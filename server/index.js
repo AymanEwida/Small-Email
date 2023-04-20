@@ -10,8 +10,11 @@ const morgan = require('morgan');
 // connectDB
 const connectDB = require('./db/connect');
 
+// auth middleware
+const authenticatedUser = require('./middleware/authentication');
+
 // router
-const testRouter = require('./routes/test');
+const authRouetr = require('./routes/auth');
 
 // error handler
 const errorHandlerMiddleware = require('./middleware/error-handler');
@@ -22,7 +25,7 @@ app.use(express.json());
 app.use(morgan('common'));
 
 // routes
-app.use('/api/v1/test', testRouter);
+app.use('/api/v1/auth', authRouetr);
 
 // errors middlerware
 app.use(errorHandlerMiddleware);
