@@ -14,7 +14,10 @@ const connectDB = require('./db/connect');
 const authenticatedUser = require('./middleware/authentication');
 
 // router
-const authRouetr = require('./routes/auth');
+const {
+    authRouter,
+    emailRouter
+} = require('./routes');
 
 // error handler
 const errorHandlerMiddleware = require('./middleware/error-handler');
@@ -25,7 +28,8 @@ app.use(express.json());
 app.use(morgan('common'));
 
 // routes
-app.use('/api/v1/auth', authRouetr);
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/email', authenticatedUser, emailRouter);
 
 // errors middlerware
 app.use(errorHandlerMiddleware);

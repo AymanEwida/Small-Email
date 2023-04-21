@@ -12,7 +12,7 @@ async function authMiddlerware (req, res, next) {
 
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = { userID: payload.userID, username: payload.username };
+        req.user = { userID: payload.userID, username: payload.username, email: payload.email };
         next();
     } catch (error) {
         throw new UnauthenticatedError('Authentication invaled, please login.');
