@@ -16,7 +16,8 @@ const authenticatedUser = require('./middleware/authentication');
 // router
 const {
     authRouter,
-    emailRouter
+    emailRouter,
+    userRouter
 } = require('./routes');
 
 // error handler
@@ -30,6 +31,7 @@ app.use(morgan('common'));
 // routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/email', authenticatedUser, emailRouter);
+app.use('/api/v1/user', authenticatedUser, userRouter);
 
 // errors middlerware
 app.use(errorHandlerMiddleware);

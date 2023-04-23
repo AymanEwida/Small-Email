@@ -1,23 +1,26 @@
 const Email = require('../models/Email');
+const User = require('../models/User');
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require('../errors');
 
 async function getAllEmailsOfUser (req, res) {
     const {
-        user: { email }
+        user: { userID }
     } = req;
 
     const emails = await Email.find({}).sort('-createdAt');
 
-    function findEmailsForAUser () {
+    async function findEmailsForAUser () {
         let emailsOfUser = [];
 
         for (let i = 0; i < emails.length; i++) {
             for (let j = 0; j < emails[i].to.length; j++) {
-                const recipientEmail = emails[i].to[j];
+                const recipientID = emails[i].to[j];
 
-                if (recipientEmail === email) {
+                if (recipientID.toString() === userID) {
+                    const userSender = await User.findById(emails[i].sender).select('username');
                     const {to, ...others} = emails[i]._doc;
+                    others.sender = userSender;
                     emailsOfUser.push(others);
                 }
             }
@@ -26,14 +29,14 @@ async function getAllEmailsOfUser (req, res) {
         return emailsOfUser;
     }
 
-    const allEmailsOfUser = findEmailsForAUser();
+    const allEmailsOfUser = await findEmailsForAUser();
 
     res.status(StatusCodes.OK).json({ nHits: allEmailsOfUser.length, emails: allEmailsOfUser });
 }
 
 async function sendEmail (req, res) {
     if (!req.body.to || req.body.to.length === 0) {
-        throw new BadRequestError('You need to provide the emails you want to send to');
+        throw new BadRequestError('You need to provide the recipients you want to send to');
     }
 
     function removeDuplicatsFromRecipientArray () {
@@ -56,8 +59,41 @@ async function sendEmail (req, res) {
         return newRecipientArray;
     }
 
+    const recipients = removeDuplicatsFromRecipientArray();
+
+    const users = await Promise.all(
+        recipients.map((recipientEmail) => {
+            return User.find({ email: recipientEmail });
+        })
+    );
+
+    function getValidUsers () {
+        let us = [];
+        
+        users.map((user) => {
+            if (user.length > 0) {
+                return us.push(user[0]);
+            }
+        });
+
+        return us;
+    }
+
+    function getToArray () {
+        let toArray = [];
+
+        const us = getValidUsers();
+
+        us.map((user) => {
+            return toArray.push(user._id);
+        });
+        
+        return toArray;
+    }
+
+
     req.body.sender = req.user.userID;
-    const email = await Email.create({ ...req.body, to: removeDuplicatsFromRecipientArray() });
+    const email = await Email.create({ ...req.body, to: getToArray() });
     res.status(StatusCodes.CREATED).json({ email });
 }
 
@@ -115,6 +151,9 @@ async function getSingleEmail (req, res) {
     if (!email) {
         throw new NotFoundError(`No order with id ${emailID}`);
     }
+
+    const userSender = await User.findById(email.sender).select('username email userImg');
+    email.sender = userSender
 
     res.status(StatusCodes.OK).json({ email });
 }

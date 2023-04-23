@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const EmailSchema = new mongoose.Schema(
     {
         to: {
-            type: [String],
-            required: [true, "Please provide a email to send to"],
+            type: [mongoose.Types.ObjectId],
+            required: [true, "Please provide recipients to send the email to"],
         },
 
         sender: {
             type: mongoose.Types.ObjectId,
             ref: 'User',
-            required: true,
+            required: true, 
         },
 
         emailSubject: {

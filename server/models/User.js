@@ -39,6 +39,12 @@ const UserSchema = new mongoose.Schema(
             type: String,
             required: false,
             default: '',
+        },
+
+        isTwoFactorAuth: {
+            type: Boolean,
+            required: false,
+            default: false,
         }
     },
     {
