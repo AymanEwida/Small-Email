@@ -13,11 +13,12 @@ const connectDB = require('./db/connect');
 // auth middleware
 const authenticatedUser = require('./middleware/authentication');
 
-// router
+// routers
 const {
     authRouter,
     emailRouter,
-    userRouter
+    userRouter,
+    groupRouter
 } = require('./routes');
 
 // error handler
@@ -32,6 +33,7 @@ app.use(morgan('common'));
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/email', authenticatedUser, emailRouter);
 app.use('/api/v1/user', authenticatedUser, userRouter);
+app.use('/api/v1/group', authenticatedUser, groupRouter);
 
 // errors middlerware
 app.use(errorHandlerMiddleware);

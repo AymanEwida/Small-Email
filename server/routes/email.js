@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
     getAllEmailsOfUser,
+    getAllEmailThatSentByUser,
     sendEmail,
     deleteEmail,
     updateEmail,
@@ -11,6 +12,7 @@ const {
 
 router.route('/send-email').post(sendEmail);
 router.route('/').get(getAllEmailsOfUser);
+router.route('/sent').get(getAllEmailThatSentByUser);
 router.route('/:id').delete(deleteEmail).patch(updateEmail).get(getSingleEmail);
 
 module.exports = router;

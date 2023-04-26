@@ -34,6 +34,36 @@ async function getAllEmailsOfUser (req, res) {
     res.status(StatusCodes.OK).json({ nHits: allEmailsOfUser.length, emails: allEmailsOfUser });
 }
 
+async function getAllEmailThatSentByUser (req, res) {
+    const {
+        user: { userID }
+    } = req;
+
+    const emails = await Email.find({ sender: userID });
+
+    async function findRecipients () {
+        let sentEmails = [];
+
+        for (let i = 0; i < emails.length; i++) {
+            const recipientArray = emails[i].to;
+
+            const recipientUsers = await Promise.all(
+                recipientArray.map((recipientID) => {
+                    return User.findById(recipientID).select('username');
+                })
+            );
+
+            sentEmails.push({ ...emails[i]._doc, to: recipientUsers });
+        }
+
+        return sentEmails;
+    }
+
+    const sentEmails = await findRecipients();
+
+    res.status(StatusCodes.OK).json({ nHits: sentEmails.length, sentEmails });
+}
+
 async function sendEmail (req, res) {
     if (!req.body.to || req.body.to.length === 0) {
         throw new BadRequestError('You need to provide the recipients you want to send to');
@@ -160,6 +190,7 @@ async function getSingleEmail (req, res) {
 
 module.exports = {
     getAllEmailsOfUser,
+    getAllEmailThatSentByUser,
     sendEmail,
     deleteEmail,
     updateEmail,

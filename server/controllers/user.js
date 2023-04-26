@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Email = require('../models/Email');
 const bcrybt = require('bcryptjs');
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require('../errors');
@@ -148,11 +149,23 @@ async function enableTwoFactorAuthentication (req, res) {
     res.status(StatusCodes.OK).json({ msg: '2FA has been enabled.' });
 }
 
+async function deleteUser (req, res) {
+    const {
+        user: { userID }
+    } = req;
+
+    await User.findOneAndRemove({ _id: userID });
+    await Email.deleteMany({ sender: userID });
+
+    res.status(StatusCodes.OK).json({ status: "success", user: null, emails: null })
+}
+
 
 module.exports = {
     searchUserByEmail,
     updateUsername,
     changePassword,
     sendTwoFactorAuthentication,
-    enableTwoFactorAuthentication
+    enableTwoFactorAuthentication,
+    deleteUser
 }
