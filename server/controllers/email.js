@@ -1,5 +1,6 @@
 const Email = require('../models/Email');
 const User = require('../models/User');
+const Group = require('../models/Group');
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require('../errors');
 
@@ -93,7 +94,11 @@ async function sendEmail (req, res) {
 
     const users = await Promise.all(
         recipients.map((recipientEmail) => {
-            return User.find({ email: recipientEmail });
+            if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@smail.com') {
+                return User.find({ email: recipientEmail });
+            } else if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@sgroup.com') {
+                return Group.find({ groupEmail: recipientEmail });
+            }
         })
     );
 
@@ -148,8 +153,8 @@ async function updateEmail (req, res) {
         params: { id: emailID },  
     } = req;
 
-    if (req.body === {}) {
-        throw new BadRequestError('Provide some Thing to change the email with it');
+    if (req.body === {} || !req.body) {
+        throw new BadRequestError('Provide a thing to change the email with it');
     }
 
     const email = await Email.findOneAndUpdate(
@@ -165,7 +170,7 @@ async function updateEmail (req, res) {
     );
 
     if (!email) {
-        throw new NotFoundError(`No order with id ${emailID}`);
+        throw new NotFoundError(`No email with id ${emailID}`);
     }
 
     res.status(StatusCodes.OK).json({ email });
@@ -179,7 +184,7 @@ async function getSingleEmail (req, res) {
     const email = await Email.findOne({ _id: emailID });
 
     if (!email) {
-        throw new NotFoundError(`No order with id ${emailID}`);
+        throw new NotFoundError(`No email with id ${emailID}`);
     }
 
     const userSender = await User.findById(email.sender).select('username email userImg');

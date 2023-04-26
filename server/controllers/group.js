@@ -1,7 +1,8 @@
 const Group = require('../models/Group');
 const User = require('../models/User');
+const Email = require('../models/Email');
 const { StatusCodes } = require("http-status-codes");
-const { BadRequestError } = require('../errors');
+const { BadRequestError, NotFoundError, UnauthenticatedError } = require('../errors');
 
 async function getAllGroupsOfAUser (req, res) {
     const {
@@ -101,7 +102,116 @@ async function createAGroup (req, res) {
     res.status(StatusCodes.CREATED).json({ group });
 }
 
+async function getAllEmailsoFAGroup (req, res) {
+    const {
+        params: { id: groupID }
+    } = req;
+
+    const emails = await Email.find({});
+
+    
+    async function findEmailsForAGroup () {
+        let emailsOfGroup = [];
+
+        for (let i = 0; i < emails.length; i++) {
+            for (let j = 0; j < emails[i].to.length; j++) {
+                const recipientID = emails[i].to[j];
+
+                if (recipientID.toString() === groupID) {
+                    const userSender = await User.findById(emails[i].sender).select('username');
+                    const {to, ...others} = emails[i]._doc;
+                    others.sender = userSender;
+                    emailsOfGroup.push(others);
+                }
+            }
+        }
+
+        return emailsOfGroup;
+    }
+
+    const allEmailsOfGroup = await findEmailsForAGroup();
+
+    res.status(StatusCodes.OK).json({ nHits: allEmailsOfGroup.length, emails: allEmailsOfGroup });
+}
+
+async function getSingleGroup (req, res) {
+    const {
+        params: { id: groupID }
+    } = req;
+
+    const group = await Group.findById(groupID);
+
+    if (!group) {
+        throw new NotFoundError(`No group with id ${groupID}`);
+    }
+
+    res.status(StatusCodes.OK).json({ group });
+}
+
+async function isUserAdminOfTheGroup (groupID, userID) {
+    const group = await Group.findById(groupID);
+
+    if (!group) {
+        throw new NotFoundError(`No group with id ${groupID}`);
+    }
+
+    for (let i = 0; i < group.participates.length; i++) {
+        if (group.participates[i].participateID.toString() === userID) {
+            return group.participates[i].isAdmin
+        }
+    }
+
+    return false
+}
+
+async function updateGroup (req, res) {
+    const {
+        user: { userID },
+        params: { id: groupID }
+    } = req;
+
+    if (req.body === {} || !req.body) {
+        throw new BadRequestError('Provide a thing to change the group with it');
+    }
+
+    if (!(await isUserAdminOfTheGroup(groupID, userID))) {
+        throw new UnauthenticatedError('Only the admins can update the group');
+    }
+
+    const group = await Group.findOneAndUpdate(
+        {
+            _id: groupID
+        },
+        req.body,
+        {
+            new: true,
+            runValidators: true,
+        }
+    );
+
+    res.status(StatusCodes.OK).json({ group });
+}
+
+async function deleteGroup (req, res) {
+    const {
+        user: { userID },
+        params: { id: groupID }
+    } = req;
+
+    if (!(await isUserAdminOfTheGroup(groupID, userID))) {
+        throw new UnauthenticatedError('Only the admins can update the group');
+    }
+
+    await Group.findOneAndRemove({ _id: groupID });
+
+    res.status(StatusCodes.OK).json({ status: "success", email: null });
+}
+
 module.exports = {
     getAllGroupsOfAUser,
-    createAGroup
+    createAGroup,
+    getAllEmailsoFAGroup,
+    getSingleGroup,
+    updateGroup,
+    deleteGroup
 }
