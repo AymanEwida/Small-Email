@@ -207,11 +207,164 @@ async function deleteGroup (req, res) {
     res.status(StatusCodes.OK).json({ status: "success", email: null });
 }
 
+async function addNewParticipates (req, res) {
+    const {
+        user: { userID },
+        params: { id: groupID },
+        body: { newParticipates }
+    } = req;
+
+    if (!newParticipates || newParticipates.length === 0) {
+        throw new BadRequestError('Please provide participates to add');
+    }
+
+    if (!(await isUserAdminOfTheGroup(groupID, userID))) {
+        throw new UnauthenticatedError('Only the admins can add new participates');
+    }
+
+    const group = await Group.findById(groupID);
+    
+    function removeExistParticipates () {
+        let newParticipatesArray = [];
+        let flag = false;
+
+        for (let i = 0; i < newParticipates.length; i++) {
+            for (let j = 0; j < group.participates.length; j++) {
+                const existParticipateID = group.participates[j].participateID.toString();
+
+                if (existParticipateID === newParticipates[i].participateID) {
+                    flag = true
+                }
+            }
+
+            if (!flag) {
+                newParticipatesArray.push(newParticipates[i]);
+            }
+
+            flag = false;
+        }
+
+        return newParticipatesArray
+    }
+
+    const existParticipates = group.participates;
+    const updatedParticipates = existParticipates.concat(removeExistParticipates());
+
+    await group.updateOne({ $set: { participates: updatedParticipates } });
+
+    res.status(StatusCodes.OK).json({ msg: 'new participates have been added' });
+}
+
+async function removeParticipatesFromGroup (req, res) {
+    const {
+        user: { userID },
+        params: { id: groupID },
+        body: { participateID }
+    } = req;
+
+    if (!participateID || !participateID === '') {
+        throw new BadRequestError('Please provide a participate to remove');
+    }
+
+    if (!(await isUserAdminOfTheGroup(groupID, userID))) {
+        throw new UnauthenticatedError('Only the admins can remove a participate');
+    }
+
+    const group = await Group.findById(groupID);
+
+    function findParticipate () {
+        return group.participates.find((participate) => participate.participateID.toString() === participateID);
+    }
+
+    await group.updateOne({ $pull: { participates: findParticipate() } });
+
+    res.status(StatusCodes.OK).json({ msg: 'participate have been removed' });
+}
+
+async function makeParticipateAnAdmin (req, res) {
+    const {
+        user: { userID },
+        params: { id: groupID },
+        body: { participateID }
+    } = req;
+
+    if (!participateID || !participateID === '') {
+        throw new BadRequestError('Please provide a participate to make it an admin');
+    }
+
+    if (!(await isUserAdminOfTheGroup(groupID, userID))) {
+        throw new UnauthenticatedError('Only the admins can make a participate an admin');
+    }
+
+    const group = await Group.findById(groupID);
+
+    function makeParticipateAdmin () {
+        let newParticipates = [];
+
+        for (let i = 0; i < group.participates.length; i++) {
+            const existParticipateID = group.participates[i].participateID.toString();
+            
+            if (existParticipateID === participateID) {
+                newParticipates.push({participateID: participateID, isAdmin: true});
+            } else {
+                newParticipates.push(group.participates[i]);
+            }
+        }
+
+        return newParticipates;
+    }
+
+    await group.updateOne({ $set: { participates: makeParticipateAdmin() } });
+
+    res.status(StatusCodes.OK).json({ msg: 'participate is an admin now' });
+}
+
+async function removeAdminFromAUser (req, res) {
+    const {
+        user: { userID },
+        params: { id: groupID }
+    } = req;
+
+    const group = await Group.findById(groupID);
+
+    if (!group) {
+        throw new NotFoundError(`No group with id ${groupID}`);
+    }
+
+    if (!(group.participates.find((participate) => participate.participateID.toString() === userID).isAdmin)) {
+        throw new BadRequestError('You are already not an admin');
+    }
+
+    function removeUserAdmin () {
+        let newParticipates = [];
+
+        for (let i = 0; i < group.participates.length; i++) {
+            const participateID = group.participates[i].participateID.toString();
+            
+            if (participateID === userID) {
+                newParticipates.push({participateID: participateID, isAdmin: false});
+            } else {
+                newParticipates.push(group.participates[i]);
+            }
+        }
+
+        return newParticipates;
+    }
+
+    await group.updateOne({ $set: { participates: removeUserAdmin() } });
+
+    res.status(StatusCodes.OK).json({ msg: 'user is not an admin now' });
+}
+
 module.exports = {
     getAllGroupsOfAUser,
     createAGroup,
     getAllEmailsoFAGroup,
     getSingleGroup,
     updateGroup,
-    deleteGroup
+    deleteGroup,
+    addNewParticipates,
+    removeParticipatesFromGroup,
+    makeParticipateAnAdmin,
+    removeAdminFromAUser
 }
