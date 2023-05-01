@@ -204,7 +204,7 @@ async function deleteGroup (req, res) {
 
     await Group.findOneAndRemove({ _id: groupID });
 
-    res.status(StatusCodes.OK).json({ status: "success", email: null });
+    res.status(StatusCodes.OK).json({ status: "success", group: null });
 }
 
 async function addNewParticipates (req, res) {
@@ -379,7 +379,7 @@ async function leaveGroup (req, res) {
     }
 
     if (!(isUserInGroup())) {
-        throw new BadRequestError('You are not a member of the group');
+        throw new UnauthenticatedError('You are not a member of the group');
     }
 
     await group.updateOne({ $pull: { participates: { participateID: userID } } });

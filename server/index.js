@@ -18,7 +18,8 @@ const {
     authRouter,
     emailRouter,
     userRouter,
-    groupRouter
+    groupRouter,
+    conversationRouter
 } = require('./routes');
 
 // error handler
@@ -34,6 +35,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/email', authenticatedUser, emailRouter);
 app.use('/api/v1/user', authenticatedUser, userRouter);
 app.use('/api/v1/group', authenticatedUser, groupRouter);
+app.use('/api/v1/conversation', authenticatedUser, conversationRouter);
 
 // errors middlerware
 app.use(errorHandlerMiddleware);
