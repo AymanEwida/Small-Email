@@ -11,7 +11,8 @@ const {
     addNewParticipates,
     removeParticipatesFromGroup,
     makeParticipateAnAdmin,
-    removeAdminFromAUser
+    removeAdminFromAUser,
+    leaveGroup
 } = require('../controllers/group');
 
 router.route('/').get(getAllGroupsOfAUser);
@@ -22,5 +23,6 @@ router.route('/add/:id').patch(addNewParticipates);
 router.route('/remove/:id').patch(removeParticipatesFromGroup);
 router.route('/make-admin/:id').patch(makeParticipateAnAdmin);
 router.route('/remove-admin/:id').patch(removeAdminFromAUser);
+router.route('/leave/:id').patch(leaveGroup);
 
 module.exports = router;

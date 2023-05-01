@@ -356,6 +356,37 @@ async function removeAdminFromAUser (req, res) {
     res.status(StatusCodes.OK).json({ msg: 'user is not an admin now' });
 }
 
+async function leaveGroup (req, res) {
+    const {
+        user: { userID },
+        params: { id: groupID }
+    } = req;
+
+    const group = await Group.findById(groupID);
+
+    if (!group) {
+        throw new NotFoundError(`No group with id ${groupID}`);
+    }
+
+    function isUserInGroup () {
+        for (let i = 0; i < group.participates.length; i++) {
+            if (group.participates[i].participateID.toString() === userID) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    if (!(isUserInGroup())) {
+        throw new BadRequestError('You are not a member of the group');
+    }
+
+    await group.updateOne({ $pull: { participates: { participateID: userID } } });
+
+    res.status(StatusCodes.OK).json({ msg: 'you have left the group' });
+}
+
 module.exports = {
     getAllGroupsOfAUser,
     createAGroup,
@@ -366,5 +397,6 @@ module.exports = {
     addNewParticipates,
     removeParticipatesFromGroup,
     makeParticipateAnAdmin,
-    removeAdminFromAUser
+    removeAdminFromAUser,
+    leaveGroup
 }
