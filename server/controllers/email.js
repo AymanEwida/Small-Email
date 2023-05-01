@@ -92,8 +92,29 @@ async function sendEmail (req, res) {
 
     const recipients = removeDuplicatsFromRecipientArray();
 
+    async function checkGroupEmail () {
+        let newToArray = [];
+
+        for (let i = 0; i < recipients.length; i++) {
+            if (recipients[i].slice(recipients[i].indexOf('@')) === '@sgroup.com') {
+                const group = await Group.findOne({ groupEmail: recipients[i] });
+                for (let j = 0; j < group.participates.length; j++) {
+                    if (group.participates[j].participateID.toString() === req.user.userID) {
+                        newToArray.push(recipients[i]);
+                    }
+                }
+            } else {
+                newToArray.push(recipients[i])
+            }
+        }
+
+        return newToArray;
+    }
+
+    const newRecipientsA = await checkGroupEmail();
+
     const users = await Promise.all(
-        recipients.map((recipientEmail) => {
+        newRecipientsA.map((recipientEmail) => {
             if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@smail.com') {
                 return User.find({ email: recipientEmail });
             } else if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@sgroup.com') {
