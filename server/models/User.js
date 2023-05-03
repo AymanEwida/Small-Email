@@ -45,8 +45,15 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             required: false,
             default: false,
+        },
+        
+        role: {
+            type: String,
+            required: false,
+            default: 'user'
         }
     },
+
     {
         timestamps: true
     }

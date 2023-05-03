@@ -16,7 +16,7 @@ async function getAllEmailsOfUser (req, res) {
 
         for (let i = 0; i < emails.length; i++) {
             for (let j = 0; j < emails[i].to.length; j++) {
-                const recipientID = emails[i].to[j];
+                const recipientID = emails[i].to[j].recipientID;
 
                 if (recipientID.toString() === userID) {
                     const userSender = await User.findById(emails[i].sender).select('username');
@@ -49,8 +49,12 @@ async function getAllEmailThatSentByUser (req, res) {
             const recipientArray = emails[i].to;
 
             const recipientUsers = await Promise.all(
-                recipientArray.map((recipientID) => {
-                    return User.findById(recipientID).select('username');
+                recipientArray.map((recipient) => {
+                    if (recipient.role === 'user') {
+                        return User.findById(recipient.recipientID).select('username');
+                    }else if (recipient.role === 'group') {
+                        return Group.findById(recipient.recipientID).select('groupName');
+                    }
                 })
             );
 
@@ -98,11 +102,15 @@ async function sendEmail (req, res) {
         for (let i = 0; i < recipients.length; i++) {
             if (recipients[i].slice(recipients[i].indexOf('@')) === '@sgroup.com') {
                 const group = await Group.findOne({ groupEmail: recipients[i] });
-                for (let j = 0; j < group.participates.length; j++) {
-                    if (group.participates[j].participateID.toString() === req.user.userID) {
-                        newToArray.push(recipients[i]);
-                    }
+                
+                if (group) {
+                    for (let j = 0; j < group.participates.length; j++) {
+                        if (group.participates[j].participateID.toString() === req.user.userID) {
+                            newToArray.push(recipients[i]);
+                        }
+                    }   
                 }
+
             } else {
                 newToArray.push(recipients[i])
             }
@@ -116,32 +124,28 @@ async function sendEmail (req, res) {
     const users = await Promise.all(
         newRecipientsA.map((recipientEmail) => {
             if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@smail.com') {
-                return User.find({ email: recipientEmail });
+                return User.findOne({ email: recipientEmail });
             } else if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@sgroup.com') {
-                return Group.find({ groupEmail: recipientEmail });
+                return Group.findOne({ groupEmail: recipientEmail });
             }
         })
     );
 
-    function getValidUsers () {
-        let us = [];
-        
-        users.map((user) => {
-            if (user.length > 0) {
-                return us.push(user[0]);
-            }
-        });
+    function removeNullFromUsersArray () {
+        return users.filter((user) => user !== null);
+    }
 
-        return us;
+    const validUsers = removeNullFromUsersArray();
+
+    if (validUsers.length === 0) {
+        throw new BadRequestError('When did not found any of the recipients you provided');
     }
 
     function getToArray () {
         let toArray = [];
 
-        const us = getValidUsers();
-
-        us.map((user) => {
-            return toArray.push(user._id);
+        validUsers.map((user) => {
+            return toArray.push({recipientID: user._id, role: user.role});
         });
         
         return toArray;

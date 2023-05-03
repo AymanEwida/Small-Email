@@ -102,7 +102,7 @@ async function createAGroup (req, res) {
     res.status(StatusCodes.CREATED).json({ group });
 }
 
-async function getAllEmailsoFAGroup (req, res) {
+async function getAllEmailsOfAGroup (req, res) {
     const {
         params: { id: groupID }
     } = req;
@@ -115,7 +115,7 @@ async function getAllEmailsoFAGroup (req, res) {
 
         for (let i = 0; i < emails.length; i++) {
             for (let j = 0; j < emails[i].to.length; j++) {
-                const recipientID = emails[i].to[j];
+                const recipientID = emails[i].to[j].recipientID;
 
                 if (recipientID.toString() === groupID) {
                     const userSender = await User.findById(emails[i].sender).select('username');
@@ -390,7 +390,7 @@ async function leaveGroup (req, res) {
 module.exports = {
     getAllGroupsOfAUser,
     createAGroup,
-    getAllEmailsoFAGroup,
+    getAllEmailsOfAGroup,
     getSingleGroup,
     updateGroup,
     deleteGroup,

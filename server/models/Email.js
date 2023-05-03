@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const EmailSchema = new mongoose.Schema(
     {
         to: {
-            type: [mongoose.Types.ObjectId],
+            type: [{recipientID: mongoose.Types.ObjectId, role: String}],
             required: [true, "Please provide recipients to send the email to"],
         },
 

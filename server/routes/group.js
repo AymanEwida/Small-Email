@@ -4,7 +4,7 @@ const router = express.Router();
 const {
     getAllGroupsOfAUser,
     createAGroup,
-    getAllEmailsoFAGroup,
+    getAllEmailsOfAGroup,
     getSingleGroup,
     updateGroup,
     deleteGroup,
@@ -17,7 +17,7 @@ const {
 
 router.route('/').get(getAllGroupsOfAUser);
 router.route('/create').post(createAGroup);
-router.route('/emails/:id').get(getAllEmailsoFAGroup);
+router.route('/emails/:id').get(getAllEmailsOfAGroup);
 router.route('/:id').get(getSingleGroup).patch(updateGroup).delete(deleteGroup);
 router.route('/add/:id').patch(addNewParticipates);
 router.route('/remove/:id').patch(removeParticipatesFromGroup);
