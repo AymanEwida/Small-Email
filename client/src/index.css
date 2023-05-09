@@ -11,6 +11,14 @@ body,
     font-family: 'Poppins', sans-serif;
 }
 
+body {
+    @apply bg-main-dark-bg text-white
+}
+
+.text-md {
+    font-size: 17px;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -8,9 +8,11 @@ import './App.css';
 
 const App: React.FC = () => {
   return (
-    <div className='bg-secondary-dark-bg'>
+    <div className=''>
       <Navbar />
-      App
+      <div className=''>
+        App
+      </div>
     </div>
   );
 }
