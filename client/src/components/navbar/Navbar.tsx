@@ -5,15 +5,22 @@ import { RiChatDeleteLine } from 'react-icons/ri';
 
 import noAvater from '../../assests/noAvatar.png';
 
+import {
+  InputElement,
+  EventInputElement,
+  FormEvent
+} from '../../types/types';
+
 import './navbar.css';
 
 const Navbar: React.FC = () => {
 
   const [searchValue, setSearchValue] = useState('');
+  const [searchTouched, setSearchTouched] = useState(false);
 
-  const search = useRef<HTMLInputElement>(null);
+  const search = useRef<InputElement>(null);
 
-  function handleSearchValue (event: React.ChangeEvent<HTMLInputElement>): void {
+  function handleSearchValue (event: EventInputElement): void {
     setSearchValue(event.target.value);
   }
 
@@ -21,8 +28,22 @@ const Navbar: React.FC = () => {
     setSearchValue('');
   }
 
+  function handleSearchFocus (): void {
+    setSearchTouched(true);
+  }
+
+  function handleSearchFocusOut (): void {
+    setSearchTouched(false);
+  }
+
+  function handleSubmitSearch (event: FormEvent): void {
+    event.preventDefault();
+
+    console.log('I submitted wow!!');
+  }
+
   return (
-    <nav className='w-full sticky top-0 bg-black flex justify-between items-center py-2 px-3 drop-shadow-lg z-index'>
+    <nav className='w-full fixed top-0 bg-black flex justify-between items-center py-2 px-3 drop-shadow-lg z-index'>
       <div className='flex gap-3 items-center'>
         <button
          type='button' 
@@ -35,7 +56,10 @@ const Navbar: React.FC = () => {
           Small Email
         </span>
       </div>
-      <div className='w-400 lg:w-800 flex items-center rounded-md bg-white text-black overflow-hidden cursor-pointer drop-shadow-md'>
+      <form 
+       className={`w-400 lg:w-800 flex items-center rounded-md ${searchTouched ? 'bg-white' : 'bg-gray-600'} transition ease-out duration-200 text-black overflow-hidden cursor-pointer drop-shadow-md`}
+       onSubmit={handleSubmitSearch}
+      >
         {searchValue !== '' ? <button
          type='button'
          className='text-xl p-2 m-1 hover:bg-gray-300 hover:rounded-full'
@@ -49,7 +73,9 @@ const Navbar: React.FC = () => {
          ref={search}
          value={searchValue}
          onChange={handleSearchValue}
-         className='w-full p-1 px-2 bg-transparent outline-none peer' 
+         className='w-full p-1 px-2 bg-transparent outline-none'
+         onFocus={handleSearchFocus}
+         onBlur={handleSearchFocusOut} 
         />
         <button
          type='button' 
@@ -58,7 +84,7 @@ const Navbar: React.FC = () => {
         >
           <AiOutlineSearch />
         </button>
-      </div>
+      </form>
       <div 
        className='flex gap-3 items-center cursor-pointer hover:bg-gray-700 hover:rounded-md p-2 h-10'
        onClick={() => console.log('open profile!')}
