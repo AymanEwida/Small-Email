@@ -14,7 +14,7 @@ module.exports = {
         backgroundColor: {
           'main-bg': '#FAFBFB',
           'main-dark-bg': '#20232A',
-          'secondary-dark-bg': '#33373E',
+          'secondary-dark-bg': '#333',
           'light-gray': '#F7F7F7',
           'half-transparent': 'rgba(0, 0, 0, 0.5)',
           'hover-bg': '#6b7280',
