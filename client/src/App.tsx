@@ -8,8 +8,19 @@ import {
 
 import {
   Navbar,
-  Sidebar
+  Sidebar,
+  EmailsNavbar
 } from './components';
+
+import {
+  Home,
+  Inbox,
+  Sent,
+  Groups,
+  Workspace,
+  ChooseAccount,
+  ProfileSettings
+} from './pages'
 
 import './App.css';
 
@@ -19,19 +30,22 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className=''>
+      <div className={`${isMeunActive ? 'ml-80': 'ml-24'} mr-5`}>
         <Navbar />
         <Sidebar />
-        <div className={`${isMeunActive ? 'ml-80': 'ml-24'} bg-slate-950 h-full rounded-lg p-5`}>
-          <Routes>
-            <Route path='/' index element={'Inbox'} />
-            <Route path='/inbox' element={'Inbox'} />
-            <Route path='/sent' element={'Sent'} />
-            <Route path='/groups' element={'Groups'} />
-            <Route path='/workspace' element={'Workspace'} />
-            <Route path='/choose-account' element={'Choose Account'} />
-            <Route path='/profile-settings' element={'Profile Settings'} />
-          </Routes>
+        <div className='bg-slate-950 h-full rounded-lg overflow-y-auto'>
+          <EmailsNavbar />
+          <div className='p-3'>
+            <Routes>
+              <Route path='/' index element={<Home />} />
+              <Route path='/inbox' element={<Inbox />} />
+              <Route path='/sent' element={<Sent />} />
+              <Route path='/groups' element={<Groups />} />
+              <Route path='/workspace' element={<Workspace />} />
+              <Route path='/choose-account' element={<ChooseAccount />} />
+              <Route path='/profile-settings' element={<ProfileSettings />} />
+            </Routes>
+          </div>
         </div>
       </div>
     </Router>

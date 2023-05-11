@@ -12,7 +12,7 @@ const Sidebar: React.FC = () => {
   const [isMenuActive, setIsMenuActive] = useState(true);
 
   return (
-    <div className={`h-full overflow-y-auto overflow-x-hidden bg-black fixed top-0 left-0 pt-20 ${isMenuActive ? 'w-72 px-5' : 'w-16 p-2 text-center'} text-gray-200`}>
+    <div className={`h-full overflow-y-auto bg-black fixed top-0 left-0 pt-20 ${isMenuActive ? 'w-72 px-5' : 'w-16 p-2 text-center'} text-gray-200`}>
       <button
        type='button'
        className={`bg-teal-500 ${isMenuActive ? 'p-2' : 'p-3'} rounded-lg hover:scale-110 transition ease-out duration-200 hover:drop-shadow-lg`}
