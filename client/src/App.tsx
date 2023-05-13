@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react';
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -22,17 +23,23 @@ import {
   ProfileSettings
 } from './pages'
 
+import { NavbarContext } from './context/navbar-context/NavbarContext';
+
 import './App.css';
 
 const App: React.FC = () => {
 
-  const [isMeunActive, setIsMeunActive] = useState(true);
+  const {
+    state
+  } = useContext(NavbarContext);
 
   return (
     <Router>
-      <div className={`${isMeunActive ? 'ml-80': 'ml-24'} mr-5`}>
+      <div className={`${state.isMenu ? 'ml-80': 'ml-24'} mr-5`}>
         <Navbar />
-        <Sidebar />
+        <Sidebar 
+         isMenuActive={state.isMenu} 
+        />
         <div className='bg-slate-950 h-full rounded-lg overflow-y-auto'>
           <EmailsNavbar />
           <div className='p-3'>

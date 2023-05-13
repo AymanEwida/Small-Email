@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { BsFillPencilFill } from 'react-icons/bs';
@@ -7,12 +7,13 @@ import { links, bottomLinks } from './data';
 
 import './sidebar.css';
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isMenuActive : boolean,
+}
 
-  const [isMenuActive, setIsMenuActive] = useState(true);
-
+const Sidebar: React.FC<SidebarProps> = ({ isMenuActive }) => {
   return (
-    <div className={`h-full overflow-y-auto bg-black fixed top-0 left-0 pt-20 ${isMenuActive ? 'w-72 px-5' : 'w-16 p-2 text-center'} text-gray-200`}>
+    <aside className={`h-full overflow-y-auto bg-black fixed top-0 left-0 pt-20 ${isMenuActive ? 'w-72 px-5' : 'w-16 p-2 text-center'} text-gray-200`}>
       <button
        type='button'
        className={`bg-teal-500 ${isMenuActive ? 'p-2' : 'p-3'} rounded-lg hover:scale-110 transition ease-out duration-200 hover:drop-shadow-lg`}
@@ -60,7 +61,7 @@ const Sidebar: React.FC = () => {
           </NavLink>
         ))}
       </div>
-    </div>
+    </aside>
   )
 }
 

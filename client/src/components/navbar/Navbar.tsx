@@ -1,13 +1,17 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useContext } from 'react'
 import { Link } from 'react-router-dom';
 
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { RiChatDeleteLine } from 'react-icons/ri';
+import { IoMdCloseCircleOutline } from 'react-icons/io';
 
 import TooltipComponent from '../tooltip-component/TooltipComponent';
 
 import noAvater from '../../assests/noAvatar.png';
+
+import { NavbarContext } from '../../context/navbar-context/NavbarContext';
+import { NavbarTypes } from '../../context/navbar-context/NavbarReducer';
 
 import {
   InputElement,
@@ -19,10 +23,31 @@ import './navbar.css';
 
 const Navbar: React.FC = () => {
 
+  const {
+    state,
+    navbarDispatch
+  } = useContext(NavbarContext);
+
   const [searchValue, setSearchValue] = useState('');
   const [searchTouched, setSearchTouched] = useState(false);
 
   const search = useRef<InputElement>(null);
+
+  function handleSidebar (): void {
+    if (state.isMenu) {
+      navbarDispatch({ type: NavbarTypes.CloseMenu });
+    }else {
+      navbarDispatch({ type: NavbarTypes.OpenMenu });
+    }
+  }
+
+  function handleProfile (): void {
+    if (state.isProfile) {
+      navbarDispatch({ type: NavbarTypes.CloseProfile });
+    }else {
+      navbarDispatch({ type: NavbarTypes.OpenProfile });
+    }
+  }
 
   function handleSearchValue (event: EventInputElement): void {
     setSearchValue(event.target.value);
@@ -46,6 +71,8 @@ const Navbar: React.FC = () => {
     console.log('I submitted wow!!');
   }
 
+  console.log({ profile: state.isProfile });
+
   return (
     <nav className='w-full fixed top-0 left-0 bg-black flex justify-between items-center py-2 px-3 drop-shadow-lg z-index'>
       <div className='flex gap-3 items-center'>
@@ -54,9 +81,9 @@ const Navbar: React.FC = () => {
          direction='bottom'
         >
           <button
-          type='button' 
-          className='text-xl text-blue-400 hover:bg-gray-700 hover:rounded-full p-2'
-          onClick={() => console.log('open sidebar!!')}
+           type='button' 
+           className='text-xl text-blue-400 hover:bg-gray-700 hover:rounded-full p-2'
+           onClick={handleSidebar}
           >
             <RxHamburgerMenu />
           </button>
@@ -114,7 +141,7 @@ const Navbar: React.FC = () => {
       >
         <div 
         className='flex gap-3 items-center cursor-pointer hover:bg-gray-700 hover:rounded-md p-2 h-10'
-        onClick={() => console.log('open profile!')}
+        onClick={handleProfile}
         >
           <img 
           src={noAvater}
@@ -129,6 +156,25 @@ const Navbar: React.FC = () => {
           </p>
         </div>
       </TooltipComponent>
+      {state.isProfile ? (
+        <div className=' absolute top-16 right-3 bg-blue-700 p-5 w-72 rounded-lg z-index'>
+          <TooltipComponent
+           message='Close'
+           direction='bottom'
+          >
+            <button
+             type='button' 
+             className='text-xl text-white hover:bg-gray-400 hover:rounded-full p-2'
+             onClick={() => navbarDispatch({ type: NavbarTypes.CloseProfile })}
+            >
+              <IoMdCloseCircleOutline />
+            </button>
+          </TooltipComponent>
+          <p>
+            Profile
+          </p>
+        </div>
+      ): null}
     </nav>
   )
 }
