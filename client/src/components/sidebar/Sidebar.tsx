@@ -1,23 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { BsFillPencilFill } from 'react-icons/bs';
 
 import { links, bottomLinks } from './data';
 
+import { Void } from '../../types/types';
+
 import './sidebar.css';
 
 interface SidebarProps {
   isMenuActive : boolean,
+  sendEmailFunc : Void
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isMenuActive }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isMenuActive, sendEmailFunc }) => {
   return (
     <aside className={`h-full overflow-y-auto bg-black fixed top-0 left-0 pt-20 ${isMenuActive ? 'w-72 px-5' : 'w-16 p-2 text-center'} text-gray-200`}>
       <button
        type='button'
        className={`bg-teal-500 ${isMenuActive ? 'p-2' : 'p-3'} rounded-lg hover:scale-110 transition ease-out duration-200 hover:drop-shadow-lg`}
-       onClick={() => console.log('I want to send new email!')}
+       onClick={sendEmailFunc}
       >
         <div className={`flex gap-2 items-center ${isMenuActive ? 'text-md' : 'text-2xl'}`}>
           <BsFillPencilFill />

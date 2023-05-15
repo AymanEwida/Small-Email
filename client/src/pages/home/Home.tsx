@@ -5,7 +5,7 @@ import './home.css';
 const Home: React.FC = () => {
   return (
     <div className=''>
-        Home
+      Home
     </div>
   )
 }

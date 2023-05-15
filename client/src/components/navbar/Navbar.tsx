@@ -7,6 +7,7 @@ import { RiChatDeleteLine } from 'react-icons/ri';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 
 import TooltipComponent from '../tooltip-component/TooltipComponent';
+import Icon from '../icon/Icon';
 
 import noAvater from '../../assests/noAvatar.png';
 
@@ -71,23 +72,18 @@ const Navbar: React.FC = () => {
     console.log('I submitted wow!!');
   }
 
-  console.log({ profile: state.isProfile });
-
   return (
     <nav className='w-full fixed top-0 left-0 bg-black flex justify-between items-center py-2 px-3 drop-shadow-lg z-index'>
       <div className='flex gap-3 items-center'>
-        <TooltipComponent
-         message='Menu'
-         direction='bottom'
-        >
-          <button
-           type='button' 
-           className='text-xl text-blue-400 hover:bg-gray-700 hover:rounded-full p-2'
-           onClick={handleSidebar}
-          >
-            <RxHamburgerMenu />
-          </button>
-        </TooltipComponent>
+        <Icon
+         title='Menu'
+         iconPosition='bottom'
+         color='rgb(96 165 250)'
+         bgColor='bg-gray-700'
+         textSize='xl'
+         icon={<RxHamburgerMenu />}
+         customFunc={handleSidebar} 
+        />
         <Link to='/'>
           <span className='text-xl'>
             Small Email
@@ -99,18 +95,17 @@ const Navbar: React.FC = () => {
        onSubmit={handleSubmitSearch}
       >
         {searchValue !== '' ? (
-          <TooltipComponent
-           message='Clear Search'
-           direction='bottom'
-          >
-            <button
-            type='button'
-            className='text-xl p-2 m-1 hover:bg-gray-300 hover:rounded-full'
-            onClick={setSearchValueToEmpty}
-            >
-              <RiChatDeleteLine />
-            </button>
-          </TooltipComponent>
+          <span className='ml-1'>
+            <Icon
+             title='Clear Search'
+             iconPosition='bottom'
+             color='black'
+             bgColor='bg-gray-300'
+             textSize='xl'
+             icon={<RiChatDeleteLine />}
+             customFunc={setSearchValueToEmpty} 
+            />
+          </span>
         ) : null}
         <input 
          type="text"
@@ -122,18 +117,17 @@ const Navbar: React.FC = () => {
          onFocus={handleSearchFocus}
          onBlur={handleSearchFocusOut} 
         />
-        <TooltipComponent
-         message='Search'
-         direction='bottom'
-        >
-          <button
-           type='button' 
-           className={`text-xl p-2 m-1 ${searchTouched || searchValue !== '' ? 'hover:bg-gray-300' : 'hover:bg-gray-400 text-white'} hover:rounded-full`}
-           onClick={() => search.current?.focus()}
-          >
-            <AiOutlineSearch />
-          </button>
-        </TooltipComponent>
+        <span className='m-1'>
+          <Icon
+           title='Search'
+           iconPosition='bottom'
+           color={searchTouched || searchValue !== '' ? 'black' : 'white'}
+           bgColor={searchTouched || searchValue !== '' ? 'bg-gray-300' : 'bg-gray-400'}
+           textSize='xl'
+           icon={<AiOutlineSearch />}
+           customFunc={() => search.current?.focus()} 
+          />
+        </span>
       </form>
       <TooltipComponent
        message='Profile'

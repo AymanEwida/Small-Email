@@ -1,12 +1,31 @@
 import React from 'react';
 
+import { Void } from '../../types/types';
+
 import './button.css';
 
-const Button: React.FC = () => {
+interface ButtonProps {
+  text : string,
+  type : "button" | "submit" | "reset",
+  borderRadius ?: string,
+  bgColor : string,
+  width ?: string,
+  paddingSize : string,
+  textSize : string,
+  color : string,
+  customFunc ?: Void,
+}
+
+const Button: React.FC<ButtonProps> = ({ text, type, borderRadius, bgColor, width, paddingSize, textSize, color, customFunc }) => {
   return (
-    <div>
-        Button
-    </div>
+    <button
+     type={type}
+     style={{ backgroundColor: bgColor, borderRadius, color, width }}
+     className={`p-${paddingSize} text-${textSize} hover:drop-shadow-xl`}
+     onClick={customFunc}
+    >
+      {text}
+    </button>
   )
 }
 
