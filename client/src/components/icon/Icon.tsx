@@ -12,11 +12,12 @@ interface IconProps {
     color : string,
     bgColor : string,
     textSize ?: string,
+    animation ?: string,
     icon : React.ReactElement,
     customFunc ?: Void
 }
 
-const Icon: React.FC<IconProps> = ({ title, iconPosition, color, bgColor, textSize, icon, customFunc }) => {
+const Icon: React.FC<IconProps> = ({ title, iconPosition, color, bgColor, textSize, animation, icon, customFunc }) => {
   return (
     <TooltipComponent
      message={title}
@@ -25,7 +26,7 @@ const Icon: React.FC<IconProps> = ({ title, iconPosition, color, bgColor, textSi
         <button
          type='button'
          style={{ color }}
-         className={`text-${textSize} hover:${bgColor} hover:rounded-full p-2`}
+         className={`text-${textSize} hover:${bgColor} hover:rounded-full p-2 ${animation}`}
          onClick={customFunc}
         >
             {icon}
