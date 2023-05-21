@@ -19,7 +19,7 @@ const EmailsNavbar: React.FC = () => {
   return (
     <div className='sticky flex justify-between items-center bg-secondary-dark-bg top-0 w-full py-2 px-4'>
       <div className='flex gap-4 items-center text-md'>
-        <span className='ml-1'>
+        <span className='ml-1 hover:rotate-90 transform duration-200'>
           <Icon
            title='Refresh'
            iconPosition='bottom'
