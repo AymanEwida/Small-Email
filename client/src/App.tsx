@@ -12,7 +12,8 @@ import {
   MainPage,
   ChooseAccount,
   ProfileSettings,
-  Register
+  Register,
+  Test
 } from './pages'
 
 import './App.css';
@@ -29,6 +30,9 @@ const App: React.FC = () => {
         <Route path='/choose-account' element={user ? <Navigate to='/inbox' /> : <ChooseAccount />} />
         <Route path='/register' element={user ? <Navigate to='/inbox' /> : <Register />} />
         <Route path='/profile-settings' element={user ? <ProfileSettings /> : <Navigate to='/' />} />
+
+        {/* this route for testing */}
+        <Route path='/test' element={<Test />} />
       </Routes>
     </Router>
   );

@@ -8,3 +8,4 @@ export { default as ProfileSettings } from './profile-settings/ProfileSettings';
 export { default as MainPage } from './main-page/MainPage';
 export { default as MainEmails } from './main-emails/MainEmails';
 export { default as Register } from './register/Register';
+export { default as Test } from './test/Test';
