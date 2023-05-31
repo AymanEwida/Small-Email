@@ -30,16 +30,10 @@ const EmailsNavbar: React.FC = () => {
            customFunc={() => console.log('refresh emails!')} 
           />
         </span>
-        {/* <TooltipComponent
-         message='Refresh'
-         direction='bottom'
-        >
-          <IoMdRefresh />
-        </TooltipComponent> */}
         <input 
          type="checkbox"
          checked={checked}
-         className=''
+         className='cursor-pointer'
          onChange={handleChecked} 
         />
         {checked ? (
@@ -51,17 +45,11 @@ const EmailsNavbar: React.FC = () => {
            icon={<MdDelete />}
            customFunc={() => console.log('delete emails!')} 
           />
-        //   <TooltipComponent
-        //    message='Delete Emails'
-        //    direction='bottom'
-        //   >
-        //     <MdDelete />
-        //  </TooltipComponent>
         ) : null}
       </div>
       <div>
-        <select className='text-black rounded-md focus:outline-none'>
-          <option>
+        <select className='text-black rounded-md focus:outline-none cursor-pointer'>
+          <option> 
             Newer
           </option>
           <option>

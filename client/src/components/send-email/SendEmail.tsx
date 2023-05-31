@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 
-import { AiOutlineFullscreen, AiFillDelete, AiOutlineFullscreenExit } from 'react-icons/ai';
-import { RiDeleteBack2Fill } from 'react-icons/ri';
+import { AiOutlineFullscreen, AiFillDelete, AiOutlineFullscreenExit, AiOutlineDeliveredProcedure } from 'react-icons/ai';
 
 import Icon from '../icon/Icon';
 import Button from '../button/Button';
 import Input from '../input/Input';
 
-import {
-  EventInputElement, 
+import { 
   FormEvent,
-  Void
+  Void,
+  Event,
+  InputElement,
+  TextAreaElement
 } from '../../types/types';
 
 import './send-email.css';
@@ -24,10 +25,19 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
   const [to, setTo] = useState('');
   const [tos, setTos] = useState('');
   const [toss, setToss] = useState('');
+  const [isContentTouched, setIsContentTouched] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
 
   function handleFullScreen (): void {
     setFullScreen(prevFullScreen => !prevFullScreen);
+  }
+
+  function handleFocus (): void {
+    setIsContentTouched(true);
+  }
+
+  function handleFocusOut (): void {
+    setIsContentTouched(false);
   }
 
   return (
@@ -40,7 +50,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
         console.log('I submited wow!');
       }}
     >
-      <div className='flex justify-between items-center w-full bg-gray-700 px-6 py-1'>
+      <div className='flex justify-between items-center w-full bg-gray-700 px-10 py-1'>
         <p className='font-semibold'>
           New Email
         </p>
@@ -54,11 +64,11 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
            customFunc={handleFullScreen} 
           />
           <Icon
-           title='Delete'
+           title='Delete & Save'
            iconPosition='bottom'
            color='white'
            bgColor='bg-gray-400'
-           icon={<RiDeleteBack2Fill />}
+           icon={<AiOutlineDeliveredProcedure />}
            customFunc={closeSendEmail} 
           />
         </div>
@@ -69,22 +79,24 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
          id='recipients'
          label='Recipients'
          value={to}
-         customFunc={(event: EventInputElement) => setTo(event.target.value)} 
+         customFunc={(event: Event<InputElement>) => setTo(event.target.value)} 
         />
         <Input
          type='text'
          id='subject'
          label='Subject'
          value={toss}
-         customFunc={(event: EventInputElement) => setToss(event.target.value)} 
+         customFunc={(event: Event<InputElement>) => setToss(event.target.value)} 
         />
         <textarea 
          cols={30} 
          rows={10}
-         className='text-white bg-neutral-700 w-full outline-none p-2 rounded-md'
+         className={`${isContentTouched || tos.length > 0 ? 'text-black bg-white' : 'text-white bg-neutral-700'} transform ease-out duration-150 w-full outline-none p-2 rounded-md`}
          value={tos}
-         placeholder='Content'
-         onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setTos(event.target.value)} 
+         placeholder=' '
+         onChange={(event: Event<TextAreaElement>) => setTos(event.target.value)}
+         onFocus={handleFocus}
+         onBlur={handleFocusOut} 
         />
       </div>
       <div className='flex justify-between items-center px-4 py-2'>
@@ -98,7 +110,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
          color='white' 
         />
         <Icon
-         title='Delete'
+         title='Remove'
          iconPosition='top'
          color='white'
          bgColor='bg-gray-400'

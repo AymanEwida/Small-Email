@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 
 import { RiInboxFill } from 'react-icons/ri';
 import { BiSend } from 'react-icons/bi';
+import { BsSave } from 'react-icons/bs';
 import { HiUserGroup } from 'react-icons/hi';
 import { IoCodeWorking } from 'react-icons/io5'
 import { MdOutlineManageAccounts, MdSupervisorAccount } from 'react-icons/md';
@@ -22,6 +23,11 @@ export const links: Link[] = [
         linkIcon: <BiSend />,
         linkMeesage: 'Sent',
         linkTo: '/sent'
+    },
+    {
+        linkIcon: <BsSave />,
+        linkMeesage: 'Saved Drafts',
+        linkTo: '/saved-drafts'
     },
     {
         linkIcon: <HiUserGroup />,

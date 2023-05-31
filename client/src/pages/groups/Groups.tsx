@@ -4,8 +4,8 @@ import './groups.css';
 
 const Groups: React.FC = () => {
   return (
-    <div>
-        Groups
+    <div className='p-3'>
+      Groups
     </div>
   )
 }

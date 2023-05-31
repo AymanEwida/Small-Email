@@ -12,7 +12,7 @@ body,
 }
 
 body {
-    @apply bg-main-dark-bg text-white pt-20
+    @apply bg-main-dark-bg text-white
 }
 
 .text-md {

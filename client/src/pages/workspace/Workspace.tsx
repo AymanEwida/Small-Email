@@ -4,8 +4,8 @@ import './workspace.css';
 
 const Workspace: React.FC = () => {
   return (
-    <div>
-        Workspace
+    <div className='p-3'>
+      Workspace
     </div>
   )
 }

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import { EventInputElement } from '../../types/types';
+import { Event, InputElement } from '../../types/types';
 
 import './input.css';
 
@@ -9,19 +9,32 @@ interface InputProps {
   label : string,
   type : string,
   value : string,
-  customFunc : (event : EventInputElement) => void
+  customFunc : (event : Event<InputElement>) => void
 }
 
 const Input: React.FC<InputProps> = ({ id, label, type, value, customFunc }) => {
+
+  const [isTouched, setIsTouched] = useState(false);
+
+  function handleFocus (): void {
+    setIsTouched(true);
+  }
+
+  function handleFocusOut (): void {
+    setIsTouched(false);
+  }
+
   return (
     <div className='relative'>
       <input
        type={type}
        id={id}
-       className='block rounded-md px-6 pt-6 pb-1 w-full text-white bg-neutral-700 appearance-none focus:outline-none focus:ring-0 peer'
+       className={`block rounded-md px-6 pt-6 pb-1 w-full ${isTouched || value.length > 0 ? 'text-black bg-white' : 'text-white bg-neutral-700'} transform ease-out duration-150 appearance-none focus:outline-none focus:ring-0 peer`}
        placeholder=' '
        value={value}
-       onChange={customFunc} 
+       onChange={customFunc}
+       onFocus={handleFocus}
+       onBlur={handleFocusOut} 
       />
       <label 
        htmlFor={id}

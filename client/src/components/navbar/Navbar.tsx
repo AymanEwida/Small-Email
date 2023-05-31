@@ -15,8 +15,8 @@ import { NavbarContext } from '../../context/navbar-context/NavbarContext';
 import { NavbarTypes } from '../../context/navbar-context/NavbarReducer';
 
 import {
+  Event,
   InputElement,
-  EventInputElement,
   FormEvent
 } from '../../types/types';
 
@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
     }
   }
 
-  function handleSearchValue (event: EventInputElement): void {
+  function handleSearchValue (event: Event<InputElement>): void {
     setSearchValue(event.target.value);
   }
 
