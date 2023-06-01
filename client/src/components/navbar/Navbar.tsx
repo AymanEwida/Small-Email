@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { RiChatDeleteLine } from 'react-icons/ri';
-import { IoMdCloseCircleOutline } from 'react-icons/io';
+import { BsChevronDown } from 'react-icons/bs';
 
 import TooltipComponent from '../tooltip-component/TooltipComponent';
 import Icon from '../icon/Icon';
@@ -13,6 +13,7 @@ import noAvater from '../../assests/noAvatar.png';
 
 import { NavbarContext } from '../../context/navbar-context/NavbarContext';
 import { NavbarTypes } from '../../context/navbar-context/NavbarReducer';
+import Profile from '../profile/Profile';
 
 import {
   Event,
@@ -148,26 +149,13 @@ const Navbar: React.FC = () => {
               Jan Doe
             </span>
           </p>
+          <span className={`text-sm ${state.isProfile ? 'rotate-180' : ''} transform duration-200`}>
+            <BsChevronDown />
+          </span>
         </div>
       </TooltipComponent>
       {state.isProfile ? (
-        <div className=' absolute top-16 right-3 bg-blue-700 p-5 w-72 rounded-lg z-index'>
-          <TooltipComponent
-           message='Close'
-           direction='bottom'
-          >
-            <button
-             type='button' 
-             className='text-xl text-white hover:bg-gray-400 hover:rounded-full p-2'
-             onClick={() => navbarDispatch({ type: NavbarTypes.CloseProfile })}
-            >
-              <IoMdCloseCircleOutline />
-            </button>
-          </TooltipComponent>
-          <p>
-            Profile
-          </p>
-        </div>
+        <Profile />
       ): null}
     </nav>
   )

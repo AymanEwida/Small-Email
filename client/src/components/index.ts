@@ -6,3 +6,4 @@ export { default as Button } from './button/Button';
 export { default as EmailsNavbar } from './emails-navbar/EmailsNavbar';
 export { default as Icon } from './icon/Icon';
 export { default as SendEmail } from './send-email/SendEmail';
+export { default as Profile } from './profile/Profile';

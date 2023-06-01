@@ -17,7 +17,7 @@ module.exports = {
           'secondary-dark-bg': '#333',
           'light-gray': '#F7F7F7',
           'half-transparent': 'rgba(0, 0, 0, 0.5)',
-          'hover-bg': '#6b7280',
+          'hover-bg': 'rgba(209, 213, 219, 0.1)',
           'black-overlay-bg': 'rgba(0, 0, 0, 0.7)',
           'hover-light': 'rgba(0, 0, 0, 0.1)'
         },
