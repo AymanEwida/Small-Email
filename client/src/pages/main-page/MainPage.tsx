@@ -45,7 +45,7 @@ const MainPage: React.FC = () => {
        isMenuActive={state.isMenu}
        sendEmailFunc={handleIsEmail} 
       />
-      <div className='bg-slate-950 height w-full rounded-lg overflow-y-auto'>
+      <div className='bg-slate-950 height w-full overflow-hidden rounded-lg overflow-y-auto relative'>
         <Routes>
           <Route path='/:emailCategory' index element={<MainEmails />} />
           <Route path='/groups' element={<Groups />} />

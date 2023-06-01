@@ -3,7 +3,8 @@ import React from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
 import {
-  EmailsNavbar
+  EmailsNavbar,
+  EmailComponent
 } from '../../components';
 
 import './main-emails.css'
@@ -15,23 +16,25 @@ const MainEmails: React.FC = () => {
   return (
     <>
       <EmailsNavbar />
-      <div className='p-3'>
-        {emailCategory === 'inbox' ? (
-          <div>
-            Inbox
-          </div>
-        ) :
-        emailCategory === 'sent' ? (
-          <div>
-            Sent
-          </div>
-        ) : 
-        emailCategory === 'saved-drafts' ? (
-          <div>
-            SavedDrafts
-          </div>
-        ) : <Navigate to='/inbox' />}
-      </div>
+      {emailCategory === 'inbox' ? (
+        <div>
+          <EmailComponent /> 
+          <EmailComponent />
+          <EmailComponent />
+          <EmailComponent />
+          <EmailComponent />
+        </div>
+      ) :
+      emailCategory === 'sent' ? (
+        <div>
+          Sent
+        </div>
+      ) : 
+      emailCategory === 'saved-drafts' ? (
+        <div>
+          SavedDrafts
+        </div>
+      ) : <Navigate to='/inbox' />}
     </>
   )
 }

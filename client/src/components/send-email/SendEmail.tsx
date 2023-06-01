@@ -41,7 +41,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
   }
 
   return (
-    <div className={fullScreen ? 'grid place-content-center' : 'absolute bottom-2 right-10'}>
+    <div className={`absolute ${fullScreen ? 'top-24 translate-x' : 'bottom-2 right-2'} z-index`}>
     <form
       className={`w-400 ${fullScreen ? 'w-500 lg:w-800' : ''} bg-black rounded-md overflow-hidden`}
       onSubmit={(event: FormEvent) => {

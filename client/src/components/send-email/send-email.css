@@ -1,0 +1,13 @@
+.z-index {
+    z-index: 99999999;
+}
+
+.translate-x {
+    transform: translateX(12.5%);
+}
+
+@media (min-width: 1024px) {
+    .translate-x {
+        transform: translateX(50%);
+    }
+}
