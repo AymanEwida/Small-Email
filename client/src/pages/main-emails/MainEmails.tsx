@@ -15,7 +15,7 @@ const MainEmails: React.FC = () => {
 
   const [isChecked, setIsChecked] = useState(false);
   const repeat = (arr: any[], n: number) => Array.from({ length: arr.length * n }, (_, i) => arr[i % arr.length]);
-  const [statuses, setStatuses] = useState<boolean[]>(repeat([true], 5));
+  const [statuses, setStatuses] = useState<boolean[]>(repeat([false], 5));
 
   function handleChecked (): void {
     setIsChecked(prevIsChecked => !prevIsChecked);
