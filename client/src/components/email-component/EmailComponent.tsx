@@ -4,31 +4,31 @@ import { AiFillDelete } from 'react-icons/ai';
 
 import Icon from '../icon/Icon';
 
+import { Void } from '../../types/types';
+
 import './email-component.css';
 
-const EmailComponent: React.FC = () => {
+interface EmailComponentProps {
+  isEmailChecked : boolean,
+  handleEmailChecked : Void,
+}
 
-  const [isChecked, setIsChecked] = useState(false);
-
-  function handleCheck (): void {
-    setIsChecked(prevIsChecked => !prevIsChecked);
-  }
-
+const EmailComponent: React.FC<EmailComponentProps> = ({ isEmailChecked, handleEmailChecked }) => {
   return (
     <div className='bg-black w-full py-2 px-9 lg:px-12 hover:scale-105 transition duration-300 text-md hover:drop-shadow-lg'>
-      <div className='flex justify-between items-center pb-1 border-b-1 w-full border-inherit'>
+      <div className='flex justify-between items-center pb-1 border-b-1 w-full border-inherit px-7'>
         <div className='flex items-center gap-3'>
           <input 
            type="checkbox"
            className=' cursor-pointer text-md'
-           checked={isChecked}
-           onChange={handleCheck} 
+           checked={isEmailChecked}
+           onChange={handleEmailChecked} 
           />
           <h2 className='font-bold text-green-400'>
             Jhon_Doe
           </h2>
         </div>
-        <p className='text-gray-300 text-clip w-96 overflow-hidden'>
+        <p className='text-gray-300 text-clip w-96 overflow-hidden ml-2'>
           WelcomeWelcomeWelcomeWelcomeWelcomeWelcome
         </p>
         <Icon

@@ -6,9 +6,16 @@ import { MdDelete } from 'react-icons/md';
 import TooltipComponent from '../tooltip-component/TooltipComponent';
 import Icon from '../icon/Icon';
 
+import { Void } from '../../types/types';
+
 import './emails-navbar.css';
 
-const EmailsNavbar: React.FC = () => {
+interface EmailsNavbarProps {
+  isEmailsChecked : boolean,
+  handleEmailsChecked : Void,
+}
+
+const EmailsNavbar: React.FC<EmailsNavbarProps> = ({ isEmailsChecked, handleEmailsChecked }) => {
   
   const [checked, setChecked] = useState(false);
 
@@ -32,11 +39,11 @@ const EmailsNavbar: React.FC = () => {
         </span>
         <input 
          type="checkbox"
-         checked={checked}
+         checked={isEmailsChecked}
          className='cursor-pointer'
-         onChange={handleChecked} 
+         onChange={handleEmailsChecked} 
         />
-        {checked ? (
+        {isEmailsChecked ? (
           <Icon
            title='Delete Emails'
            iconPosition='bottom'

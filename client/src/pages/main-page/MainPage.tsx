@@ -50,7 +50,7 @@ const MainPage: React.FC = () => {
           <Route path='/:emailCategory' index element={<MainEmails />} />
           <Route path='/groups' element={<Groups />} />
           <Route path='/workspace' element={<Workspace />} />
-          <Route path='/*' element={'No!!'} />
+          <Route path='/*' element={<Navigate to='/index' />} />
         </Routes>
         {isEmail ? <SendEmail closeSendEmail={setIsEmailToFalse} /> : null}
       </div>
