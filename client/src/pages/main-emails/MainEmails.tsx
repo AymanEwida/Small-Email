@@ -7,6 +7,8 @@ import {
   EmailComponent
 } from '../../components';
 
+import { arrayRepeat } from '../../functions/arrayRepeat';
+
 import './main-emails.css'
 
 const MainEmails: React.FC = () => {
@@ -14,12 +16,11 @@ const MainEmails: React.FC = () => {
   const { emailCategory } = useParams();
 
   const [isChecked, setIsChecked] = useState(false);
-  const repeat = (arr: any[], n: number) => Array.from({ length: arr.length * n }, (_, i) => arr[i % arr.length]);
-  const [statuses, setStatuses] = useState<boolean[]>(repeat([false], 5));
+  const [statuses, setStatuses] = useState(arrayRepeat([false], 5));
 
   function handleChecked (): void {
     setIsChecked(prevIsChecked => !prevIsChecked);
-    setStatuses(repeat([!isChecked], 5));
+    setStatuses(arrayRepeat([!isChecked], 5));
   }
 
   function handleStatuses (index: number): void {
