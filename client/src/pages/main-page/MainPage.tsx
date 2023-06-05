@@ -9,7 +9,8 @@ import {
 import {
   MainEmails,
   Groups,
-  Workspace
+  Workspace,
+  Email
 } from '../';
 
 import {
@@ -48,6 +49,7 @@ const MainPage: React.FC = () => {
       <div className='bg-slate-950 height w-full overflow-hidden rounded-lg overflow-y-auto relative'>
         <Routes>
           <Route path='/:emailCategory' index element={<MainEmails />} />
+          <Route path='/:emailCategory/email' index element={<Email />} />
           <Route path='/groups' element={<Groups />} />
           <Route path='/workspace' element={<Workspace />} />
           <Route path='/*' element={<Navigate to='/index' />} />

@@ -13,13 +13,13 @@ const TooltipComponent: React.FC<TooltipComponentProps> = ({ children, message, 
 
   const [isShow, setIsShow] = useState(false);
 
-  function handleShow () {
+  function handleShow (): void {
     timeout = setTimeout(() => {
       setIsShow(true);
     }, 300);
   }
 
-  function handleDisShow () {
+  function handleDisShow (): void {
     clearInterval(timeout);
     setIsShow(false);
   }
