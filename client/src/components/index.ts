@@ -8,3 +8,5 @@ export { default as Icon } from './icon/Icon';
 export { default as SendEmail } from './send-email/SendEmail';
 export { default as Profile } from './profile/Profile';
 export { default as EmailComponent } from './email-component/EmailComponent';
+export { default as Header } from './header/Header';
+export { default as GroupCard } from './group-card/GroupCard';
