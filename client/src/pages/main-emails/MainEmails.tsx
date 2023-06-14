@@ -56,7 +56,7 @@ const MainEmails: React.FC = () => {
        handleEmailsChecked={handleChecked} 
       />
       {emailCategory === 'inbox' ? (
-        <div>
+        <div className='mb-10'>
           {statuses.map((status, index) => (
             <EmailComponent
              key={index} 

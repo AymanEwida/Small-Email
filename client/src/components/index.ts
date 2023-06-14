@@ -10,3 +10,5 @@ export { default as Profile } from './profile/Profile';
 export { default as EmailComponent } from './email-component/EmailComponent';
 export { default as Header } from './header/Header';
 export { default as GroupCard } from './group-card/GroupCard';
+export { default as EmailNavbar } from './email-navbar/EmailNavbar';
+export { default as EmailLayout } from './email-layout/EmailLayout';
