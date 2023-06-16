@@ -57,14 +57,16 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ isEmailChecked, handleE
           </p>
         ) : null}
         {isShow ? (
-          <Icon
-            title='Delete Email'
-            iconPosition='bottom'
-            bgColor='bg-gray-700'
-            color='white'
-            icon={<AiFillDelete />}
-            customFunc={() => console.log('I want to delete this email!!')} 
-          />
+          <span className='show-animation'>
+            <Icon
+              title='Delete Email'
+              iconPosition='bottom'
+              bgColor='bg-gray-700'
+              color='white'
+              icon={<AiFillDelete />}
+              customFunc={() => console.log('I want to delete this email!!')} 
+            />
+          </span>
         ): null}
       </div>
       <p className='overflow-hidden text-ellipsis whitespace-nowrap w-96 text-gray-200'>

@@ -1,0 +1,15 @@
+.show-animation {
+    display: inline-block;
+    backface-visibility: hidden;
+    animation: show 300ms ease-in;
+}
+
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
