@@ -52,7 +52,7 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ isEmailChecked, handleE
           WelcomeWelcomeWelcomeWelcomeWelcomeWelcome
         </p>
         {!isShow ? (
-          <p className='text-sm text-gray-400 ml-3 whitespace-nowrap'>
+          <p className='text-sm text-gray-400 ml-3 whitespace-nowrap hide-animation'>
             3 May
           </p>
         ) : null}

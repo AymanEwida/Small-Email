@@ -20,7 +20,7 @@ const EmailNavbar: React.FC<EmailNavbarProps> = ({ category }) => {
         {category}
       </h2>
       <div className='flex gap-4 items-center mt-2.5'>
-        <Link to={`/${category}`}>
+        <Link to={category === 'groups' ? `/${category}/emails?g_id=1` : `/${category}`}>
           <Icon
            title='Go Back'
            iconPosition='bottom'

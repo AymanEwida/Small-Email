@@ -19,7 +19,7 @@ interface EmailLayoutProps {
 
 const EmailLayout: React.FC<EmailLayoutProps> = ({ subject, sender, recipients, content }) => {
   return (
-    <div className='py-3 px-4'>
+    <div className='py-3'>
       <h1 className='font-bold text-2xl'>
         {subject}
       </h1>
