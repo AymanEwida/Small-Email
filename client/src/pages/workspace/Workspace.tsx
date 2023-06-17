@@ -10,7 +10,8 @@ const Workspace: React.FC = () => {
   return (
     <>
       <Header
-       category='Workspace' 
+       category='Workspace'
+       textSize='lg' 
       />
       <div className='p-3'>
         Workspace

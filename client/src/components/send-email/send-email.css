@@ -3,7 +3,7 @@
 }
 
 .translate-x {
-    transform: translateX(12.5%);
+    transform: translateX(50%);
 }
 
 @media (min-width: 1024px) {

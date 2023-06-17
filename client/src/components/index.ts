@@ -12,3 +12,5 @@ export { default as Header } from './header/Header';
 export { default as GroupCard } from './group-card/GroupCard';
 export { default as EmailNavbar } from './email-navbar/EmailNavbar';
 export { default as EmailLayout } from './email-layout/EmailLayout';
+export { default as CreateGroup } from './create-group/CreateGroup';
+export { default as GroupsNavbar } from './groups-navbar/GroupsNavbar';

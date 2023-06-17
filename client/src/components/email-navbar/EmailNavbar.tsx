@@ -32,7 +32,7 @@ const EmailNavbar: React.FC<EmailNavbarProps> = ({ category }) => {
         </Link>
         {category === 'sent' ? (     
           <div className='flex items-center gap-2'>
-            <span className=' border-r-2 pr-2 b-color'>
+            <span className='border-r-2 pr-2 b-color'>
               <Icon
                title='Delete Email' 
                iconPosition='bottom'

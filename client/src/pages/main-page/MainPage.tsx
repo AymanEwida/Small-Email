@@ -52,7 +52,7 @@ const MainPage: React.FC = () => {
           <Route path='/:emailCategory' index element={<MainEmails />} />
           <Route path='/:emailCategory/email' index element={<Email />} />
           <Route path='/groups' element={<Groups />} />
-          <Route path='/groups/emails' element={<GroupEmails />} />
+          <Route path='/groups/:groupCategory' element={<GroupEmails />} />
           <Route path='/workspace' element={<Workspace />} />
           <Route path='/*' element={<Navigate to='/index' />} />
         </Routes>

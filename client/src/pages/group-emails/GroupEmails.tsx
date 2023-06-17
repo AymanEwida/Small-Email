@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 
+import { Navigate, useParams } from 'react-router-dom';
+
 import {
-  EmailsNavbar,
-  EmailComponent
+  EmailComponent,
+  GroupsNavbar
 } from '../../components';
 
 import { arrayRepeat } from '../../functions/arrayRepeat';
@@ -14,8 +16,19 @@ const GroupEmails: React.FC = () => {
   
   const queryStrings = getParamsFromURL(document.location.href);
 
+  const { groupCategory } = useParams();
+
+  const [category, setCategory] = useState<string | undefined>(groupCategory);
   const [isChecked, setIsChecked] = useState(false);
   const [statuses, setStatuses] = useState(arrayRepeat([false], 5));
+
+  function toggleCategory (): void {
+    if (category === 'emails') {
+      setCategory('conversation');
+    } else {
+      setCategory('emails');
+    }
+  }
 
   function handleChecked (): void {
     setIsChecked(prevIsChecked => !prevIsChecked);
@@ -50,22 +63,31 @@ const GroupEmails: React.FC = () => {
 
   return (
     <>
-      <EmailsNavbar
+      <GroupsNavbar
+       category={category}
        isEmailsChecked={isChecked}
        handleEmailsChecked={handleChecked} 
+       toggleFunc={toggleCategory} 
       />
-      <div>
-        {statuses.map((status, index) => (
-          <EmailComponent
-           key={index} 
-           isEmailChecked={status}
-           handleEmailChecked={() => handleStatuses(index)} 
-          />
-        ))}
-        <span>
-          Group id: {queryStrings?.g_id}
-        </span>  
-      </div>
+      {groupCategory === 'emails' ? (
+        <div>
+          {statuses.map((status, index) => (
+            <EmailComponent
+            key={index} 
+            isEmailChecked={status}
+            handleEmailChecked={() => handleStatuses(index)} 
+            />
+          ))}
+          <span>
+            Group id: {queryStrings?.g_id}
+          </span>  
+        </div>
+      ) :
+      groupCategory === 'conversation' ? (
+        <div>
+          Chat
+        </div>
+      ) : <Navigate to='/groups/emails?g_id=1' />}
     </>
   )
 }
