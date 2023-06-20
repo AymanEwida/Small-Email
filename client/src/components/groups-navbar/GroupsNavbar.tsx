@@ -82,7 +82,7 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, 
               <input 
                type="checkbox"
                checked={isEmailsChecked}
-               className='cursor-pointer'
+               className={`cursor-pointer ${!isEmailsChecked ? 'mr-4' : ''}`}
                onChange={handleEmailsChecked} 
               />
             ) : null}
