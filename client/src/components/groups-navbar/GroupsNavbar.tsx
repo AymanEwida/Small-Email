@@ -25,7 +25,7 @@ interface GroupsNavbarProps {
 
 const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, handleEmailsChecked, toggleFunc }) => {
   return (
-    <div className='sticky bg-secondary-dark-bg top-0 w-full py-3 px-8'>
+    <div className='sticky bg-secondary-dark-bg top-0 w-full py-3 px-8 z-20'>
       <div className='flex justify-between border-b-1 pb-3 color-border'>
         <Link to='/groups'>
           <Icon
