@@ -22,7 +22,7 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ isEmailChecked, handleE
   function handleShow (): void {
     timeout = setTimeout(() => {
       setIsShow(true);
-    }, 300);
+    }, 700);
   }
 
   function handleDisShow (): void {
@@ -52,7 +52,7 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ isEmailChecked, handleE
           WelcomeWelcomeWelcomeWelcomeWelcomeWelcome
         </p>
         {!isShow ? (
-          <p className='text-sm text-gray-400 ml-3 whitespace-nowrap hide-animation'>
+          <p className='text-sm text-gray-400 ml-3 whitespace-nowrap'>
             3 May
           </p>
         ) : null}

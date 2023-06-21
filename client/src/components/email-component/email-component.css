@@ -1,11 +1,6 @@
 .show-animation {
     display: inline-block;
-    backface-visibility: hidden;
     animation: show 300ms ease-in;
-}
-
-.hide-animation {
-    animation: hide 300ms ease-out;
 }
 
 @keyframes show {
@@ -15,15 +10,5 @@
 
     to {
         opacity: 1;
-    }
-}
-
-@keyframes hide {
-    from {
-        opacity: 1;
-    }
-
-    to {
-        opacity: 0;
     }
 }
