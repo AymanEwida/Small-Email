@@ -25,19 +25,10 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
   const [to, setTo] = useState('');
   const [tos, setTos] = useState('');
   const [toss, setToss] = useState('');
-  const [isContentTouched, setIsContentTouched] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
 
   function handleFullScreen (): void {
     setFullScreen(prevFullScreen => !prevFullScreen);
-  }
-
-  function handleFocus (): void {
-    setIsContentTouched(true);
-  }
-
-  function handleFocusOut (): void {
-    setIsContentTouched(false);
   }
 
   return (
@@ -92,12 +83,11 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
           <textarea 
           cols={30} 
           rows={10}
-          className={`${isContentTouched || tos.length > 0 ? 'text-black bg-white' : 'text-white bg-neutral-700'} transform ease-out duration-150 w-full outline-none p-2 rounded-md`}
+          style={{ resize: 'none' }}
+          className='bg-transparent w-full outline-none p-2'
           value={tos}
           placeholder=' '
           onChange={(event: Event<TextAreaElement>) => setTos(event.target.value)}
-          onFocus={handleFocus}
-          onBlur={handleFocusOut} 
           />
         </div>
         <div className='flex justify-between items-center px-4 py-2'>
