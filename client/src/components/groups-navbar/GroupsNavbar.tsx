@@ -21,9 +21,10 @@ interface GroupsNavbarProps {
   isEmailsChecked : boolean,
   handleEmailsChecked : Void,
   toggleFunc : Void,
+  openSettingsMenuFunc : Void,
 }
 
-const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, handleEmailsChecked, toggleFunc }) => {
+const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc }) => {
   return (
     <div className='sticky bg-secondary-dark-bg top-0 w-full py-3 px-8 z-20'>
       <div className='flex justify-between border-b-1 pb-3 color-border'>
@@ -105,6 +106,7 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, 
            bgColor='bg-gray-400'
            textSize='md'
            animation='hover:rotate-45 transform duration-150'
+           customFunc={openSettingsMenuFunc}
           />
         </div>
         {category === 'emails' ? (

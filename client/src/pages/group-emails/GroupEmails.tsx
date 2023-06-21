@@ -4,7 +4,8 @@ import { Navigate, useParams } from 'react-router-dom';
 
 import {
   EmailComponent,
-  GroupsNavbar
+  GroupsNavbar,
+  GroupSettings
 } from '../../components';
 
 import { arrayRepeat } from '../../functions/arrayRepeat';
@@ -21,8 +22,11 @@ const GroupEmails: React.FC = () => {
   const [category, setCategory] = useState<string | undefined>(groupCategory);
   const [isChecked, setIsChecked] = useState(false);
   const [statuses, setStatuses] = useState(arrayRepeat([false], 5));
+  const [isSettingMenuOpen, setIsSettingMenuOpen] = useState(false);
 
   function toggleCategory (): void {
+    setIsSettingMenuOpen(false);
+
     if (category === 'emails') {
       setCategory('conversation');
     } else {
@@ -61,13 +65,22 @@ const GroupEmails: React.FC = () => {
     setStatuses(newStatuses);
   }
 
+  function openSettingsMenu (): void {
+    setIsSettingMenuOpen(true);
+  }
+
+  function closeSettingsMenu (): void {
+    setIsSettingMenuOpen(false);
+  }
+
   return (
-    <>
+    <>      
       <GroupsNavbar
        category={category}
        isEmailsChecked={isChecked}
        handleEmailsChecked={handleChecked} 
-       toggleFunc={toggleCategory} 
+       toggleFunc={toggleCategory}
+       openSettingsMenuFunc={openSettingsMenu} 
       />
       {groupCategory === 'emails' ? (
         <div>
@@ -78,9 +91,9 @@ const GroupEmails: React.FC = () => {
             handleEmailChecked={() => handleStatuses(index)} 
             />
           ))}
-          <span>
+          {/* <span>
             Group id: {queryStrings?.g_id}
-          </span>  
+          </span>   */}
         </div>
       ) :
       groupCategory === 'conversation' ? (
@@ -88,6 +101,14 @@ const GroupEmails: React.FC = () => {
           Chat
         </div>
       ) : <Navigate to='/groups/emails?g_id=1' />}
+      {isSettingMenuOpen ? (
+        <GroupSettings
+         category={category}
+         isCurrentUserAdmin 
+         closeFunc={closeSettingsMenu}
+         toggleFunc={toggleCategory} 
+        /> 
+      ) : null}
     </>
   )
 }

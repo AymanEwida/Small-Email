@@ -145,7 +145,7 @@ const Navbar: React.FC = () => {
           />
           <p className='text-md'>
             Hi, {' '}
-            <span className='font-bold hover:text-green-400 hover:drop-shadow-md'>
+            <span className='font-bold text-blue-400 hover:text-green-400 hover:drop-shadow-md'>
               Jan Doe
             </span>
           </p>
