@@ -15,3 +15,4 @@ export { default as EmailLayout } from './email-layout/EmailLayout';
 export { default as CreateGroup } from './create-group/CreateGroup';
 export { default as GroupsNavbar } from './groups-navbar/GroupsNavbar';
 export { default as GroupSettings } from './group-settings/GroupSettings';
+export { default as ClipboardCopy } from './clipboard-copy/ClipboardCopy';
