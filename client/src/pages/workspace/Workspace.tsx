@@ -1,7 +1,8 @@
 import React from 'react'
 
 import {
-  Header
+  Header,
+  WorkspaceSidebar
 } from '../../components';
 
 import './workspace.css';
@@ -14,7 +15,10 @@ const Workspace: React.FC = () => {
        textSize='lg' 
       />
       <div className='p-3'>
-        Workspace
+        <WorkspaceSidebar />
+        <p className='pl-80'>
+          ddfdgfdf
+        </p>
       </div>
     </>
   )

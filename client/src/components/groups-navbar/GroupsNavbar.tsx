@@ -9,6 +9,7 @@ import { FiSettings } from 'react-icons/fi';
 
 import Icon from '../icon/Icon';
 import Button from '../button/Button';
+import ClipboardCopy from '../clipboard-copy/ClipboardCopy';
 
 import noGroupAvatar from '../../assests/noGroupAvatar.png';
 
@@ -47,8 +48,8 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, 
           <h2 className='font-bold text-lg'>
             Test Group - <span className='font-light text-gray-400'>{category && category === 'conversation' ? 'Chat' : 'Emails'}</span>
           </h2>
-          <h3 className='font-semibold text-sm text-gray-300'>
-            test@sgroup.com
+          <h3 className='font-semibold text-sm my-1'>
+            <ClipboardCopy copyText='test@sgroup.com' />
           </h3>
           <Link to={`/groups/${category && category === 'conversation' ? 'enails' : 'conversation'}?g_id=1`}>
             <Button

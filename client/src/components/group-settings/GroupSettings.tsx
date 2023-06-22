@@ -9,6 +9,7 @@ import { AiFillDelete } from 'react-icons/ai';
 
 import Icon from '../icon/Icon';
 import Button from '../button/Button';
+import ClipboardCopy from '../clipboard-copy/ClipboardCopy';
 
 import noGroupAvatar from '../../assests/noGroupAvatar.png';
 import noAvater from '../../assests/noAvatar.png';
@@ -75,8 +76,8 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
              borderRadius='5px'
              customFunc={() => console.log('I want to change the group name!')} 
             /> : null }
-            <p className='text-sm text-gray-400 my-1'>
-              test@sgroup.com
+            <p className='text-sm my-2'>
+              <ClipboardCopy copyText='test@sgroup.com' />
             </p>
             {isCurrentUserAdmin ? <Button
              type='button'
