@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ category, textSize }) => {
   return (
-    <div className='w-full sticky top-0 bg-secondary-dark-bg p-2'>
+    <div className='w-full sticky z-index top-0 bg-secondary-dark-bg p-2'>
       <h1 className={`font-bold text-${textSize}`}>
         {category}
       </h1>

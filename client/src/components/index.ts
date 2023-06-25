@@ -17,3 +17,5 @@ export { default as GroupsNavbar } from './groups-navbar/GroupsNavbar';
 export { default as GroupSettings } from './group-settings/GroupSettings';
 export { default as ClipboardCopy } from './clipboard-copy/ClipboardCopy';
 export { default as WorkspaceSidebar } from './workspace-sidebar/WorkspaceSidebar';
+export { default as FileNavbar } from './file-navbar/FileNavbar';
+export { default as TreeBrowser } from './tree-browser/TreeBrowser';
