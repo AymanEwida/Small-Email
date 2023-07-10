@@ -7,7 +7,7 @@ import {
   EmailComponent
 } from '../../components';
 
-import { arrayRepeat } from '../../functions/arrayRepeat';
+import { arrayRepeat } from '../../functions';
 
 import './main-emails.css'
 

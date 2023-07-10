@@ -48,7 +48,7 @@ const WorkspaceSidebar: React.FC<WorkspaceSidebarProps> = ({ files }) => {
 
   return (
     <aside
-     style={{ width: sidebarWidth, maxWidth: '250px', minWidth: '150px' }} 
+     style={{ width: sidebarWidth, maxWidth: '250px', minWidth: '175px' }} 
      className='sticky top-0 left-0 h-full bg-black flex-grow-0 flex-shrink-0 border-style flex flex-row z-index justify-between'
      ref={sidebarRef}
      onMouseDown={(event) => event.preventDefault()}

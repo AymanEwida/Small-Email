@@ -8,7 +8,7 @@ import {
   GroupSettings
 } from '../../components';
 
-import { arrayRepeat } from '../../functions/arrayRepeat';
+import { arrayRepeat } from '../../functions';
 import { getParamsFromURL } from '../../hooks/useParams';
 
 import './group-emails.css';

@@ -17,3 +17,9 @@ export type ActionMap<T extends { [index: string]: any }> = {
           payload: T[Key];
         }    
 }
+
+export type TreeStructure = {
+  name ?: string;
+  entry ?: File | void;
+  childern ?: TreeStructure[];
+}

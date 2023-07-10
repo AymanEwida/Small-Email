@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { VscNewFolder, VscNewFile } from 'react-icons/vsc';
+import { AiOutlineFolderOpen } from 'react-icons/ai';
 
 import Icon from '../icon/Icon';
 
@@ -27,6 +28,15 @@ const FileNavbar: React.FC = () => {
          icon={<VscNewFile />}
          bgColor='bg-gray-700' 
         />
+        <div className='border-l-1 border-inherit border-solid pl-0.5'>
+          <Icon
+           title='Open Folder'
+           iconPosition='bottom'
+           color='white'
+           icon={<AiOutlineFolderOpen />}
+           bgColor='bg-gray-700' 
+          />
+        </div>
       </div>
     </div>
   )
