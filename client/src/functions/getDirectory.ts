@@ -1,4 +1,4 @@
-import { TreeStructure } from "../types/types";
+import { TreeStructure, Optional } from "../types/types";
 
 function checkWindow (): boolean {
     try {
@@ -8,10 +8,10 @@ function checkWindow (): boolean {
     }
 }
 
-async function openDirectory (mode: string = 'read'): Promise<TreeStructure | undefined> {
+async function openDirectory (mode: string = 'read'): Promise<Optional<TreeStructure>> {
     const supportsFileSystemAccess = 'showDirectoryPicker' in window && checkWindow();
 
-    let directoryStructure: Promise<TreeStructure> | undefined = undefined;
+    let directoryStructure: Optional<Promise<TreeStructure>> = undefined;
     
     if (supportsFileSystemAccess) {
         const getFiles = async (directoryHandle: FileSystemDirectoryHandle, path = directoryHandle.name) => {

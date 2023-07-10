@@ -21,6 +21,7 @@ import {
 } from '../../components';
 
 import { NavbarContext } from '../../context/navbar-context/NavbarContext';
+import { FileContentContextProvider } from '../../context/file-content-context/fileContentContext';
 
 import './main-page.css';
 
@@ -53,7 +54,11 @@ const MainPage: React.FC = () => {
           <Route path='/:emailCategory/email' index element={<Email />} />
           <Route path='/groups' element={<Groups />} />
           <Route path='/groups/:groupCategory' element={<GroupEmails />} />
-          <Route path='/workspace' element={<Workspace />} />
+          <Route path='/workspace' element={
+            <FileContentContextProvider>
+              <Workspace />
+            </FileContentContextProvider>
+          } />
           <Route path='/*' element={<Navigate to='/index' />} />
         </Routes>
         {isEmail ? <SendEmail closeSendEmail={setIsEmailToFalse} /> : null}

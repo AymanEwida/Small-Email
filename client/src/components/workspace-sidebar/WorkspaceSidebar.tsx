@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import { AiOutlineFolderOpen } from 'react-icons/ai';
+
 import FileNavbar from '../file-navbar/FileNavbar';
 import TreeBrowser from '../tree-browser/TreeBrowser';
+
+import { getDirectory } from '../../functions';
+
+import { TreeStructure, Optional } from '../../types/types';
 
 import './workspace-sidebar.css';
 
@@ -11,14 +17,10 @@ type Tree = {
   childern ?: Tree[];
 }
 
-interface WorkspaceSidebarProps {
-  files : Tree[],
-}
-
-const WorkspaceSidebar: React.FC<WorkspaceSidebarProps> = ({ files }) => {
-
+const WorkspaceSidebar: React.FC = () => {
   const [isResizing, setIsResizing] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(200);
+  const [folder, setFolder] = useState<Optional<TreeStructure>>(undefined);
 
   const sidebarRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +36,11 @@ const WorkspaceSidebar: React.FC<WorkspaceSidebarProps> = ({ files }) => {
     if (isResizing && sidebarRef.current) {
       setSidebarWidth(mouseMoveEvent.clientX - sidebarRef.current.getBoundingClientRect().left);
     }
+  }
+
+  async function openFolder () {
+    const folder = await getDirectory();
+    setFolder(folder);
   }
 
   useEffect(() => {
@@ -54,15 +61,27 @@ const WorkspaceSidebar: React.FC<WorkspaceSidebarProps> = ({ files }) => {
      onMouseDown={(event) => event.preventDefault()}
     >
       <div className='relative w-full'>
-        <FileNavbar />
+        <FileNavbar
+         folderName={folder?.name}
+         getFolderFn={openFolder} 
+        />
         <div className='p-3'>
-          {files.map((file, index) => (
+          {folder?.childern ? folder?.childern.map((file, index) => (
             <TreeBrowser
              key={index}
              tree={file}
              depth={1}
             />
-          ))}
+          )) : (
+            <button
+             type='button' 
+             className=' flex gap-2 items-center text-blue-400 cursor-pointer'
+             onClick={openFolder}
+            >
+              <AiOutlineFolderOpen />
+              Open Folder...
+            </button>
+          )}
         </div>
       </div>
       <span 

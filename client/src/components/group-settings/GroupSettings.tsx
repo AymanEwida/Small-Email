@@ -14,12 +14,12 @@ import ClipboardCopy from '../clipboard-copy/ClipboardCopy';
 import noGroupAvatar from '../../assests/noGroupAvatar.png';
 import noAvater from '../../assests/noAvatar.png';
 
-import { Void } from '../../types/types';
+import { Void, Optional } from '../../types/types';
 
 import './group-settings.css';
 
 interface GroupSettingsProps {
-  category : string | undefined,
+  category : Optional<string>,
   isCurrentUserAdmin : Boolean,
   closeFunc : Void,
   toggleFunc : Void

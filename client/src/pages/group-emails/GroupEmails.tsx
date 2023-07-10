@@ -11,6 +11,8 @@ import {
 import { arrayRepeat } from '../../functions';
 import { getParamsFromURL } from '../../hooks/useParams';
 
+import { Optional } from '../../types/types';
+
 import './group-emails.css';
 
 const GroupEmails: React.FC = () => {
@@ -19,7 +21,7 @@ const GroupEmails: React.FC = () => {
 
   const { groupCategory } = useParams();
 
-  const [category, setCategory] = useState<string | undefined>(groupCategory);
+  const [category, setCategory] = useState<Optional<string>>(groupCategory);
   const [isChecked, setIsChecked] = useState(false);
   const [statuses, setStatuses] = useState(arrayRepeat([false], 5));
   const [isSettingMenuOpen, setIsSettingMenuOpen] = useState(false);

@@ -1,10 +1,12 @@
-function getParamsFromURL (url: string): { [key: string]: string | undefined } {
+import { Optional } from "../types/types";
+
+function getParamsFromURL (url: string): { [key: string]: Optional<string> } {
     if (url.indexOf('?') === -1) {
         return {};
     }
     
     const paramsArray = url.slice(url.indexOf('?')+1).split('&');
-    const params: { [key: string]: string | undefined } = {};
+    const params: { [key: string]: Optional<string> } = {};
 
     paramsArray.forEach((param) => {
         const [key, value] = param.split('=');

@@ -13,12 +13,12 @@ import ClipboardCopy from '../clipboard-copy/ClipboardCopy';
 
 import noGroupAvatar from '../../assests/noGroupAvatar.png';
 
-import { Void } from '../../types/types';
+import { Void, Optional } from '../../types/types';
 
 import './groups-navbar.css';
 
 interface GroupsNavbarProps {
-  category : string | undefined,
+  category : Optional<string>,
   isEmailsChecked : boolean,
   handleEmailsChecked : Void,
   toggleFunc : Void,

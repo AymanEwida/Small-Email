@@ -1,28 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import { AiOutlineRight, AiOutlineDown } from 'react-icons/ai';
 
+import { fileContentContext } from '../../context/file-content-context/fileContentContext';
+import { FileContentTypes } from '../../context/file-content-context/fileContentReducer';
+
+import { TreeStructure } from '../../types/types';
+
 import './tree-browser.css';
 
-type Tree = {
-  name : string;
-  childern ?: Tree[]
-}
-
 interface TreeBrowserProps {
-  tree: {
-    name : string,
-    childern ?: Tree[],
-  },
+  tree: TreeStructure,
   depth : number,
 }
 
 const TreeBrowser: React.FC<TreeBrowserProps> = ({ tree, depth }) => {
 
+  const {
+    fileContentDispatch
+  } = useContext(fileContentContext);
+
   const [isShow, setIsShow] = useState(false);
 
   function handleShow (): void {
     setIsShow(prevIsShow => !prevIsShow);
+  }
+
+  async function getFileContent (file: File | void) {
+    if (!file) {
+      return;
+    }
+
+    try {
+      const content = await file.text();
+      fileContentDispatch({ type: FileContentTypes.StoreFileContent, payload: content });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -40,8 +54,11 @@ const TreeBrowser: React.FC<TreeBrowserProps> = ({ tree, depth }) => {
           </p>
         </div>
       ) : (
-        <p className='text-gray-200 hover:bg-gray-700 px-1 rounded-md cursor-pointer'>
-          {tree.name}
+        <p 
+         className='text-gray-200 hover:bg-gray-700 px-1 rounded-md cursor-pointer'
+         onClick={() => getFileContent(tree.entry)}
+        >
+          {tree.entry?.name}
         </p>
       )}
       {isShow ? (

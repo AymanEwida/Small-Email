@@ -1,16 +1,19 @@
 import React from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { BsArrowLeft } from 'react-icons/bs';
 import { MdDelete } from 'react-icons/md';
 import { BiCommentEdit } from 'react-icons/bi';
 
+import { Optional } from '../../types/types';
+
 import Icon from '../icon/Icon';
 
 import './email-navbar.css';
-import { Link } from 'react-router-dom';
 
 interface EmailNavbarProps {
-  category : string | undefined,
+  category : Optional<string>,
 }
 
 const EmailNavbar: React.FC<EmailNavbarProps> = ({ category }) => {
