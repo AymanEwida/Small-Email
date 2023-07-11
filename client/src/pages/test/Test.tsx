@@ -5,7 +5,7 @@ import './test.css';
 const Test: React.FC = () => {
   return (
     <div className='h-screen flex justify-center items-center'>
-      Test
+      <span className='track' />
     </div>
   )
 }

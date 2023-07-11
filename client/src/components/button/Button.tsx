@@ -13,15 +13,16 @@ interface ButtonProps {
   paddingSize : string,
   textSize : string,
   color : string,
+  special ?: string,
   customFunc ?: Void,
 }
 
-const Button: React.FC<ButtonProps> = ({ text, type, borderRadius, bgColor, width, paddingSize, textSize, color, customFunc }) => {
+const Button: React.FC<ButtonProps> = ({ text, type, borderRadius, bgColor, width, paddingSize, textSize, color, special, customFunc }) => {
   return (
     <button
      type={type}
      style={{ backgroundColor: bgColor, borderRadius, color, width }}
-     className={`p-${paddingSize} text-${textSize} hover:drop-shadow-xl`}
+     className={`p-${paddingSize} text-${textSize} hover:drop-shadow-xl ${special}`}
      onClick={customFunc}
     >
       {text}
