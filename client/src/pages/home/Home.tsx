@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 
 import {
   HomePageNavbar,
-  Button
+  Button,
+  ImageSlider
 } from '../../components';
 
 import about from '../../assests/about.webp';
@@ -16,9 +17,9 @@ const Home: React.FC = () => {
     <div className='pt-24'>
       <HomePageNavbar />
       <div className='width m-auto'>
-        <div className='flex'>
+        <div className='flex mb-20'>
           <div className='flex-1 p-4 lg:p-20'> 
-            <h1 className='text-3xl font-body text-green-400 w-60 lg:w-80'>
+            <h1 className='text-3xl font-extrabold text-green-400 w-60 lg:w-80'>
               Secure, smart, and easy to use email
             </h1>
             <p className='text-gray-400 w-80 my-3.5 lg:my-16'>
@@ -44,9 +45,7 @@ const Home: React.FC = () => {
             />
           </div>
         </div>
-        <div>
-          ff
-        </div>
+        <ImageSlider />
       </div>
     </div>
   )

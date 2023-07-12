@@ -4,8 +4,8 @@ import './test.css';
 
 const Test: React.FC = () => {
   return (
-    <div className='h-screen flex justify-center items-center'>
-      <span className='track' />
+    <div className='h-screen flex items-center justify-center'>
+      Test
     </div>
   )
 }

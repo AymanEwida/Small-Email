@@ -20,3 +20,4 @@ export { default as WorkspaceSidebar } from './workspace-sidebar/WorkspaceSideba
 export { default as FileNavbar } from './file-navbar/FileNavbar';
 export { default as TreeBrowser } from './tree-browser/TreeBrowser';
 export { default as HomePageNavbar } from './home-page-navbar/HomePageNavbar';
+export { default as ImageSlider } from './image-slider/ImageSlider';
