@@ -36,7 +36,7 @@ const Profile: React.FC = () => {
       </div>
       <div className='overflow-y-auto h-[220px]'>
         {dummyData.map((dummy, index) =>(
-          <div key={index} className='flex gap-10 cursor-pointer hover:bg-hover-bg p-4 color-border border-b-1 w-full px-3'>
+          <div key={index} className='flex gap-10 cursor-pointer hover:bg-hover-bg p-4 border-inherit border-b-1 w-full px-3'>
             <img
             className='rounded-full object-cover h-8 w-8' 
             src={noAvater} 
