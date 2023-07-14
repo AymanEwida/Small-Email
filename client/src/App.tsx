@@ -13,6 +13,7 @@ import {
   ChooseAccount,
   ProfileSettings,
   Register,
+  Login,
   Test
 } from './pages'
 
@@ -20,7 +21,7 @@ import './App.css';
 
 const App: React.FC = () => {
 
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState(false);
 
   return (
     <Router>
@@ -28,6 +29,7 @@ const App: React.FC = () => {
         <Route path='/' index element={user ? <Navigate to='/inbox' /> : <Home />} />
         <Route path='/*' element={user ? <MainPage /> : <Navigate to='/' />} />
         <Route path='/choose-account' element={user ? <Navigate to='/inbox' /> : <ChooseAccount />} />
+        <Route path='/login' element={user ? <Navigate to='/inbox' /> : <Login />} />
         <Route path='/register' element={user ? <Navigate to='/inbox' /> : <Register />} />
         <Route path='/profile-settings' element={user ? <ProfileSettings /> : <Navigate to='/' />} />
 
