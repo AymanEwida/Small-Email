@@ -14,10 +14,10 @@ const Fetcher: React.FC<FetcherProps> = ({ icon, title, desc }) => {
       <span className='text-2xl bg-blue-500 p-2 rounded-full'>
         {icon}
       </span>
-      <h2 className='text-lg font-semibold w-80'>
+      <h2 className='text-lg font-semibold w-80 pl-4'>
         {title}
       </h2>
-      <p className='text-gray-300 w-80'>
+      <p className='text-gray-300 w-80 pl-4'>
         {desc}
       </p>
     </div>

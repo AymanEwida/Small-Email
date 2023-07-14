@@ -13,17 +13,18 @@ const Footer: React.FC = () => {
       <h3 className='text-md my-2 text-gray-400'>
         Contact us
       </h3>
-      <div className='flex flex-row gap-4'>
+      <ul className='flex flex-row gap-4 list-none'>
         {socialMediaLinks.map((socialMediaLink, index) => (
-          <a 
+          <li 
            key={index}
-           href={socialMediaLink.link}
-           className='hover:bg-gray-700 p-2 rounded-full text-blue-300'
+           className='hover:bg-gray-700 p-2 rounded-full text-blue-300' 
           >
-            {socialMediaLink.icon}
-          </a>
+            <a href={socialMediaLink.link}>
+              {socialMediaLink.icon}
+            </a>
+          </li>
         ))}
-      </div>
+      </ul>
       <p className='mt-3 text-gray-400'>
         Our Emails: {"<"}smallEmail@smail.com{">"} {' '} / {' '} {"<"}smallEmail@gmail.com{">"}
       </p>
