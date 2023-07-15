@@ -21,12 +21,14 @@ const UserSchema = new mongoose.Schema(
                 "Please provide valid email"
             ],
             unique: true,
+            trim: true,
         },
 
         password: {
             type: String,
             required: [true, "Please provide a password"],
             minlength: 8,
+            maxlength: 16,
             trim: true,
         },
 

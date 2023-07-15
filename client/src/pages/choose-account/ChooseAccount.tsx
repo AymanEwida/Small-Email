@@ -16,7 +16,7 @@ import './choose-account.css';
 const ChooseAccount: React.FC = () => {
   return (
     <div className='h-screen'>
-      <CenterComponent>
+      <CenterComponent addTextCenter>
         <SubTitleHeader
          subTitle='Choose an account' 
         />

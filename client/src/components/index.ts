@@ -25,3 +25,4 @@ export { default as Fetcher } from './fetcher/Fetcher';
 export { default as Footer } from './footer/Footer';
 export { default as CenterComponent } from './center-component/CenterComponent';
 export { default as SubTitleHeader } from './sub-title-header/SubTitleHeader';
+export { default as PasswordInstructionCard } from './password-instruction-card/PasswordInstructionCard';
