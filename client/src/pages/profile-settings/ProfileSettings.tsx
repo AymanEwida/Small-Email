@@ -5,7 +5,7 @@ import './profile-settings.css';
 const ProfileSettings: React.FC = () => {
   return (
     <div>
-        ProfileSettings
+      ProfileSettings
     </div>
   )
 }
