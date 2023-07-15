@@ -9,7 +9,7 @@ import {
   SubTitleHeader,
   Input,
   Button,
-  Icon
+  PasswordInstructionCard
 } from '../../components';
 
 import {
@@ -103,7 +103,40 @@ const Register: React.FC = () => {
           ) : actions[currentActionIndex] === 'password' ? (
             <>
               <div className='flex items-center gap-5'>
-
+                <PasswordInstructionCard 
+                 desc='Password must contain between 8 and 16 characters.'
+                >
+                  <h1 className='relative'>
+                    8 <span className='absolute -top-0.5 -right-2.5 text-md'>+</span> 
+                  </h1>
+                  <span>
+                    /
+                  </span>
+                  <h1 className='relative'>
+                    16 <span className='absolute -top-0.5 -right-2.5 text-md'>-</span>
+                  </h1>
+                </PasswordInstructionCard>
+                <PasswordInstructionCard 
+                 desc='Password must contain at least one number.'
+                >
+                  <h1>
+                    0 ... 9
+                  </h1>
+                </PasswordInstructionCard>
+                <PasswordInstructionCard 
+                 desc='Password must contain both small and big characters.'
+                >
+                  <h1>
+                    a & A
+                  </h1>
+                </PasswordInstructionCard>
+                <PasswordInstructionCard 
+                desc='Password must contain one of these symbols.'
+                >
+                  <h1 className='w-48'>
+                    @ # $ % & * {'('} {')'}
+                  </h1>
+                </PasswordInstructionCard>
               </div>
               <Input
                id='password'
