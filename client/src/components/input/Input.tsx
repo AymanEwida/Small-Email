@@ -9,10 +9,11 @@ interface InputProps {
   label : string,
   type : string,
   value : string,
+  name ?: string,
   customFunc : (event : Event<InputElement>) => void
 }
 
-const Input: React.FC<InputProps> = ({ id, label, type, value, customFunc }) => {
+const Input: React.FC<InputProps> = ({ id, label, type, value, name, customFunc }) => {
 
   const [isTouched, setIsTouched] = useState(false);
 
@@ -32,6 +33,7 @@ const Input: React.FC<InputProps> = ({ id, label, type, value, customFunc }) => 
        className={`block rounded-md px-6 pt-6 pb-1 w-full ${isTouched || value.length > 0 ? 'text-black bg-white' : 'text-white bg-neutral-700'} transform ease-out duration-150 appearance-none focus:outline-none focus:ring-0 peer`}
        placeholder=' '
        value={value}
+       name={name}
        onChange={customFunc}
        onFocus={handleFocus}
        onBlur={handleFocusOut} 

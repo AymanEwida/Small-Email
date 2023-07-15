@@ -96,7 +96,7 @@ const Register: React.FC = () => {
             <Input
              id='email'
              label='Email'
-             type='text'
+             type='email'
              value={username}
              customFunc={handleUsername} 
             />
