@@ -23,3 +23,5 @@ export { default as HomePageNavbar } from './home-page-navbar/HomePageNavbar';
 export { default as ImageSlider } from './image-slider/ImageSlider';
 export { default as Fetcher } from './fetcher/Fetcher';
 export { default as Footer } from './footer/Footer';
+export { default as CenterComponent } from './center-component/CenterComponent';
+export { default as SubTitleHeader } from './sub-title-header/SubTitleHeader';

@@ -7,7 +7,7 @@ const Test: React.FC = () => {
     <div className='h-screen flex items-center justify-center'>
       Test
     </div>
-  );
+  );  
 }
 
 export default Test;
