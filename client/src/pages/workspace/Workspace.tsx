@@ -23,6 +23,7 @@ const Workspace: React.FC = () => {
          style={{ resize: 'none' }}
          className='text-white bg-transparent w-full outline-none h-full'
          value={state.fileContent}
+         readOnly
         />
       </div>
     </div>
