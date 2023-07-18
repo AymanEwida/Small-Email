@@ -34,3 +34,4 @@ export { default as ChangeEmail } from './change-email/ChangeEmail';
 export { default as ChangeImage } from './change-image/ChangeImage';
 export { default as ChangePassword } from './change-password/ChangePassword';
 export { default as Enable2FA } from './enable-2fa/Enable2FA';
+export { default as LoadingComponent } from './loading-component/LoadingComponent';
