@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { AiOutlineFullscreen, AiFillDelete, AiOutlineFullscreenExit, AiOutlineDeliveredProcedure } from 'react-icons/ai';
+import { AiOutlineFullscreen, AiFillDelete, AiOutlineFullscreenExit, AiOutlineDeliveredProcedure, AiOutlineUnderline, AiOutlineItalic, AiOutlineBold } from 'react-icons/ai';
 import { TiDelete } from 'react-icons/ti';
 import { BiImageAdd } from 'react-icons/bi';
 import { FiLink2 } from 'react-icons/fi';
@@ -31,9 +31,14 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
   const [tos, setTos] = useState('');
   const [toss, setToss] = useState('');
   const [fullScreen, setFullScreen] = useState(false);
+  const [isDesignOptions, setIsDesignOptions] = useState(false);
 
   function handleFullScreen (): void {
     setFullScreen(prevFullScreen => !prevFullScreen);
+  }
+
+  function toggleDesignOptions (): void {
+    setIsDesignOptions(prevIsDesignOptions => !prevIsDesignOptions);
   }
 
   return (
@@ -136,14 +141,47 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
           color='white' 
           />
           <div className='flex items-center'>
-            <Icon
-             title='Design Possibilities'
-             iconPosition='top'
-             color='white'
-             textSize='md'
-             bgColor='bg-gray-400'
-             icon={<ImTextColor />}
-            />
+            <div className='relative'>
+              <Icon
+               title='Design Options'
+               iconPosition='top'
+               color='white'
+               textSize='md'
+               bgColor='bg-gray-400'
+               icon={<ImTextColor />}
+               customFunc={toggleDesignOptions}
+              />
+              {isDesignOptions ? (
+                <div className='absolute -top-12 rounded-sm drop-shadow-xl -translate-x-1/4 bg-gray-500'>
+                  <div className='flex items-center gap-2'>
+                    <Icon
+                    title='Uunderline'
+                    iconPosition='top'
+                    color='white'
+                    textSize='md'
+                    bgColor='bg-gray-400'
+                    icon={<AiOutlineUnderline />}
+                    />
+                    <Icon
+                    title='Italic'
+                    iconPosition='top'
+                    color='white'
+                    textSize='md'
+                    bgColor='bg-gray-400'
+                    icon={<AiOutlineItalic />}
+                    />
+                    <Icon
+                    title='Bold'
+                    iconPosition='top'
+                    color='white'
+                    textSize='md'
+                    bgColor='bg-gray-400'
+                    icon={<AiOutlineBold />}
+                    />
+                  </div>
+                </div>
+              ) : null}
+            </div>
             <Icon
              title='Add Image'
              iconPosition='top'
