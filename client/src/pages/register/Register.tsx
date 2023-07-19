@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 
 import { Link } from 'react-router-dom';
 
-import { BiPlus } from 'react-icons/bi';
+import { BiPlus, BiShow, BiHide } from 'react-icons/bi';
 
 import {
   CenterComponent,
   SubTitleHeader,
   Input,
   Button,
-  PasswordInstructionCard
+  PasswordInstructionCard,
+  Icon
 } from '../../components';
 
 import {
@@ -27,6 +28,7 @@ const Register: React.FC = () => {
   const [actions, setActions] = useState(['username', 'phoneNumber', 'email', 'password', 'addImg']);
   const [currentActionIndex, setCurrentActionIndex] = useState(0);
   const [username, setUsername] = useState('');
+  const [isPasswordShow, setIsPasswordShow] = useState(false);
 
   function handleNextAction (): void {
     if (currentActionIndex+1 >= 0 && currentActionIndex+1 <= 4) {
@@ -42,6 +44,10 @@ const Register: React.FC = () => {
 
   function handleUsername (event: Event<InputElement>): void {
     setUsername(event.target.value);
+  }
+
+  function handleShowPassword (): void {
+    setIsPasswordShow(prevIsPasswordShow => !prevIsPasswordShow);
   }
 
   function handleSubmit (event: FormEvent): void {
@@ -64,7 +70,7 @@ const Register: React.FC = () => {
            actions[currentActionIndex] === 'phoneNumber' ?
            'Enetr your phone number' :
            actions[currentActionIndex] === 'email' ?
-           'Enter your Small Email' :
+           'Enter your Small Email (do not right @ symbol)' :
            actions[currentActionIndex] === 'password' ?
            'Enetr your password(follow the instructions)' :
            actions[currentActionIndex] === 'addImg' ?
@@ -85,21 +91,32 @@ const Register: React.FC = () => {
              customFunc={handleUsername} 
             />
           ) : actions[currentActionIndex] === 'phoneNumber' ? (
-            <Input
-             id='phoneNumber'
-             label='Phone number'
-             type='text'
-             value={username}
-             customFunc={handleUsername} 
-            />
+            <div style={{ height: '53px' }} className='flex gap-2 items-center'>
+              <select className='text-zinc-400 focus:outline-none bg-neutral-700 rounded-md h-full mb-0.5'>
+                <option value="+972">+972</option>
+                <option value="+31">+31</option>
+              </select>
+              <Input
+               id='phoneNumber'
+               label='Phone number'
+               type='text'
+               value={username}
+               customFunc={handleUsername} 
+              />
+            </div>
           ) : actions[currentActionIndex] === 'email' ? (
-            <Input
-             id='email'
-             label='Email'
-             type='email'
-             value={username}
-             customFunc={handleUsername} 
-            />
+            <div className='flex items-center gap-2'>
+              <Input
+               id='email'
+               label='Email'
+               type='email'
+               value={username}
+               customFunc={handleUsername} 
+              />
+              <span className='text-zinc-400'>
+                @smail.com
+              </span>
+            </div>
           ) : actions[currentActionIndex] === 'password' ? (
             <>
               <div className='flex items-center gap-5'>
@@ -133,18 +150,30 @@ const Register: React.FC = () => {
                 <PasswordInstructionCard 
                 desc='Password must contain one of these symbols.'
                 >
-                  <h1 className='w-48'>
+                  <h1 className='text-2xl'>
                     @ # $ % & * {'('} {')'}
                   </h1>
                 </PasswordInstructionCard>
               </div>
-              <Input
-               id='password'
-               label='Password'
-               type='password'
-               value={username}
-               customFunc={handleUsername} 
-              />
+              <div className='flex items-center gap-3'>
+                <span className='w-500'>
+                  <Input
+                   id='password'
+                   label='Password'
+                   type={isPasswordShow ? 'text' : 'password'}
+                   value={username}
+                   customFunc={handleUsername} 
+                  />
+                </span>
+                <Icon
+                 title={`${isPasswordShow ? 'Hide' : 'Show'} Password`}
+                 iconPosition='bottom'
+                 icon={isPasswordShow ? <BiHide /> : <BiShow />}
+                 color='white'
+                 bgColor='bg-gray-700'
+                 customFunc={handleShowPassword}
+                />
+              </div>
             </>
           ) : actions[currentActionIndex] === 'addImg' ? (
             <>

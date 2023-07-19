@@ -13,7 +13,7 @@ const PasswordInstructionCard: React.FC<PasswordInstructionCardProps> = ({ child
       <div className='flex items-center gap-3 text-5xl justify-center italic text-gray-400'>
         {children}
       </div>
-      <p className='mt-2 text-gray-300 text-sm w-28'>
+      <p className='mt-2 text-gray-300 text-sm w-28 lg:w-44'>
         {desc}
       </p>
     </div>
