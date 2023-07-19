@@ -19,7 +19,6 @@ const LoadingComponent: React.FC<LoadingComponentProps> = ({ style }) => {
       }else {
         setDots(prevDots => prevDots+'.')
       }
-      console.log({dots});
     }, 500); 
   }
 

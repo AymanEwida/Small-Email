@@ -1,14 +1,22 @@
 import React, { useState } from 'react'
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useQuery } from 'react-query';
+
+import Cookies from 'js-cookie';
+
+import axios, { AxiosError } from 'axios';
 
 import {
   CenterComponent,
   SubTitleHeader,
   Input,
-  Button
+  Button,
+  LoadingComponent,
+  Tefo
 } from '../../components';
-
+ 
 import {
   FormEvent,
   Event,
@@ -49,6 +57,8 @@ const Login: React.FC = () => {
     }
   ]
 
+  const history = useNavigate();
+
   function handleInputValues (event: Event<InputElement>): void {
     setInputValues(prevInputValues => (
       {
@@ -58,13 +68,24 @@ const Login: React.FC = () => {
     ));
   }
 
+  const {isError, error, isLoading, data, isSuccess, refetch} = useQuery('login', async () => {
+    const res = await axios.post('http://localhost:5000/api/v1/auth/login', {email: inputValues.email, password: inputValues.password});
+    return res.data;
+  }, {
+    enabled: false
+  });
+
   function handleSubmit (event: FormEvent): void {
     event.preventDefault();
 
-    console.log('I submited wow!');
-  }
+    refetch();
 
-  console.log({ inputValues });
+    if (isSuccess) {
+      Cookies.set('token', data.token, { expires: 30 });
+      Cookies.set('username', data.user.username, { expires: 30 });
+      history('/');
+    }
+  }
 
   return (
     <div className='h-screen'>
@@ -83,6 +104,7 @@ const Login: React.FC = () => {
              label={input.lable}
              type={input.type}
              name={input.name}
+             isRequired
              value={input.value}
              customFunc={handleInputValues} 
             />
@@ -93,7 +115,7 @@ const Login: React.FC = () => {
              bgColor='rgb(34 197 94)'
              color='white'
              paddingSize='2'
-             text='Sing in'
+             text={isLoading ? <LoadingComponent style='circle' /> : 'Sing in'}
              textSize='md'
              borderRadius='10px'
             />
@@ -103,6 +125,12 @@ const Login: React.FC = () => {
           don't have an account? <Link to='/register'><span className='text-blue-400 hover:underline'>Create one</span></Link>
         </p>
       </CenterComponent>
+      {isError && (error instanceof AxiosError) ? (
+        <Tefo 
+         isError
+         message={error.response?.data.msg} 
+        />
+      ) : null}
     </div>
   )
 }

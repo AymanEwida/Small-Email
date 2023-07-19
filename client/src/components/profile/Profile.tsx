@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
+import Cookies from 'js-cookie';
+
 import { AiOutlineUserAdd } from 'react-icons/ai';
 import { IoLogOutOutline } from 'react-icons/io5';
 
@@ -12,6 +14,13 @@ import { dummyData } from './dummyData';
 import './profile.css';
 
 const Profile: React.FC = () => {
+  
+  function handleLogot (): void {
+    Cookies.remove('token');
+    Cookies.remove('username');
+    window.location.reload();
+  }
+
   return (
     <div className='absolute top-[70px] right-3 bg-secondary-dark-bg p-5 w-96 rounded-lg z-index'>
       <div className='flex gap-5 items-center border-color border-b-1 pb-4 w-full'>
@@ -71,7 +80,7 @@ const Profile: React.FC = () => {
       <button
        type='button' 
        className='mt-2 flex gap-4 items-center w-full justify-center bg-red-500 rounded-full p-2 hover:drop-shadow-md'
-       onClick={() => console.log('I want to log out!!')}
+       onClick={handleLogot}
       >
         <span className='text-2xl text-color'>
           <IoLogOutOutline />

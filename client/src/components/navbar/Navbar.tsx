@@ -1,5 +1,8 @@
 import React, { useState, useRef, useContext } from 'react'
+
 import { Link } from 'react-router-dom';
+
+import Cookies from 'js-cookie';
 
 import { RxHamburgerMenu } from 'react-icons/rx';
 import { AiOutlineSearch } from 'react-icons/ai';
@@ -146,7 +149,7 @@ const Navbar: React.FC = () => {
           <p className='text-md'>
             Hi, {' '}
             <span className='font-bold text-blue-400 hover:text-green-400 hover:drop-shadow-md'>
-              Jan Doe
+              {Cookies.get('username')}
             </span>
           </p>
           <span className={`text-sm ${state.isProfile ? 'rotate-180' : ''} transform duration-200`}>

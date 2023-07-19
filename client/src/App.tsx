@@ -7,9 +7,13 @@ import {
   Navigate
 } from 'react-router-dom';
 
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+import Cookies from 'js-cookie';
+
 import {
   Home,
-  MainPage,
+  MainPage, 
   ChooseAccount,
   ProfileSettings,
   Register,
@@ -21,22 +25,33 @@ import './App.css';
 
 const App: React.FC = () => {
 
-  const [user, setUser] = useState(false);
+  const [user] = useState(typeof Cookies.get('username') === 'string' ? true : false);
+
+  const client = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+      },
+    }
+  });
 
   return (
-    <Router>
-      <Routes>
-        <Route path='/' index element={user ? <Navigate to='/inbox' /> : <Home />} />
-        <Route path='/*' element={user ? <MainPage /> : <Navigate to='/' />} />
-        <Route path='/choose-account' element={user ? <Navigate to='/inbox' /> : <ChooseAccount />} />
-        <Route path='/login' element={user ? <Navigate to='/inbox' /> : <Login />} />
-        <Route path='/register' element={user ? <Navigate to='/inbox' /> : <Register />} />
-        <Route path='/profile-settings' element={user ? <ProfileSettings /> : <Navigate to='/' />} />
+    <QueryClientProvider client={client}>
+      <Router>
+        <Routes>
+          <Route path='/' index element={user ? <Navigate to='/inbox' /> : <Home />} />
+          <Route path='/*' element={user ? <MainPage /> : <Navigate to='/' />} />
+          <Route path='/choose-account' element={user ? <Navigate to='/inbox' /> : <ChooseAccount />} />
+          <Route path='/login' element={user ? <Navigate to='/inbox' /> : <Login />} />
+          <Route path='/register' element={user ? <Navigate to='/inbox' /> : <Register />} />
+          <Route path='/profile-settings' element={user ? <ProfileSettings /> : <Navigate to='/' />} />
 
-        {/* this route for testing */}
-        <Route path='/test' element={<Test />} />
-      </Routes>
-    </Router>
+          {/* this route for testing */}
+          <Route path='/test' element={<Test />} />
+        </Routes>
+      </Router>
+    </QueryClientProvider>
+
   );
 }
 

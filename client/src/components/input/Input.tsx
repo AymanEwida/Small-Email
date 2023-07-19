@@ -10,10 +10,11 @@ interface InputProps {
   type : string,
   value : string,
   name ?: string,
+  isRequired ?: boolean,
   customFunc : (event : Event<InputElement>) => void
 }
 
-const Input: React.FC<InputProps> = ({ id, label, type, value, name, customFunc }) => {
+const Input: React.FC<InputProps> = ({ id, label, type, value, name, isRequired, customFunc }) => {
 
   const [isTouched, setIsTouched] = useState(false);
 
@@ -34,6 +35,7 @@ const Input: React.FC<InputProps> = ({ id, label, type, value, name, customFunc 
        placeholder=' '
        value={value}
        name={name}
+       required={isRequired}
        onChange={customFunc}
        onFocus={handleFocus}
        onBlur={handleFocusOut} 

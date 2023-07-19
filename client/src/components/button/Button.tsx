@@ -5,7 +5,7 @@ import { Void } from '../../types/types';
 import './button.css';
 
 interface ButtonProps {
-  text : string,
+  text : string | React.ReactNode,
   type : "button" | "submit" | "reset",
   borderRadius ?: string,
   bgColor : string,
