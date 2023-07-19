@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import { AiOutlineFullscreen, AiFillDelete, AiOutlineFullscreenExit, AiOutlineDeliveredProcedure, AiOutlineUnderline, AiOutlineItalic, AiOutlineBold } from 'react-icons/ai';
 import { TiDelete } from 'react-icons/ti';
@@ -32,6 +32,8 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
   const [toss, setToss] = useState('');
   const [fullScreen, setFullScreen] = useState(false);
   const [isDesignOptions, setIsDesignOptions] = useState(false);
+
+  const emailContent = useRef<HTMLDivElement>(null);
 
   function handleFullScreen (): void {
     setFullScreen(prevFullScreen => !prevFullScreen);
@@ -90,9 +92,9 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
           value={toss}
           customFunc={(event: Event<InputElement>) => setToss(event.target.value)} 
           />
-          {/* <div 
-           style={{ minHeight: '196px', maxHeight: '320px' }} 
-           className='h-72 outline-none focus:border-none px-1' 
+          <div 
+           style={{ minHeight: '196px', maxHeight: '288px', resize: 'none' }} 
+           className='h-72 outline-none focus:border-none px-1 overflow-y-auto w-full' 
            role='textbox' 
            aria-multiline="true" 
            tabIndex={1} 
@@ -101,19 +103,10 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
            aria-controls=':tp' 
            aria-owns=':tp' 
            spellCheck='false'
-           onClick={(e) => console.log(e)}
+           ref={emailContent}
           >
             <br />
-          </div> */}
-          <textarea 
-          cols={30} 
-          rows={10}
-          style={{ resize: 'none' }}
-          className='bg-transparent w-full outline-none p-2'
-          value={tos}
-          placeholder=' '
-          onChange={(event: Event<TextAreaElement>) => setTos(event.target.value)}
-          />
+          </div>
         </div>
         {/* <div className='px-3 py-2 flex flex-row gap-3 overflow-x-auto'>
           <div className='flex items-center pr-2 rounded-full bg-blue-500'>
