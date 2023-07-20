@@ -38,7 +38,7 @@ const Tefo: React.FC<TefoProps> = ({ isError, message }) => {
 
   return (
     <div className='absolute bottom-5 left-1/2 w-fit right-1/2 bg-neutral-700 flex gap-2 items-center p-3 rounded-xl'>
-      <span className='text-xl text-red-400'>
+      <span className={`text-xl ${isError ? 'text-red-400' : 'text-green-400'}`}>
         {isError ? <GiCancel /> : <AiOutlineCheckCircle />}
       </span>
       <p className='text-gray-300 text-md'>

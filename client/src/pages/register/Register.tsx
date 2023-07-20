@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import { BiPlus, BiShow, BiHide } from 'react-icons/bi';
+import { useMutation } from 'react-query';
+
+import axios, { AxiosError } from 'axios';
+
+import Cookies from 'js-cookie';
+
+import { BiShow, BiHide } from 'react-icons/bi';
 
 import {
   CenterComponent,
@@ -10,7 +16,9 @@ import {
   Input,
   Button,
   PasswordInstructionCard,
-  Icon
+  Icon,
+  LoadingComponent,
+  Tefo
 } from '../../components';
 
 import {
@@ -23,16 +31,69 @@ import noAvater from '../../assests/noAvatar.png';
 
 import './register.css';
 
+type FormData = {
+  username : string;
+  phoneNumber : string;
+  email : string;
+  password : string;
+}
+
 const Register: React.FC = () => {
 
-  const [actions, setActions] = useState(['username', 'phoneNumber', 'email', 'password', 'addImg']);
+  const [actions, setActions] = useState(['username', 'phoneNumber', 'email', 'password', 'passwordAgain', 'addImg']);
   const [currentActionIndex, setCurrentActionIndex] = useState(0);
-  const [username, setUsername] = useState('');
+  const [inputsValue, setInputsValue] = useState({
+    username: '',
+    phoneNumber: '',
+    email: '',
+    password: '',
+    passwordAgain: '',
+  });
   const [isPasswordShow, setIsPasswordShow] = useState(false);
+  const [isPasswordAgainShow, setIsPasswordAgainShow] = useState(false);
+
+  const history = useNavigate();
+
+  function checkEmail (): boolean {
+    for (const char of inputsValue.email) {
+      if (char === '@') {
+        return false;
+      }
+    }
+    return true;
+  }
 
   function handleNextAction (): void {
-    if (currentActionIndex+1 >= 0 && currentActionIndex+1 <= 4) {
+    if (actions[currentActionIndex] === 'username' && inputsValue.username.length === 0) {
+      return;
+    } else if (actions[currentActionIndex] === 'phoneNumber' && inputsValue.phoneNumber.length !== 10) {
+      return;
+    } else if (actions[currentActionIndex] === 'email' && (inputsValue.email.length === 0 || !checkEmail())) {
+      return;
+    } else if (actions[currentActionIndex] === 'password' && inputsValue.password.length === 0) {
+      return;
+    } else if (actions[currentActionIndex] === 'passwordAgain' && inputsValue.passwordAgain !== inputsValue.password) {
+      return;
+    }
+
+    if (currentActionIndex+1 >= 0 && currentActionIndex+1 <= 5) {
       setCurrentActionIndex(prevActionIndex => prevActionIndex+1);
+    }
+  }
+
+  function handleIsNextActionActive(): boolean {
+    if (actions[currentActionIndex] === 'username' && inputsValue.username.length === 0) {
+      return true;
+    } else if (actions[currentActionIndex] === 'phoneNumber' && inputsValue.phoneNumber.length !== 10) {
+      return true;
+    } else if (actions[currentActionIndex] === 'email' && (inputsValue.email.length === 0 || !checkEmail())) {
+      return true;
+    } else if (actions[currentActionIndex] === 'password' && inputsValue.password.length === 0) {
+      return true;
+    } else if (actions[currentActionIndex] === 'passwordAgain' && inputsValue.passwordAgain !== inputsValue.password) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -42,18 +103,43 @@ const Register: React.FC = () => {
     }
   }
 
-  function handleUsername (event: Event<InputElement>): void {
-    setUsername(event.target.value);
+  function handleInputsValue (event: Event<InputElement>): void {
+    setInputsValue(prevInputsValue => (
+      {
+        ...prevInputsValue,
+        [event.target.name]: event.target.value,
+      }
+    ));
   }
 
   function handleShowPassword (): void {
     setIsPasswordShow(prevIsPasswordShow => !prevIsPasswordShow);
   }
 
+  function handleShowPasswordAgain (): void {
+    setIsPasswordAgainShow(prevIsPasswordAgainShow => !prevIsPasswordAgainShow);
+  }
+
+  const { isError, error, isLoading, mutate } = useMutation(async (formData: FormData) => {
+    const res = await axios.post('http://localhost:5000/api/v1/auth/register', formData);
+    return res.data;
+  }, {
+    onSuccess: (data) => {
+      Cookies.set('token', data.token, { expires: 30 });
+      Cookies.set('username', data.user.username, { expires: 30 });
+      history('/');
+      window.location.reload();
+    }
+  });
+
   function handleSubmit (event: FormEvent): void {
     event.preventDefault();
 
-    console.log('I submited wow!');
+    const validEmail = inputsValue.email+"@smail.com";
+
+    if (inputsValue.password === inputsValue.passwordAgain) {
+      mutate({ username: inputsValue.username, email: validEmail, password: inputsValue.password, phoneNumber: inputsValue.phoneNumber });
+    }
   }
 
   return (
@@ -73,6 +159,8 @@ const Register: React.FC = () => {
            'Enter your Small Email (do not right @ symbol)' :
            actions[currentActionIndex] === 'password' ?
            'Enetr your password(follow the instructions)' :
+           actions[currentActionIndex] === 'passwordAgain' ?
+           'Enetr your password again' :
            actions[currentActionIndex] === 'addImg' ?
            'Add a profile image(optional)' :
            ''
@@ -87,8 +175,10 @@ const Register: React.FC = () => {
              id='username'
              label='Username'
              type='text'
-             value={username}
-             customFunc={handleUsername} 
+             name='username'
+             isRequired
+             value={inputsValue.username}
+             customFunc={handleInputsValue} 
             />
           ) : actions[currentActionIndex] === 'phoneNumber' ? (
             <div style={{ height: '53px' }} className='flex gap-2 items-center'>
@@ -99,9 +189,11 @@ const Register: React.FC = () => {
               <Input
                id='phoneNumber'
                label='Phone number'
-               type='text'
-               value={username}
-               customFunc={handleUsername} 
+               type='number'
+               name='phoneNumber'
+               isRequired
+               value={inputsValue.phoneNumber}
+               customFunc={handleInputsValue} 
               />
             </div>
           ) : actions[currentActionIndex] === 'email' ? (
@@ -109,9 +201,11 @@ const Register: React.FC = () => {
               <Input
                id='email'
                label='Email'
-               type='email'
-               value={username}
-               customFunc={handleUsername} 
+               type='text'
+               name='email'
+               isRequired
+               value={inputsValue.email}
+               customFunc={handleInputsValue} 
               />
               <span className='text-zinc-400'>
                 @smail.com
@@ -122,6 +216,7 @@ const Register: React.FC = () => {
               <div className='flex items-center gap-5'>
                 <PasswordInstructionCard 
                  desc='Password must contain between 8 and 16 characters.'
+                 isPass={() => inputsValue.password.length >= 8 && inputsValue.password.length <= 16}
                 >
                   <h1 className='relative'>
                     8 <span className='absolute -top-0.5 -right-2.5 text-md'>+</span> 
@@ -135,6 +230,14 @@ const Register: React.FC = () => {
                 </PasswordInstructionCard>
                 <PasswordInstructionCard 
                  desc='Password must contain at least one number.'
+                 isPass={() => {
+                  for (const char of inputsValue.password) {
+                    if (char >= '0' && char <= '9') {
+                      return true;
+                    }
+                  }
+                  return false
+                 }}
                 >
                   <h1>
                     0 ... 9
@@ -142,6 +245,23 @@ const Register: React.FC = () => {
                 </PasswordInstructionCard>
                 <PasswordInstructionCard 
                  desc='Password must contain both small and big characters.'
+                 isPass={() => (
+                    (() => {
+                      for (const char of inputsValue.password) {
+                        if (char >= 'a' && char <= 'z') {
+                          return true;
+                        }
+                      }
+                      return false;
+                    })() && (() => {
+                      for (const char of inputsValue.password) {
+                        if (char >= 'A' && char <= 'Z') {
+                          return true;
+                        }
+                      }
+                      return false;
+                    })() 
+                  )}
                 >
                   <h1>
                     a & A
@@ -149,6 +269,14 @@ const Register: React.FC = () => {
                 </PasswordInstructionCard>
                 <PasswordInstructionCard 
                 desc='Password must contain one of these symbols.'
+                isPass={() => {
+                  for (const char of inputsValue.password) {
+                    if (char === '@' || char === '#' || char === '$' || char === '%' || char === '&' || char === '*' || char === '(' || char === ')') {
+                      return true;
+                    }
+                  }
+                  return false;
+                }}
                 >
                   <h1 className='text-2xl'>
                     @ # $ % & * {'('} {')'}
@@ -161,8 +289,10 @@ const Register: React.FC = () => {
                    id='password'
                    label='Password'
                    type={isPasswordShow ? 'text' : 'password'}
-                   value={username}
-                   customFunc={handleUsername} 
+                   name='password'
+                   isRequired
+                   value={inputsValue.password}
+                   customFunc={handleInputsValue} 
                   />
                 </span>
                 <Icon
@@ -175,6 +305,26 @@ const Register: React.FC = () => {
                 />
               </div>
             </>
+          ) : actions[currentActionIndex] === 'passwordAgain' ? (
+            <div className='flex items-center gap-3'>
+              <Input
+               id='passwordAgain'
+               label='Password Again'
+               type={isPasswordAgainShow ? 'text' : 'password'}
+               name='passwordAgain'
+               isRequired
+               value={inputsValue.passwordAgain}
+               customFunc={handleInputsValue} 
+              />
+              <Icon
+               title={`${isPasswordAgainShow ? 'Hide' : 'Show'} Password`}
+               iconPosition='bottom'
+               icon={isPasswordAgainShow ? <BiHide /> : <BiShow />}
+               color='white'
+               bgColor='bg-gray-700'
+               customFunc={handleShowPasswordAgain}
+              />
+            </div>
           ) : actions[currentActionIndex] === 'addImg' ? (
             <>
               <img
@@ -189,42 +339,44 @@ const Register: React.FC = () => {
             </>
           ) : null}
           <div className={currentActionIndex === 0 ? 'text-right' : 'flex items-center justify-between'}>
-            {currentActionIndex > 0 && currentActionIndex <= 4 ? (
+            {currentActionIndex > 0 && currentActionIndex <= 5 ? (
               <Button
                type='button'
                bgColor='rgb(96 165 250)'
                color='white'
-               text='Previous'
+               text={isLoading ? <LoadingComponent style='circle' /> : 'Previous'}
                paddingSize='2'
                borderRadius='10px'
                textSize='md'
+               isDisabled={isLoading}
                customFunc={handlePreviousAction}
               />
             ) : null}
-            {currentActionIndex !== 4 ? (
+            {currentActionIndex !== 5 ? (
               <Button
                type='button'
                bgColor='rgb(96 165 250)'
                color='white'
-               text='Next'
+               text={isLoading ? <LoadingComponent style='circle' /> : 'Next'}
                paddingSize='2'
                borderRadius='10px'
                textSize='md'
+               isDisabled={isLoading || handleIsNextActionActive()}
                customFunc={handleNextAction}
               />
             ) : null}
           </div>
-          {currentActionIndex === 4 ? (
+          {currentActionIndex === 5 ? (
             <Button
              type='submit'
              bgColor='rgb(74 222 128)'
              color='white'
-             text='Create account'
+             text={isLoading ? <LoadingComponent style='circle' /> :'Create account'}
              paddingSize='2'
              borderRadius='10px'
              textSize='md'
              width='full'
-             customFunc={handleNextAction}
+             isDisabled={isLoading}
             />
           ) : null}
         </form>
@@ -232,6 +384,12 @@ const Register: React.FC = () => {
           already have an account? <Link to='/choose-account'><span className='text-blue-400 hover:underline'>Sing in</span></Link>
         </p>
       </CenterComponent>
+      {isError && (error instanceof AxiosError) ? (
+        <Tefo 
+         isError
+         message={error.response?.data.msg} 
+        />
+      ) : null}
     </div>
   )
 }

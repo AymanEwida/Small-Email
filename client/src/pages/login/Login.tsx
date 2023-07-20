@@ -68,22 +68,23 @@ const Login: React.FC = () => {
     ));
   }
 
-  const {isError, error, isLoading, data, isSuccess, refetch} = useQuery('login', async () => {
+  const {isError, error, isLoading, refetch} = useQuery('login', async () => {
     const res = await axios.post('http://localhost:5000/api/v1/auth/login', {email: inputValues.email, password: inputValues.password});
     return res.data;
   }, {
     enabled: false
   });
 
-  function handleSubmit (event: FormEvent): void {
+  async function handleSubmit (event: FormEvent) {
     event.preventDefault();
 
-    refetch();
+    const { isSuccess, data } = await refetch();
 
-    if (isSuccess) {
+    if (isSuccess && data) {
       Cookies.set('token', data.token, { expires: 30 });
       Cookies.set('username', data.user.username, { expires: 30 });
       history('/');
+      window.location.reload();
     }
   }
 
@@ -118,6 +119,7 @@ const Login: React.FC = () => {
              text={isLoading ? <LoadingComponent style='circle' /> : 'Sing in'}
              textSize='md'
              borderRadius='10px'
+             isDisabled={isLoading}
             />
           </span>
         </form>
