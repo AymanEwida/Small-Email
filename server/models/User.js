@@ -3,6 +3,44 @@ const mongoose = require('mongoose');
 const bcrybt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const SavedDraft = new mongoose.Schema(
+    {
+        to: {
+            type: [{recipientID: mongoose.Types.ObjectId, role: String}],
+            required: false,
+        },
+
+        draftSubject: {
+            type: String,
+            required: false,
+            default: '',
+            maxlength: 50,
+        },
+
+        draftContent: {
+            type: String,
+            default: '',
+            require: false, 
+        },
+
+        draftFiles: {
+            type: [{filename: String, filePath: String}],
+            default: [],
+            required: false,
+        },
+        
+        draftImgs: {
+            type: [{url: String}],
+            default: [],
+            required: false,
+        }
+    },
+
+    {
+        timestamps: true
+    }
+);
+
 const UserSchema = new mongoose.Schema(
     {
         username: {
@@ -47,6 +85,12 @@ const UserSchema = new mongoose.Schema(
             type: Boolean,
             required: false,
             default: false,
+        },
+
+        savedDrafts: {
+            type: [SavedDraft],
+            required: false,
+            default: [],
         },
         
         role: {

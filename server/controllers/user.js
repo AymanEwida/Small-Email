@@ -133,6 +133,122 @@ async function changePassword (req, res) {
     res.status(StatusCodes.OK).json({ msg: 'Password has been changed.' });
 }
 
+async function getUserSavedDrafts (req, res) {
+    const {
+        user: { userID }
+    } = req;
+
+    const user = await User.findById(userID);
+
+    res.status(StatusCodes.OK).json({ savedDrafts: user.savedDrafts });
+}
+
+async function addDraftToUserSavedDrafts (req, res) {
+    const {
+        user: { userID }
+    } = req;
+
+    const user = await User.findById(userID);
+
+    if (req.body.to || req.body.to.length > 0) {
+
+        function removeDuplicatsFromRecipientArray () {
+            let newRecipientArray = [];
+            let flag = false;
+
+            for (let i = 0; i < req.body.to.length; i++) {
+                for (let j = 0; j < req.body.to.length-1-i; j++) {
+                    if (req.body.to[i] === req.body.to[j+i+1]) {
+                        flag = true
+                    }
+                }
+
+                if (!flag) {
+                    newRecipientArray.push(req.body.to[i]);
+                }
+                flag = false;
+            }
+
+            return newRecipientArray;
+        }
+
+        const recipients = removeDuplicatsFromRecipientArray();
+
+        async function checkGroupEmail () {
+            let newToArray = [];
+
+            for (let i = 0; i < recipients.length; i++) {
+                if (recipients[i].slice(recipients[i].indexOf('@')) === '@sgroup.com') {
+                    const group = await Group.findOne({ groupEmail: recipients[i] });
+                    
+                    if (group) {
+                        for (let j = 0; j < group.participates.length; j++) {
+                            if (group.participates[j].participateID.toString() === req.user.userID) {
+                                newToArray.push(recipients[i]);
+                            }
+                        }   
+                    }
+
+                } else {
+                    newToArray.push(recipients[i])
+                }
+            }
+
+            return newToArray;
+        }
+
+        const newRecipientsA = await checkGroupEmail();
+
+        const users = await Promise.all(
+            newRecipientsA.map((recipientEmail) => {
+                if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@smail.com') {
+                    return User.findOne({ email: recipientEmail });
+                } else if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@sgroup.com') {
+                    return Group.findOne({ groupEmail: recipientEmail });
+                }
+            })
+        );
+
+        function removeNullFromUsersArray () {
+            return users.filter((user) => user !== null);
+        }
+
+        const validUsers = removeNullFromUsersArray();
+
+        if (validUsers.length === 0) {
+            throw new BadRequestError('We did not found any of the recipients you provided');
+        }
+
+        function getToArray () {
+            let toArray = [];
+
+            validUsers.map((user) => {
+                return toArray.push({recipientID: user._id, role: user.role});
+            });
+            
+            return toArray;
+        }
+
+        await user.updateOne({ $push: { savedDrafts: {...req.body, to: getToArray()} } });
+    } else {
+        await user.updateOne({ $push: { savedDrafts: { ...req.body } } });
+    }
+
+    res.status(StatusCodes.OK).json("Draft have been added.");
+}
+
+async function removeDraftFromUserSavedDrafts (req, res) {
+    const {
+        user: { userID },
+        params: { id: draftID }
+    } = req;
+
+    const user = await User.findById(userID);
+    await user.updateOne({ $pull: { savedDrafts: {_id: draftID} } });
+    
+    res.status(StatusCodes.OK).json({ status: "succes", draft: null });
+}
+
 async function sendTwoFactorAuthentication (req, res) {
     // TODO: twilio package
     res.status(StatusCodes.OK).json({ msg: 'TODO twilio package' });
@@ -161,10 +277,13 @@ async function deleteUser (req, res) {
 }
 
 
-module.exports = {
+module.exports = { 
     searchUserByEmail,
     updateUsername,
     changePassword,
+    getUserSavedDrafts,
+    addDraftToUserSavedDrafts,
+    removeDraftFromUserSavedDrafts,
     sendTwoFactorAuthentication,
     enableTwoFactorAuthentication,
     deleteUser
