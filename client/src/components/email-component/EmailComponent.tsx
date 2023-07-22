@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
 
+import Cookies from 'js-cookie';
+
 import { AiFillDelete } from 'react-icons/ai';
 
 import Icon from '../icon/Icon';
 
-import { Void } from '../../types/types';
+import { Event, InputElement, Void } from '../../types/types';
 
 import './email-component.css';
 
 interface EmailComponentProps {
-  isEmailChecked : boolean,
-  handleEmailChecked : Void,
+  sender : string,
+  subject : string,
+  sendAt : string,
+  content : string,
+  handleDeleteEmail ?: Void;
+  isEmailChecked ?: boolean,
+  handleEmailChecked ?: Void,
 }
 
-const EmailComponent: React.FC<EmailComponentProps> = ({ isEmailChecked, handleEmailChecked }) => {
+const EmailComponent: React.FC<EmailComponentProps> = ({ sender, subject, sendAt, content, handleDeleteEmail, isEmailChecked, handleEmailChecked }) => {
 
   let timeout: NodeJS.Timeout;
 
@@ -45,15 +52,15 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ isEmailChecked, handleE
            onChange={handleEmailChecked} 
           />
           <h2 className='font-bold text-green-400'>
-            Jhon_Doe
+            {sender === Cookies.get('username') ? "Me" : sender}
           </h2>
         </div>
         <p className='text-gray-300 text-clip w-96 overflow-hidden ml-2'>
-          WelcomeWelcomeWelcomeWelcomeWelcomeWelcome
+          {subject}
         </p>
         {!isShow ? (
           <p className='text-sm text-gray-400 ml-3 whitespace-nowrap'>
-            3 May
+            {sendAt}
           </p>
         ) : null}
         {isShow ? (
@@ -64,16 +71,13 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ isEmailChecked, handleE
               bgColor='bg-gray-700'
               color='white'
               icon={<AiFillDelete />}
-              customFunc={() => console.log('I want to delete this email!!')} 
+              customFunc={handleDeleteEmail} 
             />
           </span>
         ): null}
       </div>
       <p className='overflow-hidden text-ellipsis whitespace-nowrap w-96 text-gray-200'>
-        Hi Jan Doe, how are you?  
-        Hi Jan Doe, how are you?  
-        Hi Jan Doe, how are you?  
-        Hi Jan Doe, how are you?
+        {content}
       </p>
     </div>
   )

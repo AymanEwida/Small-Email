@@ -90,7 +90,11 @@ const GroupEmails: React.FC = () => {
             <EmailComponent
             key={index} 
             isEmailChecked={status}
-            handleEmailChecked={() => handleStatuses(index)} 
+            handleEmailChecked={() => handleStatuses(index)}
+            sender='Jan Doe'
+            sendAt='May 5'
+            subject='Welcome'
+            content='Test112' 
             />
           ))}
           {/* <span>

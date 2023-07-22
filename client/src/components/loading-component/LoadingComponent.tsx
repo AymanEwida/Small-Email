@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import './loading-component.css';
 
 interface LoadingComponentProps {
-  style : "line" | "circle" | "text";
+  style : "line" | "circle" | "text" | "fallBack";
 }
 
 const LoadingComponent: React.FC<LoadingComponentProps> = ({ style }) => {
@@ -45,6 +45,18 @@ const LoadingComponent: React.FC<LoadingComponentProps> = ({ style }) => {
       return (
         <div>
           Loading{dots}
+        </div>
+      );
+    
+    case 'fallBack':
+      return (
+        <div className='w-full py-2 px-9 lg:px-12'>
+          <div className='flex justify-between items-center pb-2 border-b-1 w-full border-inherit px-7'>
+            <div className='rounded-md w-24 h-4 bg-gray-400' />
+            <div className='rounded-md w-72 h-4 bg-gray-400' />
+            <div className='rounded-md w-16 h-4 bg-gray-400' />
+          </div>
+          <div className='rounded-md w-96 h-10 mt-2 bg-gray-400' />
         </div>
       );
 

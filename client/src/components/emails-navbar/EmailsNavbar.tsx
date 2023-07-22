@@ -11,11 +11,13 @@ import { Void } from '../../types/types';
 import './emails-navbar.css';
 
 interface EmailsNavbarProps {
-  isEmailsChecked : boolean,
-  handleEmailsChecked : Void,
+  refreshEmails ?: Void,
+  isEmailsChecked ?: boolean,
+  handleEmailsChecked ?: Void,
+  handleDeleteEmails ?: Void,
 }
 
-const EmailsNavbar: React.FC<EmailsNavbarProps> = ({ isEmailsChecked, handleEmailsChecked }) => {
+const EmailsNavbar: React.FC<EmailsNavbarProps> = ({ refreshEmails, isEmailsChecked, handleEmailsChecked, handleDeleteEmails }) => {
   
   const [checked, setChecked] = useState(false);
 
@@ -34,7 +36,7 @@ const EmailsNavbar: React.FC<EmailsNavbarProps> = ({ isEmailsChecked, handleEmai
            bgColor='bg-gray-400'
            animation='hover:rotate-90 transform duration-200'
            icon={<IoMdRefresh />}
-           customFunc={() => console.log('refresh emails!')} 
+           customFunc={refreshEmails} 
           />
         </span>
         <input 
@@ -50,7 +52,7 @@ const EmailsNavbar: React.FC<EmailsNavbarProps> = ({ isEmailsChecked, handleEmai
            color='white'
            bgColor='bg-gray-400'
            icon={<MdDelete />}
-           customFunc={() => console.log('delete emails!')} 
+           customFunc={handleDeleteEmails} 
           />
         ) : null}
       </div>

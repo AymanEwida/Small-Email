@@ -7,6 +7,10 @@ import {
   EmailComponent
 } from '../../components';
 
+import {
+  Inbox
+} from '../../pages';
+
 import { arrayRepeat } from '../../functions';
 
 import './main-emails.css'
@@ -51,19 +55,20 @@ const MainEmails: React.FC = () => {
 
   return (
     <>
-      <EmailsNavbar
+      {/* <EmailsNavbar
        isEmailsChecked={isChecked}
        handleEmailsChecked={handleChecked} 
-      />
+      /> */}
       {emailCategory === 'inbox' ? (
-        <div className='mb-10'>
-          {statuses.map((status, index) => (
+        <div className=''>
+          {/* {statuses.map((status, index) => (
             <EmailComponent
              key={index} 
              isEmailChecked={status}
              handleEmailChecked={() => handleStatuses(index)} 
             />
-          ))} 
+          ))}  */}
+          <Inbox />
         </div>
       ) :
       emailCategory === 'sent' ? (
