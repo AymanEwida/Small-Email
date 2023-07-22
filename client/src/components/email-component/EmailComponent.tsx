@@ -51,7 +51,7 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ sender, subject, sendAt
            checked={isEmailChecked}
            onChange={handleEmailChecked} 
           />
-          <h2 className='font-bold text-green-400'>
+          <h2 className='font-bold text-green-400 w-20'>
             {sender === Cookies.get('username') ? "Me" : sender}
           </h2>
         </div>
