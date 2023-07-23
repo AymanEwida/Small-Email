@@ -121,7 +121,7 @@ const Register: React.FC = () => {
   }
 
   const { isError, error, isLoading, mutate } = useMutation(async (formData: FormData) => {
-    const res = await axios.post('http://localhost:5000/api/v1/auth/register', formData);
+    const res = await axios.post('http://localhost:8800/api/v1/auth/register', formData);
     return res.data;
   }, {
     onSuccess: (data) => {

@@ -69,7 +69,7 @@ const Login: React.FC = () => {
   }
 
   const {isError, error, isLoading, refetch} = useQuery('login', async () => {
-    const res = await axios.post('http://localhost:5000/api/v1/auth/login', {email: inputValues.email, password: inputValues.password});
+    const res = await axios.post('http://localhost:8800/api/v1/auth/login', {email: inputValues.email, password: inputValues.password});
     return res.data;
   }, {
     enabled: false

@@ -41,7 +41,7 @@ const Inbox: React.FC = () => {
   const [emailsIDs, setEmailsIDs] = useState<string[]>([]);
 
   const {isError, error, isLoading, data, refetch} = useQuery('inboxEmails', async () => {
-    const res = await axios.get('http://localhost:5000/api/v1/email', { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    const res = await axios.get('http://localhost:8800/api/v1/email', { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
     return res.data
   });
 
