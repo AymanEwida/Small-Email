@@ -9,9 +9,11 @@ import Icon from '../icon/Icon';
 import { Event, InputElement, Void } from '../../types/types';
 
 import './email-component.css';
+import { send } from 'process';
 
 interface EmailComponentProps {
-  sender : string,
+  sender ?: string,
+  sendTo ?: {_id : string, username ?: string, groupName ?: string}[],
   subject : string,
   sendAt : string,
   content : string,
@@ -20,7 +22,7 @@ interface EmailComponentProps {
   handleEmailChecked ?: Void,
 }
 
-const EmailComponent: React.FC<EmailComponentProps> = ({ sender, subject, sendAt, content, handleDeleteEmail, isEmailChecked, handleEmailChecked }) => {
+const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject, sendAt, content, handleDeleteEmail, isEmailChecked, handleEmailChecked }) => {
 
   let timeout: NodeJS.Timeout;
 
@@ -51,9 +53,20 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ sender, subject, sendAt
            checked={isEmailChecked}
            onChange={handleEmailChecked} 
           />
-          <h2 className='font-bold text-green-400 w-20'>
-            {sender === Cookies.get('username') ? "Me" : sender}
-          </h2>
+          {sender ? (
+            <h2 className='font-bold text-green-400 w-20'>
+              {sender === Cookies.get('username') ? "Me" : sender}
+            </h2>
+          ) : null}
+          {sendTo ? (
+            <div className='flex flex-row items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap w-44'>
+              {sendTo.map((recipient, index) => (
+                <h2 key={recipient._id} className='font-bold text-green-400'>
+                  {recipient.username && recipient.username === Cookies.get('username') ? "Me" : recipient.username || recipient.groupName} {index === sendTo.length - 1 ? '' : ','}
+                </h2>
+              ))}
+            </div>
+          ) : null}
         </div>
         <p className='text-gray-300 text-clip w-96 overflow-hidden ml-2'>
           {subject}

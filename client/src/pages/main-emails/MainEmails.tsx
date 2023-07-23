@@ -8,7 +8,8 @@ import {
 } from '../../components';
 
 import {
-  Inbox
+  Inbox,
+  Sent
 } from '../../pages';
 
 import { arrayRepeat } from '../../functions';
@@ -73,7 +74,7 @@ const MainEmails: React.FC = () => {
       ) :
       emailCategory === 'sent' ? (
         <div>
-          Sent
+          <Sent />
         </div>
       ) : 
       emailCategory === 'saved-drafts' ? (
