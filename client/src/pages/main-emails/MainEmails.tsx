@@ -9,7 +9,8 @@ import {
 
 import {
   Inbox,
-  Sent
+  Sent,
+  SavedDrafts
 } from '../../pages';
 
 import { arrayRepeat } from '../../functions';
@@ -79,7 +80,7 @@ const MainEmails: React.FC = () => {
       ) : 
       emailCategory === 'saved-drafts' ? (
         <div>
-          SavedDrafts
+          <SavedDrafts />
         </div>
       ) : <Navigate to='/inbox' />}
     </>

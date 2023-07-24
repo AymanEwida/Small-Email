@@ -11,5 +11,6 @@ export { default as Register } from './register/Register';
 export { default as Login } from './login/Login';
 export { default as Email } from './email/Email';
 export { default as GroupEmails } from './group-emails/GroupEmails';
+export { default as SavedDrafts } from './saved-drafts/SavedDrafts';
 
 export { default as Test } from './test/Test';

@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const SavedDraft = new mongoose.Schema(
     {
         to: {
-            type: [{recipientID: mongoose.Types.ObjectId, role: String}],
+            type: [{recipientID: mongoose.Types.ObjectId, role: String, username: String, groupName: String }],
             required: false,
         },
 

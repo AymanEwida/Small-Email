@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Email = require('../models/Email');
+const Group = require('../models/Group');
 const bcrybt = require('bcryptjs');
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require('../errors');
@@ -140,7 +141,7 @@ async function getUserSavedDrafts (req, res) {
 
     const user = await User.findById(userID);
 
-    res.status(StatusCodes.OK).json({ savedDrafts: user.savedDrafts });
+    res.status(StatusCodes.OK).json({ nHits: user.savedDrafts.length, savedDrafts: user.savedDrafts });
 }
 
 async function addDraftToUserSavedDrafts (req, res) {
@@ -223,7 +224,11 @@ async function addDraftToUserSavedDrafts (req, res) {
             let toArray = [];
 
             validUsers.map((user) => {
-                return toArray.push({recipientID: user._id, role: user.role});
+                if (user.role === 'user') {
+                    return toArray.push({recipientID: user._id, role: user.role, username: user.username});
+                } else if (user.role === 'group') {
+                    return toArray.push({recipientID: user._id, role: user.role, groupName: user.groupName});
+                }
             });
             
             return toArray;
