@@ -37,11 +37,12 @@ const Inbox: React.FC = () => {
 
   const [emails, setEmails] = useState<null | any>(null);
   const [isChecked, setIsChecked] = useState(false);
-  const [statuses, setStatuses] = useState(arrayRepeat([false], 5));
+  const [statuses, setStatuses] = useState<boolean[]>([]);
   const [emailsIDs, setEmailsIDs] = useState<string[]>([]);
 
   const {isError, error, isLoading, data, refetch} = useQuery('inboxEmails', async () => {
     const res = await axios.get('http://localhost:8800/api/v1/email', { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    setStatuses(arrayRepeat([false], res.data.emails.length));
     return res.data
   });
 
@@ -59,7 +60,7 @@ const Inbox: React.FC = () => {
     }
 
     setIsChecked(prevIsChecked => !prevIsChecked);
-    setStatuses(arrayRepeat([!isChecked], 5));
+    setStatuses(arrayRepeat([!isChecked], emailsData.length));
   }
 
   function handleEmailsChecked (index: number): void {
@@ -102,7 +103,9 @@ const Inbox: React.FC = () => {
     }
 
     setEmails(newData);
-    handleChecked();
+    setEmailsIDs([]);
+    setIsChecked(false);
+    setStatuses(arrayRepeat([false], newData.length));
   }
 
   // useEffect(() => {

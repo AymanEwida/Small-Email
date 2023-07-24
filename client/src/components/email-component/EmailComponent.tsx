@@ -9,7 +9,6 @@ import Icon from '../icon/Icon';
 import { Event, InputElement, Void } from '../../types/types';
 
 import './email-component.css';
-import { send } from 'process';
 
 interface EmailComponentProps {
   sender ?: string,
@@ -59,10 +58,10 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject
             </h2>
           ) : null}
           {sendTo ? (
-            <div className='flex flex-row items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap w-44'>
+            <div className='flex flex-row items-center gap-2 overflow-x-auto text-ellipsis whitespace-nowrap w-44'>
               {sendTo.map((recipient, index) => (
                 <h2 key={recipient._id} className='font-bold text-green-400'>
-                  {recipient.username && recipient.username === Cookies.get('username') ? "Me" : recipient.username || recipient.groupName} {index === sendTo.length - 1 ? '' : ','}
+                  {recipient.username && recipient.username === Cookies.get('username') ? "Me" : recipient.username || recipient.groupName} {recipient.groupName ? '(group)' : ''} {index === sendTo.length - 1 ? '' : ','}
                 </h2>
               ))}
             </div>
