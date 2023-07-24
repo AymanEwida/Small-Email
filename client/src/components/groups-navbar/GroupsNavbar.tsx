@@ -19,13 +19,15 @@ import './groups-navbar.css';
 
 interface GroupsNavbarProps {
   category : Optional<string>,
-  isEmailsChecked : boolean,
-  handleEmailsChecked : Void,
-  toggleFunc : Void,
-  openSettingsMenuFunc : Void,
+  isEmailsChecked ?: boolean,
+  handleEmailsChecked ?: Void,
+  toggleFunc ?: Void,
+  openSettingsMenuFunc ?: Void,
+  refreshEmails ?: Void,
+  handleDeleteEmails ?: Void,
 }
 
-const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc }) => {
+const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc, refreshEmails, handleDeleteEmails }) => {
   return (
     <div className='sticky bg-secondary-dark-bg top-0 w-full py-3 px-8 z-20'>
       <div className='flex justify-between border-b-1 pb-3 color-border'>
@@ -78,7 +80,7 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, 
              bgColor='bg-gray-400'
              animation='hover:rotate-90 transform duration-200'
              icon={<IoMdRefresh />}
-             customFunc={() => console.log('refresh emails!')} 
+             customFunc={refreshEmails} 
             />
             {category === 'emails' ? (
               <input 
@@ -95,7 +97,7 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, 
                color='white'
                bgColor='bg-gray-400'
                icon={<MdDelete />}
-               customFunc={() => console.log('delete emails!')} 
+               customFunc={handleDeleteEmails} 
               />
             ) : null}
           </div>
