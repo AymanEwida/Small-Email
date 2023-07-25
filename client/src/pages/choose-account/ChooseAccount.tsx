@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+import Cookies from 'js-cookie';
 
 import { FiPlus } from 'react-icons/fi';
 
@@ -11,136 +13,56 @@ import {
 
 import noAvater from '../../assests/noAvatar.png';
 
+import { AccountsContext } from '../../context/accounts-context/AccountsContext';
+import { AccountsTypes } from '../../context/accounts-context/AccountsReducer';
+
 import './choose-account.css';
 
 const ChooseAccount: React.FC = () => {
+
+  const {
+    state,
+    accountsDispatch
+  } = useContext(AccountsContext);
+
+  const history = useNavigate();
+
+  function handleLogin (token: string, username: string): void {
+    Cookies.set('token', token, { expires: 30 });
+    Cookies.set('username', username, { expires: 30 });
+    history('/');
+    window.location.reload();
+  }
+
   return (
     <div className='h-screen'>
       <CenterComponent addTextCenter>
         <SubTitleHeader
          subTitle='Choose an account' 
         />
-        <div className='mt-4 w-full overflow-y-auto h-72 snap-mandatory snap-y'>
-          <div className='flex items-center gap-24 w-full p-4 border-inherit border-b-1 cursor-pointer hover:bg-hover-bg snap-center'> 
-            <div className='flex gap-4'>
-              <img
-               className='h-8 w-8 object-cover rounded-full' 
-               src={noAvater} 
-               alt="profile img" 
-              />
-              <div className='text-sm text-left'>
-                <h3 className='font-medium text-[16px]'>
-                  Jan Doe
-                </h3>
-                <p className='text-gray-400'>
-                  jan@smail.com
-                </p>
+        <div className={`mt-4 w-full overflow-y-auto ${state.length > 0 ? "h-72" : "h-fit"} snap-mandatory snap-y`}>
+          {state.map((account) => (
+            <div onClick={() => handleLogin(account.token, account.username)} className='flex items-center gap-24 w-full p-4 border-inherit border-b-1 cursor-pointer hover:bg-hover-bg snap-center'> 
+              <div className='flex gap-4'>
+                <img
+                 className='h-8 w-8 object-cover rounded-full' 
+                 src={noAvater} 
+                 alt="profile img" 
+                />
+                <div className='text-sm text-left'>
+                  <h3 className='font-medium text-[16px]'>
+                    {account.username}
+                  </h3>
+                  <p className='text-gray-400'>
+                    {account.email}
+                  </p>
+                </div>
               </div>
+              {!account.isUserConnected ? <p className='text-red-700'>
+                disconnect
+              </p> : null}
             </div>
-            <p className='text-red-700'>
-              disconnect
-            </p>
-          </div>
-          <div className='flex items-center gap-24 w-full p-4 border-inherit border-b-1 cursor-pointer hover:bg-hover-bg snap-center'> 
-            <div className='flex gap-4'>
-              <img
-               className='h-8 w-8 object-cover rounded-full' 
-               src={noAvater} 
-               alt="profile img" 
-              />
-              <div className='text-sm text-left'>
-                <h3 className='font-medium text-[16px]'>
-                  Jan Doe
-                </h3>
-                <p className='text-gray-400'>
-                  jan@smail.com
-                </p>
-              </div>
-            </div>
-            <p className='text-red-700'>
-              disconnect
-            </p>
-          </div>
-          <div className='flex items-center gap-24 w-full p-4 border-inherit border-b-1 cursor-pointer hover:bg-hover-bg snap-center'> 
-            <div className='flex gap-4'>
-              <img
-               className='h-8 w-8 object-cover rounded-full' 
-               src={noAvater} 
-               alt="profile img" 
-              />
-              <div className='text-sm text-left'>
-                <h3 className='font-medium text-[16px]'>
-                  Jan Doe
-                </h3>
-                <p className='text-gray-400'>
-                  jan@smail.com
-                </p>
-              </div>
-            </div>
-            <p className='text-red-700'>
-              disconnect
-            </p>
-          </div>
-          <div className='flex items-center gap-24 w-full p-4 border-inherit border-b-1 cursor-pointer hover:bg-hover-bg snap-center'> 
-            <div className='flex gap-4'>
-              <img
-               className='h-8 w-8 object-cover rounded-full' 
-               src={noAvater} 
-               alt="profile img" 
-              />
-              <div className='text-sm text-left'>
-                <h3 className='font-medium text-[16px]'>
-                  Jan Doe
-                </h3>
-                <p className='text-gray-400'>
-                  jan@smail.com
-                </p>
-              </div>
-            </div>
-            <p className='text-red-700'>
-              disconnect
-            </p>
-          </div>
-          <div className='flex items-center gap-24 w-full p-4 border-inherit border-b-1 cursor-pointer hover:bg-hover-bg snap-center'> 
-            <div className='flex gap-4'>
-              <img
-               className='h-8 w-8 object-cover rounded-full' 
-               src={noAvater} 
-               alt="profile img" 
-              />
-              <div className='text-sm text-left'>
-                <h3 className='font-medium text-[16px]'>
-                  Jan Doe
-                </h3>
-                <p className='text-gray-400'>
-                  jan@smail.com
-                </p>
-              </div>
-            </div>
-            <p className='text-red-700'>
-              disconnect
-            </p>
-          </div>
-          <div className='flex items-center gap-24 w-full p-4 border-inherit border-b-1 cursor-pointer hover:bg-hover-bg snap-center'> 
-            <div className='flex gap-4'>
-              <img
-               className='h-8 w-8 object-cover rounded-full' 
-               src={noAvater} 
-               alt="profile img" 
-              />
-              <div className='text-sm text-left'>
-                <h3 className='font-medium text-[16px]'>
-                  Jan Doe
-                </h3>
-                <p className='text-gray-400'>
-                  jan@smail.com
-                </p>
-              </div>
-            </div>
-            <p className='text-red-700'>
-              disconnect
-            </p>
-          </div>
+          ))}
         </div>
         <Link to='/login'>
           <div className='mt-4 flex items-center gap-4 cursor-pointer mx-4 hover:bg-hover-bg w-fit p-2 rounded-md'>

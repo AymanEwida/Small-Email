@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -16,7 +16,10 @@ import {
   LoadingComponent,
   Tefo
 } from '../../components';
- 
+
+import { AccountsContext } from '../../context/accounts-context/AccountsContext';
+import { AccountsTypes } from '../../context/accounts-context/AccountsReducer';
+
 import {
   FormEvent,
   Event,
@@ -34,6 +37,10 @@ type Input = {
 }
 
 const Login: React.FC = () => {
+
+  const {
+    accountsDispatch,
+  } = useContext(AccountsContext);
 
   const [inputValues, setInputValues] = useState({
     email: '',
@@ -81,6 +88,7 @@ const Login: React.FC = () => {
     const { isSuccess, data } = await refetch();
 
     if (isSuccess && data) {
+      accountsDispatch({ type: AccountsTypes.AddAccount, payload: {username: data.user.username, email: inputValues.email, userImg: "", token: data.token, isUserConnected: true} });
       Cookies.set('token', data.token, { expires: 30 });
       Cookies.set('username', data.user.username, { expires: 30 });
       history('/');
