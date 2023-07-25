@@ -62,6 +62,18 @@ const Group: React.FC = () => {
     setIsSettingMenuOpen(false);
   }
 
+  function checkIfCurrentUserIsAdmin (): boolean {
+    for (let i = 0; i < data.participates.length; i++) {
+      const participate: {participateID : string, isAdmin : boolean, _id : string, user : {_id: string, username: string, email: string, userImg: string}} = data.participates[i];
+
+      if (Cookies.get('username') === participate.user.username) {
+        return participate.isAdmin;
+      }
+    }
+
+    return false;
+  }
+
   if(isLoading) {
     return (
       <>
@@ -103,9 +115,10 @@ const Group: React.FC = () => {
       {isSettingMenuOpen ? (
         <GroupSettings
          category={category}
-         isCurrentUserAdmin
+         isCurrentUserAdmin={checkIfCurrentUserIsAdmin()}
+         groupID={data._id}
          groupName={data.groupName}
-         groupEmail={data.groupEmail}
+         groupEmail={data.groupEmail} 
          groupDesc={data.groupDesc}
          groupParticipates={data.participates} 
          closeFunc={closeSettingsMenu}

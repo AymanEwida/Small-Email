@@ -29,7 +29,8 @@ type GroupParticipate = {
 
 interface GroupSettingsProps {
   category : Optional<string>,
-  isCurrentUserAdmin : Boolean,
+  isCurrentUserAdmin : boolean,
+  groupID : Optional<string>,
   groupName : string,
   groupEmail : string,
   groupDesc : string,
@@ -38,7 +39,7 @@ interface GroupSettingsProps {
   toggleFunc : Void
 }
 
-const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAdmin, groupName, groupEmail, groupDesc, groupParticipates, closeFunc, toggleFunc }) => {
+const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAdmin, groupID, groupName, groupEmail, groupDesc, groupParticipates, closeFunc, toggleFunc }) => {
   return (
     <div className='sticky bottom-0 left-0 z-index h-full bg-[#42464D] py-5 px-4 w-80'>
       <div className='flex justify-between items-center'>
@@ -104,7 +105,7 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
             /> : null }
           </div>
         </div>
-        <Link to={`/groups/${category && category === 'conversation' ? 'enails' : 'conversation'}?g_id=1`}>
+        <Link to={`/groups/${category && category === 'conversation' ? 'enails' : 'conversation'}?g_id=${groupID}`}>
           <Button
            type='button'
            bgColor='rgb(74 222 128)'
@@ -122,9 +123,20 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
         {groupDesc}
       </p>
       <div className='p-2'>
-        <h2 className='text-center text-gray-200 text-lg underline font-semibold'> 
+        <h2 className='text-center text-gray-200 text-lg underline font-semibold mb-2'> 
           Participates Users
         </h2>
+        {isCurrentUserAdmin ? <Button
+         type='button'
+         bgColor='rgb(94 234 212)'
+         text='Add new participates'
+         textSize='md'
+         borderRadius='10px'
+         paddingSize='1'
+         width='100%'
+         color='white'
+         customFunc={() => console.log('I want to add new Participates')} 
+        /> : null}
         <div className='overflow-y-auto h-96'>
           {groupParticipates.map((participate) => (
             <div key={participate._id} className='border-color border-b-1 py-4 w-full'>
@@ -171,6 +183,16 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
               </div> : null }   
             </div>
           ))}
+          {isCurrentUserAdmin ? <div className='mt-2'><Button
+           type='button'
+           bgColor='rgb(94 234 212)'
+           text='Add new participates'
+           textSize='md'
+           borderRadius='10px'
+           paddingSize='1'
+           color='white'
+           customFunc={() => console.log('I want to add new Participates')} 
+          /></div> : null}
         </div>
       </div>
       <span className='absolute bottom-2 left-10'>
