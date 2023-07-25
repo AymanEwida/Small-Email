@@ -11,7 +11,7 @@ import {
   Groups,
   Workspace,
   Email,
-  GroupEmails
+  Group
 } from '../';
 
 import {
@@ -53,7 +53,7 @@ const MainPage: React.FC = () => {
           <Route path='/:emailCategory' index element={<MainEmails />} />
           <Route path='/:emailCategory/email' index element={<Email />} />
           <Route path='/groups' element={<Groups />} />
-          <Route path='/groups/:groupCategory' element={<GroupEmails />} />
+          <Route path='/groups/:groupCategory' element={<Group />} />
           <Route path='/workspace' element={
             <FileContentContextProvider>
               <Workspace />

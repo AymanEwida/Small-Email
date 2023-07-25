@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Link } from 'react-router-dom';
 
+import Cookies from 'js-cookie';
+
 import { IoMdCloseCircle } from 'react-icons/io';
 import { BsFillPencilFill } from 'react-icons/bs';
 import { ImExit } from 'react-icons/im';
@@ -18,14 +20,25 @@ import { Void, Optional } from '../../types/types';
 
 import './group-settings.css';
 
+type GroupParticipate = {
+  participateID : string;
+  isAdmin : boolean;
+  _id : string;
+  user : {_id: string, username: string, email: string, userImg: string};
+}
+
 interface GroupSettingsProps {
   category : Optional<string>,
   isCurrentUserAdmin : Boolean,
+  groupName : string,
+  groupEmail : string,
+  groupDesc : string,
+  groupParticipates : GroupParticipate[],
   closeFunc : Void,
   toggleFunc : Void
 }
 
-const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAdmin, closeFunc, toggleFunc }) => {
+const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAdmin, groupName, groupEmail, groupDesc, groupParticipates, closeFunc, toggleFunc }) => {
   return (
     <div className='sticky bottom-0 left-0 z-index h-full bg-[#42464D] py-5 px-4 w-80'>
       <div className='flex justify-between items-center'>
@@ -64,7 +77,7 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
           </div>
           <div className=''>
             <h2 className='text-xl font-bold mb-1'>
-              Test Group
+              {groupName}
             </h2>
             {isCurrentUserAdmin ? <Button
              type='button'
@@ -77,7 +90,7 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
              customFunc={() => console.log('I want to change the group name!')} 
             /> : null }
             <p className='text-sm my-2'>
-              <ClipboardCopy copyText='test@sgroup.com' />
+              <ClipboardCopy copyText={groupEmail} />
             </p>
             {isCurrentUserAdmin ? <Button
              type='button'
@@ -106,50 +119,58 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
         </Link>
       </div>
       <p className='text-gray-300 text-sm text-center border-color border-b-1 py-4'>
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis illo dolore fuga tempore reprehenderit nostrum autem veritatis consectetur esse obcaecati.
+        {groupDesc}
       </p>
       <div className='p-2'>
         <h2 className='text-center text-gray-200 text-lg underline font-semibold'> 
           Participates Users
         </h2>
         <div className='overflow-y-auto h-96'>
-          <div className='border-color border-b-1 py-4 w-full'>
-            <div className='flex gap-2 items-center'>
-              <img
-              className='h-8 w-8 rounded-full object-cover' 
-              src={noAvater} 
-              alt="profile image" 
-              />
-              <p className='text-gray-100 font-medium'>
-                Jan Doe <span className='text-gray-300 font-light'>{'<'}jan@smail.com{'>'}</span>
-              </p>
+          {groupParticipates.map((participate) => (
+            <div key={participate._id} className='border-color border-b-1 py-4 w-full'>
+              <div className='flex gap-2 items-center'>
+                <img
+                 className='h-8 w-8 rounded-full object-cover' 
+                 src={noAvater} 
+                 alt="profile image" 
+                />
+                {Cookies.get('username') === participate.user.username ? (
+                  <p className='text-gray-100 font-medium'>
+                    Me
+                  </p>
+                ) : (
+                <p className='text-gray-100 font-medium'>
+                  {participate.user.username} <span className='text-gray-300 font-light'>{'<'}{participate.user.email}{'>'}</span>
+                </p>
+                )}
+              </div>
+              {participate.isAdmin ? <p className='text-gray-400 my-2 text-center font-medium'>
+                status: <span className='text-gray-200 font-semibold'>Admin</span>
+              </p> : null}
+              {isCurrentUserAdmin && Cookies.get('username') !== participate.user.username ? <div className='mt-2 flex gap-2 justify-center items-center'>
+                <Button
+                type='button'
+                bgColor='rgb(248 113 113)'
+                text='Remove'
+                textSize='md'
+                borderRadius='5px'
+                paddingSize='1'
+                color='white'
+                customFunc={() => console.log('I want to remove the group participate!')} 
+                />
+                <Button
+                type='button'
+                bgColor='rgb(94 234 212)'
+                text='Make Admin'
+                textSize='md'
+                borderRadius='5px'
+                paddingSize='1'
+                color='white'
+                customFunc={() => console.log('I want to change the group participate!')} 
+                />
+              </div> : null }   
             </div>
-            <p className='text-gray-400 my-2 text-center font-medium'>
-              status: <span className='text-gray-200 font-semibold'>Admin</span>
-            </p>
-            {isCurrentUserAdmin ? <div className='mt-2 flex gap-2 justify-center items-center'>
-              <Button
-               type='button'
-               bgColor='rgb(248 113 113)'
-               text='Remove'
-               textSize='md'
-               borderRadius='5px'
-               paddingSize='1'
-               color='white'
-               customFunc={() => console.log('I want to remove the group participate!')} 
-              />
-              <Button
-               type='button'
-               bgColor='rgb(94 234 212)'
-               text='Make Admin'
-               textSize='md'
-               borderRadius='5px'
-               paddingSize='1'
-               color='white'
-               customFunc={() => console.log('I want to change the group participate!')} 
-              />
-            </div> : null }   
-          </div>
+          ))}
         </div>
       </div>
       <span className='absolute bottom-2 left-10'>

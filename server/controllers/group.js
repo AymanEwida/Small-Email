@@ -145,7 +145,21 @@ async function getSingleGroup (req, res) {
         throw new NotFoundError(`No group with id ${groupID}`);
     }
 
-    res.status(StatusCodes.OK).json({ group });
+    async function getGroupParticipates () {
+        let newParticipatesArray = [];
+
+        for (let i = 0; i < group.participates.length; i++) {
+            const participate = group.participates[i];
+
+            const user = await User.findById(participate.participateID).select('username email userImg');
+
+            newParticipatesArray.push({...participate._doc, user});
+        }
+
+        return newParticipatesArray;
+    }
+
+    res.status(StatusCodes.OK).json({ ...group._doc, participates: await getGroupParticipates() });
 }
 
 async function isUserAdminOfTheGroup (groupID, userID) {

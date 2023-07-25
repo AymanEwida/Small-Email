@@ -19,6 +19,7 @@ import './groups-navbar.css';
 
 interface GroupsNavbarProps {
   category : Optional<string>,
+  groupID : Optional<string>,
   isEmailsChecked ?: boolean,
   handleEmailsChecked ?: Void,
   toggleFunc ?: Void,
@@ -27,7 +28,7 @@ interface GroupsNavbarProps {
   handleDeleteEmails ?: Void,
 }
 
-const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc, refreshEmails, handleDeleteEmails }) => {
+const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc, refreshEmails, handleDeleteEmails }) => {
   return (
     <div className='sticky bg-secondary-dark-bg top-0 w-full py-3 px-8 z-20'>
       <div className='flex justify-between border-b-1 pb-3 color-border'>
@@ -53,7 +54,7 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, isEmailsChecked, 
           <h3 className='font-semibold text-sm my-1'>
             <ClipboardCopy copyText='test@sgroup.com' />
           </h3>
-          <Link to={`/groups/${category && category === 'conversation' ? 'enails' : 'conversation'}?g_id=1`}>
+          <Link to={`/groups/${category && category === 'conversation' ? 'enails' : 'conversation'}?g_id=${groupID}`}>
             <Button
              type='button'
              bgColor='rgb(74 222 128)'

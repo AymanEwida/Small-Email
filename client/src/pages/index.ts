@@ -10,6 +10,7 @@ export { default as MainEmails } from './main-emails/MainEmails';
 export { default as Register } from './register/Register';
 export { default as Login } from './login/Login';
 export { default as Email } from './email/Email';
+export { default as Group } from './group/Group';
 export { default as GroupEmails } from './group-emails/GroupEmails';
 export { default as SavedDrafts } from './saved-drafts/SavedDrafts';
 
