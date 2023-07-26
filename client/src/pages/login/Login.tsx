@@ -20,6 +20,8 @@ import {
 import { AccountsContext } from '../../context/accounts-context/AccountsContext';
 import { AccountsTypes } from '../../context/accounts-context/AccountsReducer';
 
+import { getParamsFromURL } from '../../hooks/useParams';
+
 import {
   FormEvent,
   Event,
@@ -42,8 +44,10 @@ const Login: React.FC = () => {
     accountsDispatch,
   } = useContext(AccountsContext);
 
+  const queryStrings = getParamsFromURL(document.location.href);
+
   const [inputValues, setInputValues] = useState({
-    email: '',
+    email: queryStrings?.email || '',
     password: ''
   });
 
@@ -88,7 +92,11 @@ const Login: React.FC = () => {
     const { isSuccess, data } = await refetch();
 
     if (isSuccess && data) {
-      accountsDispatch({ type: AccountsTypes.AddAccount, payload: {username: data.user.username, email: inputValues.email, userImg: "", token: data.token, isUserConnected: true} });
+      if (queryStrings?.email && queryStrings?.email?.length > 0) {
+        accountsDispatch({ type: AccountsTypes.ReconnectAccount, payload: { email: queryStrings?.email, token: data.token, expired: new Date(new Date().getTime() + 30*24*60*60*1000) } })
+      } else {
+        accountsDispatch({ type: AccountsTypes.AddAccount, payload: {username: data.user.username, email: inputValues.email, userImg: "", token: data.token, isUserConnected: true, expired: new Date(new Date().getTime() + 30*24*60*60*1000)} });
+      }
       Cookies.set('token', data.token, { expires: 30 });
       Cookies.set('username', data.user.username, { expires: 30 });
       history('/');

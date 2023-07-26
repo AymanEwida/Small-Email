@@ -11,6 +11,7 @@ type Account = {
     userImg : string;
     token : string;
     isUserConnected : boolean;
+    expired : Date;
 }
 
 const accountsValueFromLocalStorage = localStorage.getItem('accounts');
