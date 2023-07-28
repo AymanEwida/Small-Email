@@ -15,7 +15,7 @@ import {
   GroupsNavbar,
   GroupSettings,
   LoadingComponent,
-  Tefo
+  Tefo,
 } from '../../components';
 
 import {
@@ -117,6 +117,7 @@ const Group: React.FC = () => {
          category={category}
          isCurrentUserAdmin={checkIfCurrentUserIsAdmin()}
          groupID={data._id}
+         groupImg={data.groupImg}
          groupName={data.groupName}
          groupEmail={data.groupEmail} 
          groupDesc={data.groupDesc}

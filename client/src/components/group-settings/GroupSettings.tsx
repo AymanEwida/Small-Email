@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Link } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ import { AiFillDelete } from 'react-icons/ai';
 import Icon from '../icon/Icon';
 import Button from '../button/Button';
 import ClipboardCopy from '../clipboard-copy/ClipboardCopy';
+import UpdateGroup from '../update-group/UpdateGroup';
 
 import noGroupAvatar from '../../assests/noGroupAvatar.png';
 import noAvater from '../../assests/noAvatar.png';
@@ -31,6 +32,7 @@ interface GroupSettingsProps {
   category : Optional<string>,
   isCurrentUserAdmin : boolean,
   groupID : Optional<string>,
+  groupImg : string,
   groupName : string,
   groupEmail : string,
   groupDesc : string,
@@ -39,7 +41,37 @@ interface GroupSettingsProps {
   toggleFunc : Void
 }
 
-const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAdmin, groupID, groupName, groupEmail, groupDesc, groupParticipates, closeFunc, toggleFunc }) => {
+enum UpdateGroupTypes {
+  OpenChangeImg = "OPEN_CHANGE_IMAGE",
+  OpenChangeName = "OPEN_CHANGE_NAME",
+  OpenChangeEmail = "OPEN_CHANGE_EMAIL",
+  OpenChangeDesc = "OPEN_CHANGE_DESCRIPTION"
+}
+
+const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAdmin, groupID, groupImg, groupName, groupEmail, groupDesc, groupParticipates, closeFunc, toggleFunc }) => {
+
+  const [updateGroupCredentials, setupdateGroupCredentials] = useState<{groupCredential: string, groupCredentialValue: string} | null>(null);
+
+  function handleUpdateGroupCredentials (type: string): void {
+    switch (type) {
+      case UpdateGroupTypes.OpenChangeImg:
+        setupdateGroupCredentials({groupCredential: "Change Image", groupCredentialValue: groupImg});
+        break;
+      case UpdateGroupTypes.OpenChangeName:
+        setupdateGroupCredentials({groupCredential: "Change Name", groupCredentialValue: groupName});
+        break;
+      case UpdateGroupTypes.OpenChangeEmail:
+        setupdateGroupCredentials({groupCredential: "Change Email", groupCredentialValue: groupEmail});
+        break;
+      case UpdateGroupTypes.OpenChangeDesc:
+        setupdateGroupCredentials({groupCredential: "Change Description", groupCredentialValue: groupDesc});
+        break;
+      default:
+        setupdateGroupCredentials(null);
+        break;
+    }
+  }
+
   return (
     <div className='sticky bottom-0 left-0 z-index h-full bg-[#42464D] py-5 px-4 w-80'>
       <div className='flex justify-between items-center'>
@@ -72,7 +104,7 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
                bgColor='bg-gray-500'
                icon={<BsFillPencilFill />}
                textSize='sm'
-               customFunc={() => console.log('I want to change the group img!')} 
+               customFunc={() => handleUpdateGroupCredentials(UpdateGroupTypes.OpenChangeImg)} 
               />
             </span> : null}
           </div>
@@ -88,7 +120,7 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
              textSize='sm'
              color='white'
              borderRadius='5px'
-             customFunc={() => console.log('I want to change the group name!')} 
+             customFunc={() => handleUpdateGroupCredentials(UpdateGroupTypes.OpenChangeName)} 
             /> : null }
             <p className='text-sm my-2'>
               <ClipboardCopy copyText={groupEmail} />
@@ -101,7 +133,7 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
              textSize='sm'
              color='white'
              borderRadius='5px'
-             customFunc={() => console.log('I want to change the group email!')} 
+             customFunc={() => handleUpdateGroupCredentials(UpdateGroupTypes.OpenChangeEmail)} 
             /> : null }
           </div>
         </div>
@@ -119,9 +151,23 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
           />
         </Link>
       </div>
-      <p className='text-gray-300 text-sm text-center border-color border-b-1 py-4'>
-        {groupDesc}
-      </p>
+      <div className='border-color border-b-1 py-4 text-center'>
+        <p className='text-gray-300 text-sm'>
+          {groupDesc}
+        </p>
+        <div className='mt-8'>
+          <Button
+           type='button'
+           text="change group's description"
+           bgColor='rgb(94 234 212)'
+           paddingSize='1'
+           textSize='sm'
+           color='white'
+           borderRadius='5px'
+           customFunc={() => handleUpdateGroupCredentials(UpdateGroupTypes.OpenChangeDesc)} 
+          />
+        </div>
+      </div>
       <div className='p-2'>
         <h2 className='text-center text-gray-200 text-lg underline font-semibold mb-2'> 
           Participates Users
@@ -215,6 +261,14 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
          textSize='md' 
         />
       </span> : null}
+      {updateGroupCredentials ? (
+        <UpdateGroup
+         groupID={groupID}
+         groupCredential={updateGroupCredentials.groupCredential}
+         groupCredentialValue={updateGroupCredentials.groupCredentialValue}
+         closeFunc={() => handleUpdateGroupCredentials("")} 
+        />
+      ) : null}
     </div>
   )
 }
