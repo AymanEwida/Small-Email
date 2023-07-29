@@ -12,7 +12,7 @@ async function searchUserByEmail (req, res) {
 
     const searchedEmail = email.split('+').join(' ');
 
-    const users = await User.find({}).select('email');
+    const users = await User.find({}).select('email username userImg role');
 
     function findUser () {
         let foundUsers = [];
@@ -20,7 +20,7 @@ async function searchUserByEmail (req, res) {
         for (let i = 0; i < users.length; i++) {
             const userEmail = users[i].email;
 
-            if (userEmail.toLocaleLowerCase().includes(searchedEmail.toLocaleLowerCase())) {
+            if (userEmail.toLocaleLowerCase().includes(searchedEmail.toLocaleLowerCase()) && searchedEmail.length > 0) {
                 foundUsers.push(users[i]);
             }
         }
