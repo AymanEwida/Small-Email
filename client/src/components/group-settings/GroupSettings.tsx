@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { useMutation, useQueryClient } from 'react-query';
+
+import axios, { AxiosError } from 'axios';
 
 import Cookies from 'js-cookie';
 
@@ -13,6 +17,8 @@ import Icon from '../icon/Icon';
 import Button from '../button/Button';
 import ClipboardCopy from '../clipboard-copy/ClipboardCopy';
 import UpdateGroup from '../update-group/UpdateGroup';
+import AddNewParticipates from '../add-new-participates/AddNewParticipates';
+import LoadingComponent from '../loading-component/LoadingComponent';
 
 import noGroupAvatar from '../../assests/noGroupAvatar.png';
 import noAvater from '../../assests/noAvatar.png';
@@ -50,7 +56,48 @@ enum UpdateGroupTypes {
 
 const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAdmin, groupID, groupImg, groupName, groupEmail, groupDesc, groupParticipates, closeFunc, toggleFunc }) => {
 
+  const queryClient = useQueryClient();
+
   const [updateGroupCredentials, setupdateGroupCredentials] = useState<{groupCredential: string, groupCredentialValue: string} | null>(null);
+  const [isAddNewParticipatesOpen, setIsAddNewParticipatesOpen] = useState(false);
+
+  const history = useNavigate();
+
+  const removeMemberMutation = useMutation(async (participateID: string) => {
+    const res = await axios.patch(`http://localhost:8800/api/v1/group/remove/${groupID}`, {participateID: participateID}, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('group');
+    }
+  });
+
+  const makeMemberAdminMutation = useMutation(async (participateID: string) => {
+    const res = await axios.patch(`http://localhost:8800/api/v1/group/make-admin/${groupID}`, {participateID: participateID}, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('group');
+    }
+  });
+
+  const removeCurrentUserAdminMutation = useMutation(async () => {
+    const res = await axios.patch(`http://localhost:8800/api/v1/group/remove-admin/${groupID}`, {}, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('group');
+    }
+  });
+
+  const leaveGroupMutation = useMutation(async () => {
+    const res = await axios.patch(`http://localhost:8800/api/v1/group/leave/${groupID}`, {}, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('groups');
+    }
+  });
 
   function handleUpdateGroupCredentials (type: string): void {
     switch (type) {
@@ -70,6 +117,13 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
         setupdateGroupCredentials(null);
         break;
     }
+
+    setIsAddNewParticipatesOpen(false);
+  }
+
+  function handleOpenAddNewParticipates (): void {
+    handleUpdateGroupCredentials("");
+    setIsAddNewParticipatesOpen(true);
   }
 
   return (
@@ -156,7 +210,7 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
           {groupDesc}
         </p>
         <div className='mt-8'>
-          <Button
+          {isCurrentUserAdmin ? <Button
            type='button'
            text="change group's description"
            bgColor='rgb(94 234 212)'
@@ -165,7 +219,7 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
            color='white'
            borderRadius='5px'
            customFunc={() => handleUpdateGroupCredentials(UpdateGroupTypes.OpenChangeDesc)} 
-          />
+          /> : null}
         </div>
       </div>
       <div className='p-2'>
@@ -181,10 +235,10 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
          paddingSize='1'
          width='100%'
          color='white'
-         customFunc={() => console.log('I want to add new Participates')} 
+         customFunc={handleOpenAddNewParticipates} 
         /> : null}
-        <div className='overflow-y-auto h-96'>
-          {groupParticipates.map((participate) => (
+        <div className='overflow-y-auto h-72'>
+          {groupParticipates.map((participate, index) => (
             <div key={participate._id} className='border-color border-b-1 py-4 w-full'>
               <div className='flex gap-2 items-center'>
                 <img
@@ -209,27 +263,37 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
                 <Button
                 type='button'
                 bgColor='rgb(248 113 113)'
-                text='Remove'
+                text={removeMemberMutation.isLoading ? <LoadingComponent style='circle' /> : 'Remove'}
                 textSize='md'
                 borderRadius='5px'
                 paddingSize='1'
                 color='white'
-                customFunc={() => console.log('I want to remove the group participate!')} 
+                customFunc={() => removeMemberMutation.mutate(participate.participateID)} 
                 />
-                <Button
+                {!participate.isAdmin ? <Button
                 type='button'
                 bgColor='rgb(94 234 212)'
-                text='Make Admin'
+                text={makeMemberAdminMutation.isLoading ? <LoadingComponent style='circle' /> : 'Make Admin'}
                 textSize='md'
                 borderRadius='5px'
                 paddingSize='1'
                 color='white'
-                customFunc={() => console.log('I want to change the group participate!')} 
-                />
-              </div> : null }   
+                customFunc={() => makeMemberAdminMutation.mutate(participate.participateID)} 
+                /> : null}
+              </div> : null}
+              {isCurrentUserAdmin && Cookies.get('username') === participate.user.username ? <div className='flex items-center justify-center'><Button
+                type='button'
+                bgColor='rgb(220 38 38)'
+                text={removeCurrentUserAdminMutation.isLoading ? <LoadingComponent style='circle' /> : 'Remove Admin'}
+                textSize='md'
+                borderRadius='5px'
+                paddingSize='1'
+                color='white'
+                customFunc={() => removeCurrentUserAdminMutation.mutate()} 
+                /></div> : null}   
             </div>
           ))}
-          {isCurrentUserAdmin ? <div className='mt-2'><Button
+          {/* {isCurrentUserAdmin ? <div className='mt-2'><Button
            type='button'
            bgColor='rgb(94 234 212)'
            text='Add new participates'
@@ -237,21 +301,25 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
            borderRadius='10px'
            paddingSize='1'
            color='white'
-           customFunc={() => console.log('I want to add new Participates')} 
-          /></div> : null}
+           customFunc={handleOpenAddNewParticipates} 
+          /></div> : null} */}
         </div>
       </div>
-      <span className='absolute bottom-2 left-10'>
+      <span className='absolute -bottom-1 left-10'>
         <Icon
          title='Leave Group'
          iconPosition='top'
          color='white'
          bgColor='bg-gray-500'
          icon={<ImExit />}
-         textSize='md' 
+         textSize='md'
+         customFunc={() => {
+          leaveGroupMutation.mutate();
+          history('/groups');
+         }}
         />
       </span>
-      {isCurrentUserAdmin ? <span className='absolute bottom-2 right-10'>
+      {isCurrentUserAdmin ? <span className='absolute -bottom-1 right-10'>
         <Icon
          title='Delete Group'
          iconPosition='top'
@@ -267,6 +335,12 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
          groupCredential={updateGroupCredentials.groupCredential}
          groupCredentialValue={updateGroupCredentials.groupCredentialValue}
          closeFunc={() => handleUpdateGroupCredentials("")} 
+        />
+      ) : null}
+      {isAddNewParticipatesOpen ? (
+        <AddNewParticipates
+         groupID={groupID}
+         closeFunc={() => setIsAddNewParticipatesOpen(false)} 
         />
       ) : null}
     </div>

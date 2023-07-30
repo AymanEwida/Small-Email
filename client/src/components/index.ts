@@ -39,3 +39,4 @@ export { default as Tefo } from './tefo/Tefo';
 export { default as UpdateGroup } from './update-group/UpdateGroup';
 export { default as Textarea } from './textarea/Textarea';
 export { default as FoundUsers } from './found-users/FoundUsers';
+export { default as AddNewParticipates } from './add-new-participates/AddNewParticipates';

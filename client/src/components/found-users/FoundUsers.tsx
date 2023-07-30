@@ -1,49 +1,27 @@
 import React from 'react';
 
-import { useQuery } from 'react-query';
-
-import axios, { AxiosError } from 'axios';
-
-import Cookies from 'js-cookie';
-
-import LoadingComponent from '../loading-component/LoadingComponent';
-import Tefo from '../tefo/Tefo';
-
 import noAvatar from '../../assests/noAvatar.png';
 
 import './found-users.css';
 
-interface FoundUsersProps {
-  email: string
+type User = {
+  _id : string;
+  role : string;
+  email : string;
+  username : string;
+  userImg : string;
 }
 
-const FoundUsers: React.FC<FoundUsersProps> = ({ email }) => {
-  const {isError, error, isLoading, isSuccess, data} = useQuery(['searchByEmail', email], async () => {
-    const res = await axios.get(`http://localhost:8800/api/v1/user/search?email=${email}`, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
-    return res.data
-  }, {
-    enabled: email.length > 0
-  });
+interface FoundUsersProps {
+  users: User[],
+  addFunc : (index: number) => void,
+}
 
-  if (isLoading) {
-    return (
-      <div className='mt-2 bg-black rounded-md text-center'>
-        <LoadingComponent style='text' />
-      </div>
-    );
-  }
-
-  if (isError && (error instanceof AxiosError)) {
-    return (
-      <Tefo isError message={error.response?.data.msg} />
-    );
-  }
-
-  if(data) {
+const FoundUsers: React.FC<FoundUsersProps> = ({ users, addFunc }) => {
   return (
     <div className='mt-2 bg-black rounded-md overflow-y-auto h-72'>
-      {data.users.map((user: any) => (
-        <div key={user._id} className='flex items-center gap-5 border-b-1 border-inherit hover:bg-hover-bg w-full cursor-pointer p-4'>
+      {users.map((user: any, index: number) => (
+        <div key={user._id} onClick={() => addFunc(index)} className='flex items-center gap-5 border-b-1 border-inherit hover:bg-hover-bg w-full cursor-pointer p-4'>
           <img
            className='h-10 w-10 rounded-full object-cover' 
            src={noAvatar} 
@@ -60,10 +38,7 @@ const FoundUsers: React.FC<FoundUsersProps> = ({ email }) => {
         </div>
       ))}
     </div>
-  )
-  }
-
-  return <></>
+  );
 }
 
 export default FoundUsers;
