@@ -99,6 +99,16 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
     }
   });
 
+  const deleteGroupMutation = useMutation(async () => {
+    const res = await axios.delete(`http://localhost:8800/api/v1/group/${groupID}`, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('groups');
+      history('/groups');
+    }
+  });
+
   function handleUpdateGroupCredentials (type: string): void {
     switch (type) {
       case UpdateGroupTypes.OpenChangeImg:
@@ -326,7 +336,8 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
          color='white'
          bgColor='bg-gray-500'
          icon={<AiFillDelete />}
-         textSize='md' 
+         textSize='md'
+         customFunc={() => deleteGroupMutation.mutate()} 
         />
       </span> : null}
       {updateGroupCredentials ? (
