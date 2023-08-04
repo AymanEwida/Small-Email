@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
     searchUserByEmail,
+    searchForUserAndGroupByEmail,
     updateUsername,
     changePassword,
     getUserSavedDrafts,
@@ -14,6 +15,7 @@ const {
 } = require('../controllers/user');
 
 router.route('/search').get(searchUserByEmail);
+router.route('/search-for-users-and-groups').get(searchForUserAndGroupByEmail);
 router.route('/change/username').patch(updateUsername);
 router.route('/change/password').patch(changePassword);
 router.route('/saved-drafts').get(getUserSavedDrafts);

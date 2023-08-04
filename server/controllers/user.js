@@ -31,6 +31,42 @@ async function searchUserByEmail (req, res) {
     res.status(StatusCodes.OK).json({ users: findUser() });
 }
 
+async function searchForUserAndGroupByEmail (req, res) {
+    const {
+        query: { email }
+    } = req;
+
+    const searchedEmail = email.split('+').join(' ');
+
+    const users = await User.find({}).select('email username userImg role');
+    const groups = await Group.find({}).select('groupEmail groupName groupImg role');
+
+    function findUserAndGroup () {
+        let foundUsersAndGroups = [];
+
+        for (let i = 0; i < users.length; i++) {
+            const userEmail = users[i].email;
+
+            if (userEmail.toLocaleLowerCase().includes(searchedEmail.toLocaleLowerCase()) && searchedEmail.length > 0) {
+                foundUsersAndGroups.push(users[i]);
+            }
+        }
+
+        for (let j = 0; j < groups.length; j++) {
+            const groupEmail = groups[j].groupEmail;
+
+            if (groupEmail.toLocaleLowerCase().includes(searchedEmail.toLocaleLowerCase())) {
+                foundUsersAndGroups.push(groups[j]);
+            }
+        }
+
+        return foundUsersAndGroups;
+    }
+
+    res.status(StatusCodes.OK).json({ usersAndGroups: findUserAndGroup() });
+
+}
+
 async function updateUsername (req, res) {
     const {
         user: { userID },
@@ -284,6 +320,7 @@ async function deleteUser (req, res) {
 
 module.exports = { 
     searchUserByEmail,
+    searchForUserAndGroupByEmail,
     updateUsername,
     changePassword,
     getUserSavedDrafts,
