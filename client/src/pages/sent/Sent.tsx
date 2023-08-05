@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import axios, { AxiosError } from 'axios';
@@ -135,16 +137,17 @@ const Sent: React.FC = () => {
        handleDeleteEmails={handleDeleteSentEmails} 
       />
       {data.sentEmails.map((sentEmail: any, index: number) => (
-        <EmailComponent
-         key={sentEmail._id}
-         sendTo={sentEmail.to}
-         subject={sentEmail.emailSubject}
-         sendAt={new Date(sentEmail.createdAt).toDateString()}
-         content={sentEmail.emailContent}
-         handleDeleteEmail={() => mutation.mutate(sentEmail._id)}
-         isEmailChecked={statuses[index]}
-         handleEmailChecked={() => handleEmailsChecked(index)}
-        />
+        <Link key={sentEmail._id} to={`/sent/email?e_id=${sentEmail._id}`}>
+          <EmailComponent
+           sendTo={sentEmail.to}
+           subject={sentEmail.emailSubject}
+           sendAt={new Date(sentEmail.createdAt).toDateString()}
+           content={sentEmail.emailContent}
+           handleDeleteEmail={() => mutation.mutate(sentEmail._id)}
+           isEmailChecked={statuses[index]}
+           handleEmailChecked={() => handleEmailsChecked(index)}
+          />
+        </Link>
       ))}
     </div>
   )

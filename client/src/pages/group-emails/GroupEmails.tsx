@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import { useQuery } from 'react-query';
 
 import axios, { AxiosError } from 'axios';
@@ -139,32 +141,34 @@ const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupCategory, toggl
         {emails ? (
           <>
             {emails.map((email: any, index: number) => (
-              <EmailComponent
-               key={email._id}
-               sender={email.sender.username}
-               subject={email.emailSubject}
-               sendAt={new Date(email.createdAt).toDateString()}
-               content={email.emailContent}
-               handleDeleteEmail={() => fiterData([email._id])}
-               isEmailChecked={statuses[index]}
-               handleEmailChecked={() => handleEmailsChecked(index)}
-              />
+              <Link key={email._id} to={`/groups/email?e_id=${email._id}`}>
+                <EmailComponent
+                 sender={email.sender.username}
+                 subject={email.emailSubject}
+                 sendAt={new Date(email.createdAt).toDateString()}
+                 content={email.emailContent}
+                 handleDeleteEmail={() => fiterData([email._id])}
+                 isEmailChecked={statuses[index]}
+                 handleEmailChecked={() => handleEmailsChecked(index)}
+                />
+              </Link>
             ))}
           </>
         ) : 
         (
           <>
             {data.emails.map((email: any, index: number) => (
-              <EmailComponent
-               key={email._id}
-               sender={email.sender.username}
-               subject={email.emailSubject}
-               sendAt={new Date(email.createdAt).toDateString()}
-               content={email.emailContent}
-               handleDeleteEmail={() => fiterData([email._id])}
-               isEmailChecked={statuses[index]}
-               handleEmailChecked={() => handleEmailsChecked(index)}
-              /> 
+              <Link key={email._id} to={`/groups/email?e_id=${email._id}`}>
+                <EmailComponent
+                 sender={email.sender.username}
+                 subject={email.emailSubject}
+                 sendAt={new Date(email.createdAt).toDateString()}
+                 content={email.emailContent}
+                 handleDeleteEmail={() => fiterData([email._id])}
+                 isEmailChecked={statuses[index]}
+                 handleEmailChecked={() => handleEmailsChecked(index)}
+                />
+              </Link> 
             ))}
           </>
         )}

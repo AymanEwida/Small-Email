@@ -215,6 +215,32 @@ async function getSingleEmail (req, res) {
     const userSender = await User.findById(email.sender).select('username email userImg');
     email.sender = userSender
 
+    function getRecipients () {
+        return Promise.all(email.to.map((recipient) => {
+            if (recipient.role === "user") {
+                return User.findById(recipient.recipientID).select("email");
+            } else if (recipient.role === "group") {
+                return Group.findById(recipient.recipientID).select("groupEmail");
+            }
+        }));
+    }
+
+    async function setToArray () {
+        const recipients = await getRecipients();
+
+        let newToArray = []
+
+        for (let i = 0; i < email.to.length; i++) {
+            const recipient = email.to[i];
+            newToArray.push({...recipient._doc, user: {email: recipients[i].email || recipients[i].groupEmail}});
+        }
+
+        return newToArray;
+    }
+
+    const toArray = await setToArray();
+    email.to = toArray;
+
     res.status(StatusCodes.OK).json({ email });
 }
 

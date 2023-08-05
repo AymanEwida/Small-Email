@@ -6,7 +6,7 @@ import { BsArrowLeft } from 'react-icons/bs';
 import { MdDelete } from 'react-icons/md';
 import { BiCommentEdit } from 'react-icons/bi';
 
-import { Optional } from '../../types/types';
+import { Optional, Void } from '../../types/types';
 
 import Icon from '../icon/Icon';
 
@@ -14,9 +14,10 @@ import './email-navbar.css';
 
 interface EmailNavbarProps {
   category : Optional<string>,
+  deleteEmailFunc ?: Void,
 }
 
-const EmailNavbar: React.FC<EmailNavbarProps> = ({ category }) => {
+const EmailNavbar: React.FC<EmailNavbarProps> = ({ category, deleteEmailFunc }) => {
   return (
     <div className='sticky bg-secondary-dark-bg top-0 w-full py-2 px-8'>
       <h2 className='text-center text-gray-400 font-bold color-border border-b-1 pb-3 w-full'>
@@ -42,7 +43,8 @@ const EmailNavbar: React.FC<EmailNavbarProps> = ({ category }) => {
                color='white'
                icon={<MdDelete />}
                textSize='md'
-               bgColor='bg-gray-400' 
+               bgColor='bg-gray-400'
+               customFunc={deleteEmailFunc} 
               />
             </span>
             <Icon
@@ -54,16 +56,7 @@ const EmailNavbar: React.FC<EmailNavbarProps> = ({ category }) => {
              bgColor='bg-gray-400' 
             />
           </div>
-        ) : (
-        <Icon
-         title='Delete Email' 
-         iconPosition='bottom'
-         color='white'
-         icon={<MdDelete />}
-         textSize='md'
-         bgColor='bg-gray-400' 
-        />
-        )}
+        ) : null}
       </div>
     </div>
   )

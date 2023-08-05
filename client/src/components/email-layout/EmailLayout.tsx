@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Cookies from 'js-cookie';
+
 import parse from 'html-react-parser';
 
 import noAvatar from '../../assests/noAvatar.png';
@@ -29,12 +31,18 @@ const EmailLayout: React.FC<EmailLayoutProps> = ({ subject, sender, recipients, 
          src={sender.userImg ? sender.userImg : noAvatar} 
          alt="profile image" 
         />
-        <p className='text-md font-bold'>
-          {sender.username}
-          <span className='font-semibold text-gray-400'>
-            {'<'}{sender.email}{'>'}
-          </span>
-        </p>
+        {Cookies.get('username') === sender.username ? (
+          <p className='text-md font-bold'>
+            Me
+          </p>
+        ) : (
+          <p className='text-md font-bold'>
+            {sender.username}
+            <span className='font-semibold text-gray-400'>
+              {'<'}{sender.email}{'>'}
+            </span>
+          </p>
+        )}
       </div>
       <div className='mt-2'>
         <h2 className='text-gray-500'>
