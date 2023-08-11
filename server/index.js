@@ -9,6 +9,15 @@ const xss = require('xss-clean');
 const express = require('express');
 const app = express();
 
+const fileUpload = require('express-fileupload');
+// cloudinary
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
 // morgan
 const morgan = require('morgan');
 
@@ -24,7 +33,8 @@ const {
     emailRouter,
     userRouter,
     groupRouter,
-    conversationRouter
+    conversationRouter,
+    uploadRouter
 } = require('./routes');
 
 // error handler
@@ -33,6 +43,8 @@ const notFoundMiddlewarem = require('./middleware/not-found');
 
 //middleware
 app.use(express.json());
+app.use(express.urlencoded({extended: true})); 
+app.use(fileUpload({ useTempFiles: true }));
 app.use(helmet());
 app.use(cors());
 app.use(xss());
@@ -44,6 +56,7 @@ app.use('/api/v1/email', authenticatedUser, emailRouter);
 app.use('/api/v1/user', authenticatedUser, userRouter);
 app.use('/api/v1/group', authenticatedUser, groupRouter);
 app.use('/api/v1/conversation', authenticatedUser, conversationRouter);
+app.use('/api/v1/upload', authenticatedUser, uploadRouter);
 
 // errors middlerware
 app.use(errorHandlerMiddleware);
