@@ -4,11 +4,13 @@ const router = express.Router();
 const {
     uploadImage,
     uploadVideo,
-    uploadFile
+    uploadFile,
+    uploadTest
 } = require('../controllers/upload');
 
 router.route('/image').post(uploadImage);
 router.route('/video').post(uploadVideo);
 router.route('/file').post(uploadFile);
+router.route('/test').post(uploadTest);
 
 module.exports = router;

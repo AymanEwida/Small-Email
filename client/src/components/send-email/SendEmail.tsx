@@ -10,6 +10,7 @@ import { ImTextColor } from 'react-icons/im';
 import Icon from '../icon/Icon';
 import Button from '../button/Button';
 import Input from '../input/Input';
+import TooltipComponent from '../tooltip-component/TooltipComponent';
 
 import { 
   FormEvent,
@@ -32,6 +33,8 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
   const [toss, setToss] = useState('');
   const [fullScreen, setFullScreen] = useState(false);
   const [isDesignOptions, setIsDesignOptions] = useState(false);
+  const [images, setImages] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
 
   const emailContent = useRef<HTMLDivElement>(null);
 
@@ -41,6 +44,60 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
 
   function toggleDesignOptions (): void {
     setIsDesignOptions(prevIsDesignOptions => !prevIsDesignOptions);
+  }
+
+  function handleAddImages (event: Event<InputElement>): void {
+    if (event.target.files && event.target.files.length > 0) {
+      const addedImages = Array.from(event.target.files);
+
+      setImages(prevImages => (
+        [
+          ...prevImages,
+          addedImages
+        ].flat()
+      ));
+    }
+  }
+
+  function handleDeleteImage (index: number): void {
+    let newImages: File[] = [];
+
+    if (images) {
+      for (let i = 0; i < images?.length; i++) {
+        if (i !== index) {
+          newImages.push(images[i]);
+        }
+      }
+    }
+
+    setImages(newImages);
+  }
+
+  function handleAddFiles (event: Event<InputElement>): void {
+    if (event.target.files && event.target.files.length > 0) {
+      const addedFiles = Array.from(event.target.files);
+
+      setFiles(prevFiles => (
+        [
+          ...prevFiles,
+          addedFiles
+        ].flat()
+      ));
+    }
+  }
+
+  function handleDeleteFile (index: number): void {
+    let newFiles: File[] = [];
+
+    if (files) {
+      for (let i = 0; i < files?.length; i++) {
+        if (i !== index) {
+          newFiles.push(files[i]);
+        }
+      }
+    }
+
+    setFiles(newFiles);
   }
 
   return (
@@ -106,23 +163,39 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
            ref={emailContent}
           >
             <br />
+            {images ? (
+              <>
+                {images.map((image, index) => (
+                  <img
+                   src={URL.createObjectURL(image)} 
+                   alt="content-image"
+                   className='w-full h-fit my-3 object-cover mx-4' 
+                  />
+                ))}
+              </>
+            ) : null}
           </div>
         </div>
-        {/* <div className='px-3 py-2 flex flex-row gap-3 overflow-x-auto'>
-          <div className='flex items-center pr-2 rounded-full bg-blue-500'>
-            <Icon
-             title='Delete'
-             textSize='2xl'
-             iconPosition='left'
-             icon={<TiDelete />}
-             color='white'
-             bgColor='bg-transparent' 
-            />
-            <p className='text-gray-200'>
-              index.pptx
-            </p>
+        {files.length > 0 ? (
+          <div className='px-3 py-2 flex flex-row gap-3 overflow-x-auto'>
+            {files.map((file, index) => (
+              <div key={index} className='flex items-center pr-2 rounded-full bg-blue-500'>
+                <Icon
+                 title='Delete'
+                 textSize='2xl'
+                 iconPosition='left'
+                 icon={<TiDelete />}
+                 color='white'
+                 bgColor='bg-transparent'
+                 customFunc={() => handleDeleteFile(index)} 
+                />
+                <a href={URL.createObjectURL(file)} className='text-gray-200'>
+                  {file.name}
+                </a>
+              </div>
+            ))}
           </div>
-        </div> */}
+        ) : null}
         <div className='flex justify-between items-center px-4 py-2'>
           <Button
           type='submit'
@@ -133,7 +206,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
           paddingSize='2'
           color='white' 
           />
-          <div className='flex items-center'>
+          <div className='flex items-center gap-2'>
             <div className='relative'>
               <Icon
                title='Design Options'
@@ -175,13 +248,25 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
                 </div>
               ) : null}
             </div>
-            <Icon
-             title='Add Image'
-             iconPosition='top'
-             color='white'
-             textSize='md'
-             bgColor='bg-gray-400'
-             icon={<BiImageAdd />}
+            <TooltipComponent
+             message='Add Image'
+             direction='top'
+            >
+              <label 
+              htmlFor="addImg"
+              className='cursor-pointer'
+              >
+                <BiImageAdd />
+              </label>
+            </TooltipComponent>
+            <input 
+             type="file"
+             accept='image/*'
+             className='hidden'
+             multiple
+             id='addImg'
+             name='images'
+             onChange={handleAddImages} 
             />
             <Icon
              title='Add Link'
@@ -191,13 +276,25 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
              bgColor='bg-gray-400'
              icon={<FiLink2 />}
             />
-            <Icon
-             title='Add File'
-             iconPosition='top'
-             color='white'
-             textSize='md'
-             bgColor='bg-gray-400'
-             icon={<MdOutlineAttachFile />}
+            <TooltipComponent
+             message='Add File'
+             direction='top'
+            >
+              <label 
+              htmlFor="addFile"
+              className='cursor-pointer'
+              >
+                <MdOutlineAttachFile />
+              </label>
+            </TooltipComponent>
+            <input 
+             type="file"
+             accept='*'
+             className='hidden'
+             multiple
+             name="files"
+             id='addFile'
+             onChange={handleAddFiles} 
             />
           </div>
           <Icon

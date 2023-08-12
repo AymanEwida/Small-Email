@@ -58,7 +58,7 @@ async function register (req, res) {
 
     const user = await User.create({ ...req.body });
     const token = user.createJWT();
-    res.status(StatusCodes.CREATED).json({ user: { username: user.username }, token });
+    res.status(StatusCodes.CREATED).json({ user: { username: user.username, userImg: user.userImg }, token });
 }
 
 //login
@@ -81,7 +81,7 @@ async function login (req, res) {
     }
 
     const token = user.createJWT();
-    res.status(StatusCodes.OK).json({ user: { username: user.username }, token });
+    res.status(StatusCodes.OK).json({ user: { username: user.username, userImg: user.userImg }, token });
 }
 
 

@@ -65,8 +65,15 @@ async function uploadFile (req, res) {
     res.status(StatusCodes.OK).json({ file: { src: result.secure_url, filename: file.name } });
 }
 
+async function uploadTest (req, res) {
+    console.log("files", req.files);
+
+    res.status(StatusCodes.OK).json({ msg: "Hello" });
+}
+
 module.exports = {
     uploadImage,
     uploadVideo,
-    uploadFile
+    uploadFile,
+    uploadTest
 }
