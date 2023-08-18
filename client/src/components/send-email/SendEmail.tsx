@@ -28,11 +28,25 @@ interface SendEmailProps {
 
 const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
 
-  const [to, setTo] = useState('');
-  const [tos, setTos] = useState('');
-  const [toss, setToss] = useState('');
+  const [emailInputs, setEmailInputs] = useState({
+    recipient: '',
+    subject: ''
+  });
   const [fullScreen, setFullScreen] = useState(false);
   const [isDesignOptions, setIsDesignOptions] = useState(false);
+  const [isDesignOptionsActive, setIsDesignOptionsActive] = useState({
+    underLine: false,
+    italic: false,
+    bold: false
+  });
+  const [designedText, setDesignedText] = useState('');
+  const [designOptions, setDesignOptions] = useState<{underLine: boolean, italic: boolean, bold: boolean, text: string}[]>([]);
+  const [isAddLink, setIsAddLinke] = useState(false);
+  const [addLinks, setAddLinks] = useState<{url: string, text: string}[]>([]);
+  const [linkInputs, setLinkInputs] = useState({
+    href: '',
+    text: ''
+  });
   const [images, setImages] = useState<File[]>([]);
   const [files, setFiles] = useState<File[]>([]);
 
@@ -40,6 +54,15 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
 
   function handleFullScreen (): void {
     setFullScreen(prevFullScreen => !prevFullScreen);
+  }
+
+  function handleEmailInputs (event: Event<InputElement>): void {
+    setEmailInputs(prevEmailInputs => (
+      {
+        ...prevEmailInputs,
+        [event.target.name]: event.target.value
+      }
+    ));
   }
 
   function toggleDesignOptions (): void {
@@ -50,12 +73,10 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     if (event.target.files && event.target.files.length > 0) {
       const addedImages = Array.from(event.target.files);
 
-      setImages(prevImages => (
-        [
-          ...prevImages,
-          addedImages
-        ].flat()
-      ));
+      setImages(prevImages => {
+        prevImages.push(...addedImages)
+        return prevImages.flat()
+      });
     }
   }
 
@@ -77,12 +98,10 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     if (event.target.files && event.target.files.length > 0) {
       const addedFiles = Array.from(event.target.files);
 
-      setFiles(prevFiles => (
-        [
-          ...prevFiles,
-          addedFiles
-        ].flat()
-      ));
+      setFiles(prevFiles => {
+        prevFiles.push(...addedFiles)
+        return prevFiles.flat()
+      });
     }
   }
 
@@ -99,6 +118,17 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
 
     setFiles(newFiles);
   }
+
+  function handleLinkInputs (event: Event<InputElement>): void {
+    setLinkInputs(prevLinkInputs => (
+      {
+        ...prevLinkInputs,
+        [event.target.name]: event.target.value
+      }
+    ))
+  }
+
+  console.log({ content: emailContent.current, isDesignOptionsActive });
 
   return (
     <div className='flex justify-center items-center'>
@@ -139,19 +169,21 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
           type='text'
           id='recipients'
           label='Recipients'
-          value={to}
-          customFunc={(event: Event<InputElement>) => setTo(event.target.value)} 
+          value={emailInputs.recipient}
+          name='recipient'
+          customFunc={handleEmailInputs} 
           />
           <Input
           type='text'
           id='subject'
           label='Subject'
-          value={toss}
-          customFunc={(event: Event<InputElement>) => setToss(event.target.value)} 
+          value={emailInputs.subject}
+          name='subject'
+          customFunc={handleEmailInputs} 
           />
           <div 
            style={{ minHeight: '196px', maxHeight: '288px', resize: 'none' }} 
-           className='h-72 outline-none focus:border-none px-1 overflow-y-auto w-full' 
+           className='h-72 outline-none focus:border-none px-1 overflow-y-auto w-full'
            role='textbox' 
            aria-multiline="true" 
            tabIndex={1} 
@@ -161,18 +193,32 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
            aria-owns=':tp' 
            spellCheck='false'
            ref={emailContent}
+           onChange={() => console.log('I am here!')}
           >
             <br />
             {images ? (
-              <>
+              <React.Fragment>
                 {images.map((image, index) => (
-                  <img
-                   src={URL.createObjectURL(image)} 
-                   alt="content-image"
-                   className='w-full h-fit my-3 object-cover mx-4' 
-                  />
+                  <div key={index} className='relative'>
+                    <img src={URL.createObjectURL(image)} alt="content-image" className='w-3/4 h-fit my-3 object-cover' />
+                    <span className='absolute top-1 left-1 cursor-pointer text-black' onClick={() => handleDeleteImage(index)}>X</span>
+                  </div>
                 ))}
-              </>
+              </React.Fragment>
+            ) : null}
+            {addLinks ? (
+              <React.Fragment>
+                {addLinks.map((link, index) => (
+                  <a key={index} href={link.url} className='text-blue-400 underline cursor-pointer'>{link.text}</a>
+                ))}
+              </React.Fragment>
+            ) : null}
+            {designOptions ? (
+              <React.Fragment>
+                {designOptions.map((text, index) => (
+                  <p key={index} className={`${text.underLine ? 'underline' : ''} ${text.italic ? 'italic' : ''} ${text.bold ? 'font-body' : ''}`}>{text.text}</p>
+                ))}
+              </React.Fragment>
             ) : null}
           </div>
         </div>
@@ -218,31 +264,96 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
                customFunc={toggleDesignOptions}
               />
               {isDesignOptions ? (
-                <div className='absolute -top-12 rounded-sm drop-shadow-xl -translate-x-1/4 bg-gray-500'>
-                  <div className='flex items-center gap-2'>
-                    <Icon
-                    title='Uunderline'
-                    iconPosition='top'
-                    color='white'
-                    textSize='md'
-                    bgColor='bg-gray-400'
-                    icon={<AiOutlineUnderline />}
-                    />
-                    <Icon
-                    title='Italic'
-                    iconPosition='top'
-                    color='white'
-                    textSize='md'
-                    bgColor='bg-gray-400'
-                    icon={<AiOutlineItalic />}
-                    />
-                    <Icon
-                    title='Bold'
-                    iconPosition='top'
-                    color='white'
-                    textSize='md'
-                    bgColor='bg-gray-400'
-                    icon={<AiOutlineBold />}
+                <div className='absolute -top-96 p-4 w-60 rounded-sm drop-shadow-xl -translate-x-1/4 bg-gray-500'>
+                  <div className='flex items-center justify-center gap-2'>
+                    <span className={isDesignOptionsActive.underLine ? 'bg-gray-400' : ''}>
+                      <Icon
+                      title='Underline'
+                      iconPosition='top'
+                      color='white'
+                      textSize='md'
+                      bgColor='bg-gray-400'
+                      icon={<AiOutlineUnderline />}
+                      customFunc={() => setIsDesignOptionsActive(previsDesignOptionsActive => (
+                        {
+                          ...previsDesignOptionsActive,
+                          underLine: !previsDesignOptionsActive.underLine
+                        }
+                      ))}
+                      />
+                    </span>
+                    <span className={isDesignOptionsActive.italic ? 'bg-gray-400' : ''}>
+                      <Icon
+                      title='Italic'
+                      iconPosition='top'
+                      color='white'
+                      textSize='md'
+                      bgColor='bg-gray-400'
+                      icon={<AiOutlineItalic />}
+                      customFunc={() => setIsDesignOptionsActive(previsDesignOptionsActive => (
+                        {
+                          ...previsDesignOptionsActive,
+                          italic: !previsDesignOptionsActive.italic
+                        }
+                      ))}
+                      />
+                    </span>
+                    <span className={isDesignOptionsActive.bold ? 'bg-gray-400' : ''}>
+                      <Icon
+                      title='Bold'
+                      iconPosition='top'
+                      color='white'
+                      textSize='md'
+                      bgColor='bg-gray-400'
+                      icon={<AiOutlineBold />}
+                      customFunc={() => setIsDesignOptionsActive(previsDesignOptionsActive => (
+                        {
+                          ...previsDesignOptionsActive,
+                          bold: !previsDesignOptionsActive.bold
+                        }
+                      ))}
+                      />
+                    </span>
+                  </div>
+                  <Input
+                   id='desingedText'
+                   type='text'
+                   label='Your Text'
+                   isRequired
+                   value={designedText}
+                   customFunc={(event: Event<InputElement>) => {
+                    setDesignedText(event.target.value)
+                   }} 
+                  />
+                  <div className='mt-2'>
+                    <Button
+                     type='button'
+                     textSize='md'
+                     text='Add Link'
+                     borderRadius='10px'
+                     bgColor='rgb(96 165 250)'
+                     paddingSize='2'
+                     color='white'
+                     customFunc={() => {
+                      if (designedText) {
+                        setDesignOptions(prevDesignOptions => (
+                          [
+                            ...prevDesignOptions,
+                            {
+                              ...isDesignOptionsActive,
+                              text: designedText
+                            }
+                          ]
+                        ))
+                      }
+                      setIsDesignOptions(false)
+                      setIsDesignOptionsActive({
+                        underLine: false,
+                        italic: false,
+                        bold: false
+                      })
+                      setDesignedText('')
+                     }}
                     />
                   </div>
                 </div>
@@ -275,7 +386,54 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
              textSize='md'
              bgColor='bg-gray-400'
              icon={<FiLink2 />}
+             customFunc={() => setIsAddLinke(prevIsAddLinke => !prevIsAddLinke)}
             />
+            {isAddLink ? (
+              <div className='flex flex-col items-start rounded-sm gap-2 -translate-x-1/4 absolute top-1/2 bg-gray-500 p-2'>
+                <Input
+                 id='href'
+                 type='url'
+                 label='Destination URL'
+                 isRequired
+                 name='href'
+                 value={linkInputs.href}
+                 customFunc={handleLinkInputs}
+                />
+                <Input
+                 id='text'
+                 type='text'
+                 label='Your Text'
+                 isRequired
+                 name='text'
+                 value={linkInputs.text}
+                 customFunc={handleLinkInputs}
+                />
+                <Button
+                 type='button'
+                 textSize='md'
+                 text='Add Link'
+                 borderRadius='10px'
+                 bgColor='rgb(96 165 250)'
+                 paddingSize='2'
+                 color='white'
+                 customFunc={() => {
+                  setIsAddLinke(false)
+                  if (( linkInputs.href.startsWith('http://') || linkInputs.href.startsWith('https://') ) && linkInputs.text.length > 0) {
+                    setAddLinks(prevAddLinks => (
+                      [
+                        ...prevAddLinks,
+                        {url: linkInputs.href, text: linkInputs.text}
+                      ]
+                    ))
+                  }
+                  setLinkInputs({
+                    href: '',
+                    text: ''
+                  })
+                 }}  
+                />
+              </div>
+            ) : null}
             <TooltipComponent
              message='Add File'
              direction='top'
