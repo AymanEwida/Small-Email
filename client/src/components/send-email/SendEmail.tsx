@@ -1,5 +1,11 @@
 import React, { useState, useRef } from 'react';
 
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+
+import axios, { AxiosError } from 'axios';
+
+import Cookies from 'js-cookie';
+
 import { AiOutlineFullscreen, AiFillDelete, AiOutlineFullscreenExit, AiOutlineDeliveredProcedure, AiOutlineUnderline, AiOutlineItalic, AiOutlineBold } from 'react-icons/ai';
 import { TiDelete } from 'react-icons/ti';
 import { BiImageAdd } from 'react-icons/bi';
@@ -11,13 +17,17 @@ import Icon from '../icon/Icon';
 import Button from '../button/Button';
 import Input from '../input/Input';
 import TooltipComponent from '../tooltip-component/TooltipComponent';
+import FoundUsers from '../found-users/FoundUsers';
+import LoadingComponent from '../loading-component/LoadingComponent';
+import Tefo from '../tefo/Tefo';
 
 import { 
   FormEvent,
   Void,
   Event,
   InputElement,
-  TextAreaElement
+  User,
+  Group
 } from '../../types/types';
 
 import './send-email.css';
@@ -28,10 +38,13 @@ interface SendEmailProps {
 
 const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
 
+  const queryClient = useQueryClient();
+
   const [emailInputs, setEmailInputs] = useState({
     recipient: '',
     subject: ''
   });
+  const [recipients, setRecipients] = useState<string[]>([]);
   const [fullScreen, setFullScreen] = useState(false);
   const [isDesignOptions, setIsDesignOptions] = useState(false);
   const [isDesignOptionsActive, setIsDesignOptionsActive] = useState({
@@ -49,8 +62,51 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
   });
   const [images, setImages] = useState<File[]>([]);
   const [files, setFiles] = useState<File[]>([]);
+  const [imgs, setImgs] = useState<{url: string}[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<{filename: string, filePath: string}[]>([]);
 
   const emailContent = useRef<HTMLDivElement>(null);
+
+  const {isError, error, isLoading, data} = useQuery(['searchForUsersAndGroupsByEmail', emailInputs.recipient], async () => {
+    const res = await axios.get(`http://localhost:8800/api/v1/user/search-for-users-and-groups?email=${emailInputs.recipient}`, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data
+  }, {
+    enabled: emailInputs.recipient.length > 0
+  });
+
+  const uploadImageMutation = useMutation(async (imageFormData: FormData) => {
+    const res = await axios.post('http://localhost:8800/api/v1/upload/image', imageFormData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: (data) => {
+      setImgs(prevImgs => {
+        prevImgs.push({url: data.image.src});
+        return prevImgs;
+      });
+    }
+  });
+
+  const uploadFileMutation = useMutation(async (fileFormData: FormData) => {
+    const res = await axios.post('http://localhost:8800/api/v1/upload/file', fileFormData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: (data) => {
+      setUploadedFiles(prevUploadedFiles => {
+        prevUploadedFiles.push({filename: data.file.filename, filePath: data.file.src})
+        return prevUploadedFiles;
+      });
+    }
+  });
+
+  const sendEmailMutation = useMutation(async (sendEmailFormData: {to: string[], emailContent: string | undefined, emailSubject: string, imgs: {url: string}[], files: {filename: string, filePath: string}[]}) => {
+    const res = await axios.post('http://localhost:8800/api/v1/email/send-email', sendEmailFormData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('sentEmails');
+      closeSendEmail();
+    }
+  });
 
   function handleFullScreen (): void {
     setFullScreen(prevFullScreen => !prevFullScreen);
@@ -128,18 +184,84 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     ))
   }
 
-  console.log({ content: emailContent.current, isDesignOptionsActive });
+  function getFoundUsersData (data: (User & Group)[]): User[] {
+    let newFoundUsers: User[] = []
+    
+    for (const user of data) {
+      if (user.role === 'user') {
+        newFoundUsers.push(user)
+      } else if (user.role === 'group') {
+        newFoundUsers.push({
+          _id: user._id,
+          role: user.role,
+          email: user.groupEmail,
+          username: user.groupName,
+          userImg: user.groupImg
+        });
+      }
+    }
+
+    return newFoundUsers
+  }
+
+  function addRecipient (index: number): void {
+    setRecipients(prevRecipients => (
+      [...prevRecipients, data.usersAndGroups[index].email || data.usersAndGroups[index].groupEmail]
+    ));
+    setEmailInputs(prevEmailInputs => (
+      {
+        ...prevEmailInputs,
+        recipient: '',
+      }
+    ));
+  }
+
+  function deleteRecipient (index: number): void {
+    let newRecipients: string[] = [];
+
+    for (let i = 0; i < recipients.length; i++) {
+      if (i !== index) {
+        newRecipients.push(recipients[i]);
+      }
+    }
+
+    setRecipients(newRecipients);
+  }
+
+  function handleSendEmail (event: FormEvent): void {
+    event.preventDefault();
+
+    const uploadData = new FormData();
+
+    for (const image of images) {
+      uploadData.append("image", image);
+      uploadImageMutation.mutate(uploadData);
+      uploadData.delete("image");
+    }
+
+    for (const file in files) {
+      uploadData.append("file", file);
+      uploadFileMutation.mutate(uploadData);
+      uploadData.delete("file");
+    }
+
+    sendEmailMutation.mutate({
+      to: recipients,
+      emailContent: "<div>" + emailContent.current?.innerHTML + "</div>",
+      emailSubject: emailInputs.subject,
+      files: uploadedFiles,
+      imgs
+    });
+  }
+
+  //console.log({ content: emailContent.current, isDesignOptionsActive });
 
   return (
     <div className='flex justify-center items-center'>
       <div className={`absolute ${fullScreen ? 'top-24' : 'bottom-2 right-2'} z-index`}>
         <form
           className={`w-400 ${fullScreen ? 'w-500 lg:w-800' : ''} bg-black rounded-md overflow-hidden`}
-          onSubmit={(event: FormEvent) => {
-            event.preventDefault();
-
-            console.log('I submited wow!');
-          }}
+          onSubmit={handleSendEmail}
         >
         <div className='flex justify-between items-center w-full bg-gray-700 px-10 py-1'>
           <p className='font-semibold'>
@@ -165,14 +287,44 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
           </div>
         </div>
         <div className='flex flex-col gap-3 p-3'>
-          <Input
-          type='text'
-          id='recipients'
-          label='Recipients'
-          value={emailInputs.recipient}
-          name='recipient'
-          customFunc={handleEmailInputs} 
-          />
+          <div className='relative'>
+            <Input
+            type='text'
+            id='recipients'
+            label='Recipients'
+            value={emailInputs.recipient}
+            name='recipient'
+            customFunc={handleEmailInputs} 
+            />
+            {isLoading ? <div className='mt-2 bg-main-dark-bg text-center rounded-md p-2 absolute w-full z-50 -bottom-12'>
+              <LoadingComponent style='text' />
+            </div> : null}
+            {isError && (error instanceof AxiosError) ? (
+              <Tefo isError={true} message={error.response?.data.msg} />
+            ) : null}
+            {data ? <div className='absolute -bottom-63 z-50'><FoundUsers users={getFoundUsersData(data.usersAndGroups)} addFunc={addRecipient} /></div> : null}
+          </div>
+          {recipients.length > 0 ? <div className='flex flex-row items-center gap-3 flex-wrap mt-3'>
+            {recipients.map((recipientsEmail, index) => (
+              <div key={index} className='py-1 px-3 rounded-full bg-blue-400 flex items-center gap-4'>
+                <TooltipComponent
+                 message='Delete'
+                 direction='top'
+                >
+                  <button 
+                  type='button' 
+                  className='text-gray-200 cursor-pointer'
+                  onClick={() => deleteRecipient(index)}
+                  >
+                    X
+                  </button>
+                </TooltipComponent>
+                <p className='font-bold text-gray-300'>
+                  {recipientsEmail}
+                </p>
+              </div>
+            ))}
+          </div> : null}
           <Input
           type='text'
           id='subject'

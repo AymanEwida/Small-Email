@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import Cookies from 'js-cookie';
 
@@ -19,7 +19,7 @@ interface EmailLayoutProps {
   content : string,
 }
 
-const EmailLayout: React.FC<EmailLayoutProps> = ({ subject, sender, recipients, content }) => {
+const EmailLayout: React.FC<EmailLayoutProps> = ({ subject, sender, recipients, content }) => {  
   return (
     <div className='py-3'>
       <h1 className='font-bold text-2xl'>

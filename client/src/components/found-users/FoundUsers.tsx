@@ -2,15 +2,9 @@ import React from 'react';
 
 import noAvatar from '../../assests/noAvatar.png';
 
-import './found-users.css';
+import { User } from '../../types/types';
 
-type User = {
-  _id : string;
-  role : string;
-  email : string;
-  username : string;
-  userImg : string;
-}
+import './found-users.css';
 
 interface FoundUsersProps {
   users: User[],

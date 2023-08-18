@@ -9,6 +9,22 @@ export type Event<T> =  React.ChangeEvent<T>;
 export type InputElement = HTMLInputElement;
 export type TextAreaElement = HTMLTextAreaElement;
 
+export type User = {
+  _id : string;
+  role : string;
+  email : string;
+  username : string;
+  userImg : string;
+}
+
+export type Group = {
+  _id : string;
+  role : string;
+  groupEmail : string;
+  groupName : string;
+  groupImg : string;
+}
+
 export type ActionMap<T extends { [index: string]: any }> = {
     [Key in keyof T]: T[Key] extends undefined
       ? {

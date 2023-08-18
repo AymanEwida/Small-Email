@@ -5,12 +5,14 @@ const {
     uploadImage,
     uploadVideo,
     uploadFile,
-    uploadTest
+    uploadImages,
+    uploadFiles
 } = require('../controllers/upload');
 
 router.route('/image').post(uploadImage);
+router.route('/images').post(uploadImages);
 router.route('/video').post(uploadVideo);
 router.route('/file').post(uploadFile);
-router.route('/test').post(uploadTest);
+router.route('/files').post(uploadImages);
 
 module.exports = router;

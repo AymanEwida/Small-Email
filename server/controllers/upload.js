@@ -48,7 +48,7 @@ async function uploadVideo (req, res) {
 
 async function uploadFile (req, res) {
     if (!req.files) {
-        throw new BadRequestError('No image uploaded.');
+        throw new BadRequestError('No file uploaded.');
     }
 
     const file = req.files.file;
@@ -65,15 +65,64 @@ async function uploadFile (req, res) {
     res.status(StatusCodes.OK).json({ file: { src: result.secure_url, filename: file.name } });
 }
 
-async function uploadTest (req, res) {
-    console.log("files", req.files);
+async function uploadImages (req, res) {
+    if (!req.files) {
+        throw new BadRequestError('No image uploaded.');
+    }
 
-    res.status(StatusCodes.OK).json({ msg: "Hello" });
+    const images = req.files.images;
+
+    let urls = []
+
+    for (const image of images) {
+        if (!image.mimetype.startsWith('image')) {
+            throw new BadRequestError('Please upload an image.');
+        } else {
+            const result = await cloudinary.uploader.upload(
+                image.tempFilePath,
+                {
+                    use_filename: true,
+                    folder: 'Small-Email',
+                    resource_type: 'image'
+                }
+            );
+
+            urls.push({url: result.secure_url});
+        }
+    }
+
+    res.status(StatusCodes.OK).json({ imgs: urls });
+}
+
+async function uploadFiles (req, res) {
+    if (!req.files) {
+        throw new BadRequestError('No image uploaded.');
+    }
+
+    const files = req.files.uploadedfiles;
+
+    let uploadedFiles = []
+
+    for (const file in files) {
+        const result = await cloudinary.uploader.upload(
+            file.tempFilePath,
+            {
+              use_filename: true,
+              folder: 'Small-Email',
+              resource_type: 'raw'
+            }
+        );
+
+        uploadedFiles.push({filename: file.name, filePath: result.secure_url});
+    }
+
+    res.status(StatusCodes.OK).json({ files: uploadedFiles });
 }
 
 module.exports = {
     uploadImage,
     uploadVideo,
     uploadFile,
-    uploadTest
+    uploadImages,
+    uploadFiles
 }
