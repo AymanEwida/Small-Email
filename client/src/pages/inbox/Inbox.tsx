@@ -149,34 +149,36 @@ const Inbox: React.FC = () => {
       {emails ? (
         <>
           {emails.map((email: any, index: number) => (
-            <Link key={email._id} to={`/inbox/email?e_id=${email._id}`}>
-              <EmailComponent
-               sender={email.sender.username}
-               subject={email.emailSubject}
-               sendAt={new Date(email.createdAt).toDateString()}
-               content={email.emailContent}
-               handleDeleteEmail={() => fiterData([email._id])}
-               isEmailChecked={statuses[index]}
-               handleEmailChecked={() => handleEmailsChecked(index)}
-              />
-            </Link>
+            <EmailComponent
+            key={email._id}
+            sender={email.sender.username}
+            subject={email.emailSubject}
+            sendAt={new Date(email.createdAt).toDateString()}
+            content={email.emailContent}
+            emailID={email._id}
+            category='inbox'
+            handleDeleteEmail={() => fiterData([email._id])}
+            isEmailChecked={statuses[index]}
+            handleEmailChecked={() => handleEmailsChecked(index)}
+            />
           ))}
         </>
       ) : 
       (
         <>
           {data.emails.map((email: any, index: number) => (
-            <Link key={email._id} to={`/inbox/email?e_id=${email._id}`}>
-              <EmailComponent
-               sender={email.sender.username}
-               subject={email.emailSubject}
-               sendAt={new Date(email.createdAt).toDateString()}
-               content={email.emailContent}
-               handleDeleteEmail={() => fiterData([email._id])}
-               isEmailChecked={statuses[index]}
-               handleEmailChecked={() => handleEmailsChecked(index)}
-              />
-            </Link> 
+            <EmailComponent
+            key={email._id}
+            sender={email.sender.username}
+            subject={email.emailSubject}
+            sendAt={new Date(email.createdAt).toDateString()}
+            content={email.emailContent}
+            emailID={email._id}
+            category='inbox'
+            handleDeleteEmail={() => fiterData([email._id])}
+            isEmailChecked={statuses[index]}
+            handleEmailChecked={() => handleEmailsChecked(index)}
+            />
           ))}
         </>
       )}

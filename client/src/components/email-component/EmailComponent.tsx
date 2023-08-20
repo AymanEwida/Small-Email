@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import Cookies from 'js-cookie';
 
 import { AiFillDelete } from 'react-icons/ai';
@@ -16,12 +18,14 @@ interface EmailComponentProps {
   subject : string,
   sendAt : string,
   content : string,
+  emailID ?: string,
+  category ?: string
   handleDeleteEmail ?: Void;
   isEmailChecked ?: boolean,
   handleEmailChecked ?: Void,
 }
 
-const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject, sendAt, content, handleDeleteEmail, isEmailChecked, handleEmailChecked }) => {
+const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject, sendAt, content, emailID, category, handleDeleteEmail, isEmailChecked, handleEmailChecked }) => {
 
   let timeout: NodeJS.Timeout;
 
@@ -47,10 +51,10 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject
       <div className='flex justify-between items-center pb-1 border-b-1 w-full border-inherit px-7'>
         <div className='flex items-center gap-3'>
           <input 
-           type="checkbox"
-           className=' cursor-pointer text-md'
-           checked={isEmailChecked}
-           onChange={handleEmailChecked} 
+          type="checkbox"
+          className=' cursor-pointer text-md'
+          checked={isEmailChecked}
+          onChange={handleEmailChecked} 
           />
           {sender ? (
             <h2 className='font-bold text-green-400 w-20'>
@@ -67,9 +71,11 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject
             </div>
           ) : null}
         </div>
-        <p className='text-gray-300 text-clip w-96 overflow-hidden ml-2'>
-          {subject}
-        </p>
+        <Link to={`/${category}/email?e_id=${emailID}`}>
+          <p className='text-gray-300 text-clip w-96 overflow-hidden ml-2'>
+            {subject}
+          </p>
+        </Link>
         {!isShow ? (
           <p className='text-sm text-gray-400 ml-3 whitespace-nowrap'>
             {sendAt}
@@ -88,9 +94,11 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject
           </span>
         ): null}
       </div>
-      <p className='overflow-hidden text-ellipsis whitespace-nowrap w-96 text-gray-200'>
-        {content}
-      </p>
+      <Link to={`/${category}/email?e_id=${emailID}`}>
+        <p className='overflow-hidden text-ellipsis whitespace-nowrap w-96 text-gray-200'>
+          {content}
+        </p>
+      </Link>
     </div>
   )
 }
