@@ -81,6 +81,7 @@ const Email: React.FC = () => {
     <>
       <EmailNavbar
        category={emailCategory}
+       groupID={queryStrings.g_id}
        deleteEmailFunc={() => mutation.mutate(data.email._id)} 
       />
       <div className='px-4 mb-4'>

@@ -137,17 +137,18 @@ const Sent: React.FC = () => {
        handleDeleteEmails={handleDeleteSentEmails} 
       />
       {data.sentEmails.map((sentEmail: any, index: number) => (
-        <Link key={sentEmail._id} to={`/sent/email?e_id=${sentEmail._id}`}>
-          <EmailComponent
-           sendTo={sentEmail.to}
-           subject={sentEmail.emailSubject}
-           sendAt={new Date(sentEmail.createdAt).toDateString()}
-           content={sentEmail.emailContent}
-           handleDeleteEmail={() => mutation.mutate(sentEmail._id)}
-           isEmailChecked={statuses[index]}
-           handleEmailChecked={() => handleEmailsChecked(index)}
-          />
-        </Link>
+        <EmailComponent
+          key={sentEmail._id}
+          sendTo={sentEmail.to}
+          subject={sentEmail.emailSubject}
+          sendAt={new Date(sentEmail.createdAt).toDateString()}
+          content={sentEmail.emailContent}
+          emailID={sentEmail._id}
+          category='sent'
+          handleDeleteEmail={() => mutation.mutate(sentEmail._id)}
+          isEmailChecked={statuses[index]}
+          handleEmailChecked={() => handleEmailsChecked(index)}
+        />
       ))}
     </div>
   )

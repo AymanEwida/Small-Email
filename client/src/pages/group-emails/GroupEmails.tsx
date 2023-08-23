@@ -158,17 +158,19 @@ const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupCategory, toggl
         (
           <>
             {data.emails.map((email: any, index: number) => (
-              <Link key={email._id} to={`/groups/email?e_id=${email._id}`}>
-                <EmailComponent
-                 sender={email.sender.username}
-                 subject={email.emailSubject}
-                 sendAt={new Date(email.createdAt).toDateString()}
-                 content={email.emailContent}
-                 handleDeleteEmail={() => fiterData([email._id])}
-                 isEmailChecked={statuses[index]}
-                 handleEmailChecked={() => handleEmailsChecked(index)}
-                />
-              </Link> 
+              <EmailComponent
+                key={email._id}
+                sender={email.sender.username}
+                subject={email.emailSubject}
+                sendAt={new Date(email.createdAt).toDateString()}
+                content={email.emailContent}
+                emailID={email._id}
+                groupID={groupID}
+                category='groups'
+                handleDeleteEmail={() => fiterData([email._id])}
+                isEmailChecked={statuses[index]}
+                handleEmailChecked={() => handleEmailsChecked(index)}
+              />
             ))}
           </>
         )}

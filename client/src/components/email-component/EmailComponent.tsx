@@ -19,13 +19,14 @@ interface EmailComponentProps {
   sendAt : string,
   content : string,
   emailID ?: string,
+  groupID ?: string
   category ?: string
   handleDeleteEmail ?: Void;
   isEmailChecked ?: boolean,
   handleEmailChecked ?: Void,
 }
 
-const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject, sendAt, content, emailID, category, handleDeleteEmail, isEmailChecked, handleEmailChecked }) => {
+const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject, sendAt, content, emailID, groupID, category, handleDeleteEmail, isEmailChecked, handleEmailChecked }) => {
 
   let timeout: NodeJS.Timeout;
 
@@ -71,7 +72,7 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject
             </div>
           ) : null}
         </div>
-        <Link to={`/${category}/email?e_id=${emailID}`}>
+        <Link to={category === 'groups' ? `/${category}/email?e_id=${emailID}&g_id=${groupID}` : `/${category}/email?e_id=${emailID}`}>
           <p className='text-gray-300 text-clip w-96 overflow-hidden ml-2'>
             {subject}
           </p>
@@ -94,7 +95,7 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject
           </span>
         ): null}
       </div>
-      <Link to={`/${category}/email?e_id=${emailID}`}>
+      <Link to={category === 'groups' ? `/${category}/email?e_id=${emailID}&g_id=${groupID}` : `/${category}/email?e_id=${emailID}`}>
         <p className='overflow-hidden text-ellipsis whitespace-nowrap w-96 text-gray-200'>
           {content}
         </p>
