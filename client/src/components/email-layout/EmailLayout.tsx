@@ -17,9 +17,13 @@ interface EmailLayoutProps {
   sender : {username : string, email ?: string, userImg ?: string},
   recipients : recipient[],
   content : string,
+  files: {filename: string, filePath: string}[],
 }
 
-const EmailLayout: React.FC<EmailLayoutProps> = ({ subject, sender, recipients, content }) => {  
+const EmailLayout: React.FC<EmailLayoutProps> = ({ subject, sender, recipients, content, files }) => {
+
+  const htmlString = parse(content) as string
+
   return (
     <div className='py-3'>
       <h1 className='font-bold text-2xl'>
@@ -59,9 +63,20 @@ const EmailLayout: React.FC<EmailLayoutProps> = ({ subject, sender, recipients, 
           ))}
         </div>
       </div>
-      <div className='mt-10 bg-slate-700 w-full rounded-md p-5 h-fit'>
-        {parse(content)}
+      <div className='mt-10 bg-slate-700 w-full rounded-md p-5 h-fit mb-5'>
+        {parse(htmlString)}
       </div>
+      {files.length > 0 ? <div className='flex flex-row flex-wrap'>
+        {files.map((file, index) => (
+          <a 
+           key={index}
+           href={file.filePath} 
+           className='rounded-full bg-blue-500 text-gray-200 p-2'
+          >
+            {file.filename}
+          </a>
+        ))}
+      </div> : null}
     </div>
   )
 }

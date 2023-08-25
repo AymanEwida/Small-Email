@@ -27,7 +27,8 @@ import {
   Event,
   InputElement,
   User,
-  Group
+  Group,
+  Optional
 } from '../../types/types';
 
 import './send-email.css';
@@ -79,10 +80,12 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     return res.data;
   }, {
     onSuccess: (data) => {
-      setImgs(prevImgs => {
-        prevImgs.push({url: data.image.src});
-        return prevImgs;
-      });
+      setImgs(prevImgs => (
+        [
+          ...prevImgs,
+          {url: data.image.src}
+        ]
+      ));
     }
   });
 
@@ -91,10 +94,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     return res.data;
   }, {
     onSuccess: (data) => {
-      setUploadedFiles(prevUploadedFiles => {
-        prevUploadedFiles.push({filename: data.file.filename, filePath: data.file.src})
-        return prevUploadedFiles;
-      });
+      setUploadedFiles(data.files);
     }
   });
 
@@ -228,33 +228,51 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     setRecipients(newRecipients);
   }
 
-  function handleSendEmail (event: FormEvent): void {
+  function changeContentString (contentString: Optional<string>, imgsCount: number): Optional<string> {
+    const content  = contentString as string;
+    const startImgEelment = content?.indexOf('<div class=\"relative\">');
+    
+    let newContentString = content
+
+    if (startImgEelment != -1) {
+      const endImgElement = content?.indexOf('</span>');
+      
+      newContentString = content?.slice(0, startImgEelment) + `<img src=\"${imgs[imgsCount].url}\" alt=\"content-image\" class=\"w-3/4 h-fit my-3 object-cover\">` + content?.slice(endImgElement+13); 
+    } else {
+      return newContentString;
+    }
+
+    return changeContentString(newContentString, imgsCount++);
+  }
+
+  async function handleSendEmail (event: FormEvent): Promise<void> {
     event.preventDefault();
 
     const uploadData = new FormData();
 
     for (const image of images) {
-      uploadData.append("image", image);
-      uploadImageMutation.mutate(uploadData);
+      uploadData.append("image", image, image.name);
+      await uploadImageMutation.mutateAsync(uploadData);
       uploadData.delete("image");
     }
 
-    for (const file in files) {
-      uploadData.append("file", file);
-      uploadFileMutation.mutate(uploadData);
+    for (let i = 0; i < files?.length; i++) {
+      uploadData.append("file", files[i], files[i].name);
+      await uploadFileMutation.mutateAsync(uploadData);
       uploadData.delete("file");
+      console.log({uploadedFiles});
     }
-
-    sendEmailMutation.mutate({
+    
+    await sendEmailMutation.mutateAsync({
       to: recipients,
-      emailContent: "<div>" + emailContent.current?.innerHTML + "</div>",
+      emailContent: '<div>' + changeContentString(emailContent.current?.innerHTML, 0) + '</div>',
       emailSubject: emailInputs.subject,
       files: uploadedFiles,
       imgs
     });
   }
 
-  //console.log({ content: emailContent.current, isDesignOptionsActive });
+  //console.log({ content: changeContentString(emailContent.current?.innerHTML, 0), isDesignOptionsActive });
 
   return (
     <div className='flex justify-center items-center'>
@@ -528,7 +546,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
              className='hidden'
              multiple
              id='addImg'
-             name='images'
+             name='image'
              onChange={handleAddImages} 
             />
             <Icon
@@ -602,7 +620,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
              accept='*'
              className='hidden'
              multiple
-             name="files"
+             name="file"
              id='addFile'
              onChange={handleAddFiles} 
             />

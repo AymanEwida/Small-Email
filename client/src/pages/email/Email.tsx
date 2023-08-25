@@ -89,7 +89,8 @@ const Email: React.FC = () => {
          subject={data.email.emailSubject}
          sender={{username: data.email.sender.username, email: data.email.sender.email, userImg: data.email.sender.userImg}}
          recipients={emailCategory === 'inbox' || emailCategory === 'groups' ? [{recipientEmail: 'Me<jan@smail.com>'}] : data.email.to.map((recipient: any) => ({recipientEmail:recipient.user.email}))}
-         content={data.email.emailContent} 
+         content={eval('`' + data.email.emailContent + '`')}
+         files={data.email.files} 
         />
         {emailCategory === 'inbox' || emailCategory === 'groups' ? (
           <div className='grid grid-cols-2 gap-3 w-fit'>

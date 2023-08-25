@@ -6,6 +6,8 @@ import Cookies from 'js-cookie';
 
 import { AiFillDelete } from 'react-icons/ai';
 
+import parse from 'html-react-parser';
+
 import Icon from '../icon/Icon';
 
 import { Event, InputElement, Void } from '../../types/types';
@@ -97,7 +99,7 @@ const EmailComponent: React.FC<EmailComponentProps> = ({ sender, sendTo, subject
       </div>
       <Link to={category === 'groups' ? `/${category}/email?e_id=${emailID}&g_id=${groupID}` : `/${category}/email?e_id=${emailID}`}>
         <p className='overflow-hidden text-ellipsis whitespace-nowrap w-96 text-gray-200'>
-          {content}
+          {parse(content)}
         </p>
       </Link>
     </div>
