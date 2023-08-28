@@ -47,7 +47,7 @@ const App: React.FC = () => {
           <Route path='/profile-settings' element={user ? <ProfileSettings /> : <Navigate to='/' />} />
 
           {/* this route for testing */}
-          <Route path='/test' element={<Test />} />
+          <Route path='/test' element={<Test />} /> 
         </Routes>
       </Router>
     </QueryClientProvider>
