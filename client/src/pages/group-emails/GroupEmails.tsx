@@ -145,6 +145,7 @@ const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupImg, groupName,
        groupImg={groupImg}
        groupName={groupName}
        groupEmail={groupEmail}
+       numberOfEmail={emails ? emails.length : data.emails.length}
        isEmailsChecked={isChecked}
        handleEmailsChecked={handleChecked} 
        toggleFunc={toggleGroupCategory}
