@@ -9,6 +9,7 @@ import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 
 import GroupEmails from '../group-emails/GroupEmails';
+import GroupConversation from '../group-conversation/GroupConversation';
 
 import {
   EmailComponent,
@@ -104,9 +105,7 @@ const Group: React.FC = () => {
         />
       ) :
       groupCategory === 'conversation' ? (
-        <div>
-          Chat
-        </div>
+        <GroupConversation />
       ) : <Navigate to={`/groups/emails?g_id=${queryStrings?.g_id}`} />}
       {isSettingMenuOpen ? (
         <GroupSettings

@@ -13,5 +13,6 @@ export { default as Email } from './email/Email';
 export { default as Group } from './group/Group';
 export { default as GroupEmails } from './group-emails/GroupEmails';
 export { default as SavedDrafts } from './saved-drafts/SavedDrafts';
+export { default as GroupConversation } from './group-conversation/GroupConversation';
 
 export { default as Test } from './test/Test';
