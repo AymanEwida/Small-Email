@@ -15,7 +15,10 @@ import {
   LoadingComponent
 } from '../../components';
 
-import { arrayRepeat } from '../../functions';
+import {
+  arrayRepeat, 
+  range
+} from '../../functions';
 
 import {
   Void,
@@ -26,12 +29,15 @@ import './group-emails.css';
 
 interface GroupEmailsProps {
   groupID : Optional<string>,
+  groupImg : string
+  groupName : string,
+  groupEmail : string,
   groupCategory : Optional<string>,
   toggleGroupCategory : Void,
   openSettingsMenu : Void,
 }
 
-const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupCategory, toggleGroupCategory, openSettingsMenu }) => {
+const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupImg, groupName, groupEmail, groupCategory, toggleGroupCategory, openSettingsMenu }) => {
 
   const [emails, setEmails] = useState<null | any>(null);
   const [isChecked, setIsChecked] = useState(false);
@@ -111,10 +117,16 @@ const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupCategory, toggl
   if (isLoading) {
     return (
       <>
-        <GroupsNavbar groupID={groupID} category={groupCategory} /> 
+        <GroupsNavbar groupID={groupID} groupImg={groupImg} groupEmail={groupEmail} groupName={groupName} category={groupCategory} /> 
         <div className='sticky top-62'>
           <LoadingComponent style='line' />
         </div>
+        {range(0, 8, 1).map((idx) => (
+          <LoadingComponent
+           key={idx}
+           style='fallBack' 
+          />
+        ))}
       </>
     );
   }
@@ -130,6 +142,9 @@ const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupCategory, toggl
       <GroupsNavbar
        category={groupCategory}
        groupID={groupID}
+       groupImg={groupImg}
+       groupName={groupName}
+       groupEmail={groupEmail}
        isEmailsChecked={isChecked}
        handleEmailsChecked={handleChecked} 
        toggleFunc={toggleGroupCategory}

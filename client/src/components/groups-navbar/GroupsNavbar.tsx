@@ -20,6 +20,9 @@ import './groups-navbar.css';
 interface GroupsNavbarProps {
   category : Optional<string>,
   groupID : Optional<string>,
+  groupImg : string
+  groupName : string,
+  groupEmail : string,
   isEmailsChecked ?: boolean,
   handleEmailsChecked ?: Void,
   toggleFunc ?: Void,
@@ -28,7 +31,7 @@ interface GroupsNavbarProps {
   handleDeleteEmails ?: Void,
 }
 
-const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc, refreshEmails, handleDeleteEmails }) => {
+const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, groupImg, groupName, groupEmail, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc, refreshEmails, handleDeleteEmails }) => {
   return (
     <div className='sticky bg-secondary-dark-bg top-0 w-full py-3 px-8 z-20'>
       <div className='flex justify-between border-b-1 pb-3 color-border'>
@@ -49,10 +52,10 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, isEmails
            alt="group img" 
           />
           <h2 className='font-bold text-lg'>
-            Test Group - <span className='font-light text-gray-400'>{category && category === 'conversation' ? 'Chat' : 'Emails'}</span>
+            {groupName} - <span className='font-light text-gray-400'>{category && category === 'conversation' ? 'Chat' : 'Emails'}</span>
           </h2>
           <h3 className='font-semibold text-sm my-1'>
-            <ClipboardCopy copyText='test@sgroup.com' />
+            <ClipboardCopy copyText={groupEmail} />
           </h3>
           <Link to={`/groups/${category && category === 'conversation' ? 'enails' : 'conversation'}?g_id=${groupID}`}>
             <Button

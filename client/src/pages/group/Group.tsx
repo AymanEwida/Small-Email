@@ -77,16 +77,9 @@ const Group: React.FC = () => {
   if(isLoading) {
     return (
       <>
-      <GroupsNavbar groupID={queryStrings?.g_id} category={category} /> 
-      <div className='sticky top-62'>
-        <LoadingComponent style='line' />
+      <div className=' pt-20 flex justify-center'>
+        <LoadingComponent style='text' />
       </div>
-        {range(0, 8, 1).map((idx) => (
-          <LoadingComponent
-           key={idx}
-           style='fallBack' 
-          />
-        ))}
       </>
     );
   }
@@ -102,6 +95,9 @@ const Group: React.FC = () => {
       {groupCategory === 'emails' ? (
         <GroupEmails
          groupID={queryStrings?.g_id}
+         groupImg={data.groupImg}
+         groupName={data.groupName}
+         groupEmail={data.groupEmail} 
          groupCategory={category}
          toggleGroupCategory={toggleCategory}
          openSettingsMenu={openSettingsMenu} 
