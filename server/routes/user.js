@@ -6,6 +6,7 @@ const {
     searchForUserAndGroupByEmail,
     updateUsername,
     changePassword,
+    changeEmail,
     getUserSavedDrafts,
     addDraftToUserSavedDrafts,
     removeDraftFromUserSavedDrafts,
@@ -18,6 +19,7 @@ router.route('/search').get(searchUserByEmail);
 router.route('/search-for-users-and-groups').get(searchForUserAndGroupByEmail);
 router.route('/change/username').patch(updateUsername);
 router.route('/change/password').patch(changePassword);
+router.route('/change/email').patch(changeEmail);
 router.route('/saved-drafts').get(getUserSavedDrafts);
 router.route('/saved-drafts/add').patch(addDraftToUserSavedDrafts);
 router.route('/saved-drafts/remove/:id').patch(removeDraftFromUserSavedDrafts);

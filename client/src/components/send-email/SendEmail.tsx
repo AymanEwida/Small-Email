@@ -242,7 +242,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
       return newContentString;
     }
 
-    return changeContentString(newContentString, imgsCount++);
+    return changeContentString(newContentString, imgsCount+1);
   }
 
   async function handleSendEmail (event: FormEvent): Promise<void> {
@@ -263,7 +263,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
       console.log({uploadedFiles});
     }
     
-    await sendEmailMutation.mutateAsync({
+    sendEmailMutation.mutate({
       to: recipients,
       emailContent: '<div>' + changeContentString(emailContent.current?.innerHTML, 0) + '</div>',
       emailSubject: emailInputs.subject,

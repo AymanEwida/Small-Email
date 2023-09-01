@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
 
+import { useNavigate } from 'react-router-dom';
+
+import { useMutation } from 'react-query';
+
+import axios, { AxiosError } from 'axios';
+
+import Cookies from 'js-cookie';
+
 import { FaLock } from 'react-icons/fa';
 
 import SettingsItemHeader from '../settings-item-header/SettingsItemHeader';
 import Input from '../input/Input';
 import Button from '../button/Button';
+import LoadingComponent from '../loading-component/LoadingComponent';
+import Tefo from '../tefo/Tefo';
 
 import {
   Void,
@@ -27,6 +37,13 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ closeChangePassword, op
     password: ''
   });
 
+  const history = useNavigate();
+
+  const mutation = useMutation(async (formData: {oldPassword: string, newPassword: string}) => {
+    const res = await axios.patch('http://localhost:8800/api/v1/user/change/password', formData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  });
+
   function handleInputsValue (event: Event<InputElement>): void {
     setInputsValue(prevInputsValue => (
       {
@@ -39,7 +56,11 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ closeChangePassword, op
   function handleSubmit (event: FormEvent): void {
     event.preventDefault();
 
-    console.log('I submited wow!');
+    mutation.mutate({oldPassword: inputsValue.password, newPassword: inputsValue.newPassword});
+
+    if (mutation.isSuccess && mutation.data) {
+      history('/profile-settings')
+    }
   }
 
   return (
@@ -71,13 +92,19 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ closeChangePassword, op
           <Button
            type='submit'
            paddingSize='2'
-           text='Change Password'
+           text={mutation.isLoading ? <LoadingComponent style='circle' /> : 'Change Password'}
            bgColor='rgb(74 222 128)'
            color='white'
            borderRadius='10px'
            textSize='md'
           />
         </span>
+        {(mutation.isError && mutation.error instanceof AxiosError) ? (
+          <Tefo isError message={mutation.error.response?.data.msg} />
+        ) : null}
+        {(mutation.isSuccess && mutation.data) ? (
+          <Tefo isError={false} message={mutation.data.msg} />
+        ) : null}
       </form>
       <div className='border-t-1 border-inherit w-full pt-3'>
         <h1 className='text-center text-xl text-green-600'>

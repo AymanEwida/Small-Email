@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Cookies from 'js-cookie';
+
 import SettingsItemHeader from '../settings-item-header/SettingsItemHeader';
 import Button from '../button/Button';
 
@@ -26,7 +28,7 @@ const PersonalDetailsSettings: React.FC<PersonalDetailsSettingsProps> = ({ close
             Change Username
           </h1>
           <h2 className='text-gray-400 font-medium text-lg'> 
-            Jan Doe
+            {Cookies.get('username')}
           </h2>
           <Button
            type='button'

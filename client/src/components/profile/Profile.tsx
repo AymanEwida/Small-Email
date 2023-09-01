@@ -1,25 +1,114 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Cookies from 'js-cookie';
 
-import { AiOutlineUserAdd } from 'react-icons/ai';
+import { AiOutlineUserAdd, AiFillDelete } from 'react-icons/ai';
 import { IoLogOutOutline } from 'react-icons/io5';
 
 import noAvater from '../../assests/noAvatar.png';
 
-import { dummyData } from './dummyData';
+import { AccountsContext } from '../../context/accounts-context/AccountsContext';
+import { AccountsTypes } from '../../context/accounts-context/AccountsReducer';
+
+import { arrayRepeat } from '../../functions';
 
 import './profile.css';
 
 const Profile: React.FC = () => {
+
+  const {
+    state,
+    accountsDispatch
+  } = useContext(AccountsContext);
+
+  let timeout: NodeJS.Timeout;
+  let interval: NodeJS.Timer;
+
+  const [statuses, setStatuses] = useState(arrayRepeat([false], state.length));
+
+  function handleShow (index: number): void {
+    timeout = setTimeout(() => {
+      let newStatuses: boolean[] = [];
+
+      for (let i = 0; i < statuses.length; i++) {
+        if (i !== index) {
+          newStatuses.push(statuses[i]);
+        } else {
+          newStatuses.push(true);
+        }
+      }
+
+      setStatuses(newStatuses);
+    }, 700);
+  }
+
+  function handleDisShow (index: number): void {
+    clearInterval(timeout);
+    let newStatuses: boolean[] = [];
+
+    for (let i = 0; i < statuses.length; i++) {
+      if (i !== index) {
+        newStatuses.push(statuses[i]);
+      } else {
+        newStatuses.push(false);
+      }
+    }
+
+    setStatuses(newStatuses);
+  }
+
+  const history = useNavigate();
   
   function handleLogot (): void {
     Cookies.remove('token');
     Cookies.remove('username');
     window.location.reload();
   }
+
+  function checkAccounts (): void {
+    for (let i = 0; i < state.length; i++) {
+      const account = state[i];
+
+      if (new Date(account.expired).getTime() <= new Date().getTime()) {
+        accountsDispatch({ type: AccountsTypes.DisconnectAccount, payload: { index: i } });
+        if (account.username === Cookies.get('username')) {
+          Cookies.remove('token');
+          Cookies.remove('username');
+        }
+      }
+    }
+  }
+
+  function handleLogin (token: string, username: string, email: string, isConnected: boolean): void {
+    if (token.length > 0 && isConnected) {
+      Cookies.set('token', token, { expires: 30 });
+      Cookies.set('username', username, { expires: 30 });
+      history('/');
+      window.location.reload();
+    } else {
+      history(`/login?email=${email}`);
+    }
+  }
+
+  function handleDeleteAccount (index: number): void {
+    accountsDispatch({ type: AccountsTypes.RemoveAccount, payload: { index } });
+  }
+
+  function getInterval (): ReturnType<typeof setInterval> {
+    return setInterval(() => {
+      checkAccounts();
+    }, 1000);
+  }
+
+  useEffect(() => {
+    interval = getInterval();
+
+    return () => {
+      clearInterval(interval);
+    }
+  }, []);
 
   return (
     <div className='absolute top-[70px] right-3 bg-secondary-dark-bg p-5 w-96 rounded-lg z-index'>
@@ -31,7 +120,7 @@ const Profile: React.FC = () => {
         />
         <div className='h-20'>
           <h2 className='text-xl font-bold text-green-400'>
-            Jan Doe
+            {Cookies.get('username')}
           </h2>
           <p className='text-sm text-gray-400 mb-2'>
             jan@smail.com
@@ -44,26 +133,48 @@ const Profile: React.FC = () => {
         </div>
       </div>
       <div className='overflow-y-auto h-[220px]'>
-        {dummyData.map((dummy, index) =>(
-          <div key={index} className='flex gap-10 cursor-pointer hover:bg-hover-bg p-4 border-inherit border-b-1 w-full px-3'>
-            <img
-            className='rounded-full object-cover h-8 w-8' 
-            src={noAvater} 
-            alt="account" 
-            />
-            <div className='text-sm'>
-              <h3 className='text-[16px] font-medium text-blue-500'>
-                {dummy.name}
-              </h3>
-              <p className='text-gray-400'>
-                {dummy.email}
-              </p>
-            </div>
-            <span className='text-sm text-gray-300'>
-              {dummy.stauts}
-            </span>
-          </div>
-        ))}
+        {state.map((account, index) => {
+          if (account.username !== Cookies.get('username')) {
+            return (
+            <div 
+             key={index} 
+             className='flex gap-1 cursor-pointer hover:bg-hover-bg p-4 border-inherit border-b-1 w-full px-3'  
+             onMouseEnter={() => handleShow(index)}
+             onMouseLeave={() => handleDisShow(index)}
+            >
+              <img
+              className='rounded-full object-cover h-8 w-8' 
+              src={noAvater} 
+              alt="account" 
+              />
+              <div 
+               className='text-sm ml-5'
+               onClick={() => handleLogin(account.token, account.username, account.email, account.isUserConnected)}
+              >
+                <h3 className='text-[16px] font-medium text-blue-500'>
+                  {account.username}
+                </h3>
+                <p className='text-gray-400'>
+                  {account.email}
+                </p>
+              </div>
+              {!statuses[index] ? <span className={`text-sm ${account.isUserConnected ? 'text-gray-300' : 'text-red-300'}`}>
+                {account.isUserConnected ? 'connected' : 'disconnected'}
+              </span> : null}
+              {statuses[index] ? (
+                <button
+                type='button'
+                className='show-animation hover:bg-gray-700 p-2 text-white text-md rounded-full'
+                onClick={() => handleDeleteAccount(index)}
+                >
+                  <AiFillDelete />
+                </button>
+              ) : null}
+            </div>);
+          } else {
+            return null
+          }
+        })}
       </div>
       <div className='border-color border-b-1 w-full py-3'>
         <Link to='/choose-account'>
