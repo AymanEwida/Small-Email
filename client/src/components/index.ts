@@ -40,3 +40,5 @@ export { default as UpdateGroup } from './update-group/UpdateGroup';
 export { default as Textarea } from './textarea/Textarea';
 export { default as FoundUsers } from './found-users/FoundUsers';
 export { default as AddNewParticipates } from './add-new-participates/AddNewParticipates';
+export { default as SendMessage } from './send-message/SendMessage';
+export { default as Message } from './message/Message';

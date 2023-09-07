@@ -1,5 +1,6 @@
 const Conversation = require('../models/Conversation');
 const Group = require('../models/Group');
+const User = require('../models/User');
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError, UnauthenticatedError } = require('../errors');
 
@@ -29,9 +30,25 @@ async function getConversationOfGroup (req, res) {
         throw new UnauthenticatedError('You are not a member of the group');
     }
 
-    const conversations = await Conversation.find({ groupID }); 
+    const conversations = await Conversation.find({ groupID });
+    
+    async function getMessagesSenders () {
+        let newConversations = []
 
-    res.status(StatusCodes.OK).json({ conversations });
+        for (let i = 0; i < conversations.length; i++) {
+            const conversation = conversations[i]._doc;
+    
+            const sender = await User.findById(conversation.messageSender).select('username userImg');
+            
+            newConversations.push({ ...conversation, messageSender: sender });
+        }
+
+        return newConversations
+    }
+    
+    const newConversations = await getMessagesSenders();
+
+    res.status(StatusCodes.OK).json({ conversations: newConversations });
 }
 
 async function sendMessageToConversation (req, res) {

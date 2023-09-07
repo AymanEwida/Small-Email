@@ -24,6 +24,7 @@ interface GroupsNavbarProps {
   groupName : string,
   groupEmail : string,
   numberOfEmail ?: number,
+  numberOfMessages ?: number,
   isEmailsChecked ?: boolean,
   handleEmailsChecked ?: Void,
   toggleFunc ?: Void,
@@ -32,7 +33,7 @@ interface GroupsNavbarProps {
   handleDeleteEmails ?: Void,
 }
 
-const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, groupImg, groupName, groupEmail, numberOfEmail, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc, refreshEmails, handleDeleteEmails }) => {
+const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, groupImg, groupName, groupEmail, numberOfEmail, numberOfMessages, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc, refreshEmails, handleDeleteEmails }) => {
   return (
     <div className='sticky bg-secondary-dark-bg top-0 w-full py-3 px-8 z-20'>
       <div className='flex justify-between border-b-1 pb-3 color-border'>
@@ -74,6 +75,9 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, groupImg
         {numberOfEmail ? <p className='text-gray-400'>
           {numberOfEmail} emails
         </p> : null}
+        {numberOfMessages ? <p className='text-gray-400'>
+          {numberOfMessages} messages
+        </p>: null}
       </div>
       <div className='flex justify-between items-center mt-2.5'>
         <div className='grid grid-cols-2 gap-2'>

@@ -105,7 +105,15 @@ const Group: React.FC = () => {
         />
       ) :
       groupCategory === 'conversation' ? (
-        <GroupConversation />
+        <GroupConversation 
+         groupID={queryStrings?.g_id}
+         groupImg={data.groupImg}
+         groupName={data.groupName}
+         groupEmail={data.groupEmail} 
+         groupCategory={category}
+         toggleGroupCategory={toggleCategory}
+         openSettingsMenu={openSettingsMenu} 
+        />
       ) : <Navigate to={`/groups/emails?g_id=${queryStrings?.g_id}`} />}
       {isSettingMenuOpen ? (
         <GroupSettings
