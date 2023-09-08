@@ -111,6 +111,7 @@ const Group: React.FC = () => {
          groupName={data.groupName}
          groupEmail={data.groupEmail} 
          groupCategory={category}
+         isCurrentUserAdmin={checkIfCurrentUserIsAdmin()}
          toggleGroupCategory={toggleCategory}
          openSettingsMenu={openSettingsMenu} 
         />

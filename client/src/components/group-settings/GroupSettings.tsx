@@ -157,7 +157,7 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
           <div className='relative'>
             <img 
              className='rounded-full object-cover h-10 w-10 bg-white'
-             src={noGroupAvatar} 
+             src={groupImg ? groupImg : noGroupAvatar} 
              alt="group img" 
             />
             {isCurrentUserAdmin ? <span className='absolute -top-3 -right-3 cursor-pointer'>
@@ -186,9 +186,9 @@ const GroupSettings: React.FC<GroupSettingsProps> = ({ category, isCurrentUserAd
              borderRadius='5px'
              customFunc={() => handleUpdateGroupCredentials(UpdateGroupTypes.OpenChangeName)} 
             /> : null }
-            <p className='text-sm my-2'>
+            <div className='text-sm my-2'>
               <ClipboardCopy copyText={groupEmail} />
-            </p>
+            </div>
             {isCurrentUserAdmin ? <Button
              type='button'
              text="change group's email"

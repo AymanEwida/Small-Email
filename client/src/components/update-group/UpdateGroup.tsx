@@ -40,6 +40,12 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ groupID, groupCredential, gro
 
   const [newCredential, setNewCredential] = useState(groupCredentialValue);
   const [isEqual, setIsEqual] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
+
+  const uploadImageMutation = useMutation(async (imageFormData: FormData) => {
+    const res = await axios.post('http://localhost:8800/api/v1/upload/image', imageFormData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  });
 
   const mutation = useMutation(async (formData: {groupName: string} | {groupEmail: string} | {groupDesc: string} | {groupImg: string}) => {
     const res = await axios.patch(`http://localhost:8800/api/v1/group/${groupID}`, formData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
@@ -49,6 +55,23 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ groupID, groupCredential, gro
       queryClient.invalidateQueries('group');
     }
   });
+
+  function handleAddImage (event: Event<InputElement>): void {
+    if (event.target.files && event.target.files.length > 0) {
+      const addedImage = event.target.files[0];
+      setImage(addedImage);
+    }
+  }
+
+  function getImageSrc (): string {
+    if (image) {
+      return URL.createObjectURL(image);
+    } else if (groupCredential.split(" ")[1].toLocaleLowerCase() === "image" && groupCredentialValue) {
+      return groupCredentialValue;
+    }
+
+    return noGroupAvatar;
+  }
 
   return (
     <div className='absolute top-60 left-1/2 bg-main-dark-bg rounded-md w-full p-2'>
@@ -166,18 +189,41 @@ const UpdateGroup: React.FC<UpdateGroupProps> = ({ groupID, groupCredential, gro
          className='my-3 flex flex-col gap-3'
          onSubmit={(event: React.FormEvent) => {
           event.preventDefault();
+          
+          if (image) {
+            const uploadData = new FormData();
 
-          console.log("I submitted wow!");
+            uploadData.append("image", image, image.name);
+            uploadImageMutation.mutate(uploadData);
+
+            if (uploadImageMutation.isSuccess && uploadImageMutation.data) {
+              mutation.mutate({groupImg: uploadImageMutation.data.image.src})
+              closeFunc();
+            }
+          } else {
+            console.log("no image selected!");
+          }
          }}
         >
           <img
            className='h-16 w-16 m-auto bg-white rounded-full object-cover' 
-           src={noGroupAvatar} 
+           src={getImageSrc()} 
            alt="group image" 
           />
           <input 
-           type="file" 
+           type="file"
+           className='hidden'
+           id='changeImg'
+           onChange={handleAddImage}
+           multiple={false}
+           accept='.png, .jpeg, .jpg' 
           />
+          <label 
+           htmlFor="changeImg"
+           className='cursor-pointer bg-gray-700 w-fit py-1 px-3 rounded-lg'
+          >
+            Select an image
+          </label>
           <Button
            type='submit'
            bgColor='rgb(34 197 94)'

@@ -50,7 +50,7 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, groupImg
         <div className='flex flex-col gap-1 items-center'>
           <img
            className='h-10 w-10 rounded-full object-cover bg-white' 
-           src={noGroupAvatar} 
+           src={groupImg ? groupImg : noGroupAvatar} 
            alt="group img" 
           />
           <h2 className='font-bold text-lg'>

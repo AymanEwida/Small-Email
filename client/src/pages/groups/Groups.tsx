@@ -80,6 +80,7 @@ const Groups: React.FC = () => {
             <GroupCard
              name={group.groupName}
              email={group.groupEmail}
+             img={group.groupImg}
             />
           </Link>
         ))}

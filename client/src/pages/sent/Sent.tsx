@@ -20,9 +20,13 @@ import {
   arrayRepeat
 } from '../../functions';
 
+import { getParamsFromURL } from '../../hooks/useParams';
+
 import './sent.css';
 
 const Sent: React.FC = () => {
+
+  const queryStrings = getParamsFromURL(document.location.href);
 
   const queryClient = useQueryClient();
 
@@ -105,6 +109,26 @@ const Sent: React.FC = () => {
     setStatuses(arrayRepeat([false], data.sentEmails.length));
   }
 
+  function handleSearch () {
+    let newData: any[] = [];
+
+    const searchedValue = queryStrings?.searchValue?.split('+').join(' ');
+    
+    if (searchedValue) {
+      const currentData = data.sentEmails;
+
+      for (const email of currentData) {
+        if (email.emailSubject.toLocaleLowerCase().includes(searchedValue) || email.emailContent.toLocaleLowerCase().includes(searchedValue)) {
+          newData.push(email);
+        }
+      }
+      
+      return newData;
+    }
+
+    return newData;
+  }
+
   if(isLoading) {
     return (
       <>
@@ -136,7 +160,22 @@ const Sent: React.FC = () => {
        handleEmailsChecked={handleChecked}
        handleDeleteEmails={handleDeleteSentEmails} 
       />
-      {data.sentEmails.map((sentEmail: any, index: number) => (
+      {handleSearch().length > 0 ? (
+        handleSearch().map((sentEmail: any, index: number) => (
+          <EmailComponent
+            key={sentEmail._id}
+            sendTo={sentEmail.to}
+            subject={sentEmail.emailSubject}
+            sendAt={new Date(sentEmail.createdAt).toDateString()}
+            content={sentEmail.emailContent}
+            emailID={sentEmail._id}
+            category='sent'
+            handleDeleteEmail={() => mutation.mutate(sentEmail._id)}
+            isEmailChecked={statuses[index]}
+            handleEmailChecked={() => handleEmailsChecked(index)}
+          />
+        ))
+      ) : data.sentEmails.map((sentEmail: any, index: number) => (
         <EmailComponent
           key={sentEmail._id}
           sendTo={sentEmail.to}

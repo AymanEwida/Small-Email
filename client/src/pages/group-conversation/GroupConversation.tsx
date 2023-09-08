@@ -27,11 +27,12 @@ interface GroupConversationProps {
   groupName : string,
   groupEmail : string,
   groupCategory : Optional<string>,
+  isCurrentUserAdmin : boolean,
   toggleGroupCategory : Void,
   openSettingsMenu : Void,
 }
 
-const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg, groupEmail, groupName, groupCategory, toggleGroupCategory, openSettingsMenu }) => {
+const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg, groupEmail, groupName, groupCategory, isCurrentUserAdmin, toggleGroupCategory, openSettingsMenu }) => {
 
   const { isError, error, isLoading, isSuccess, data } = useQuery('groupConversation' ,async () => {
     const res = await axios.get(`http://localhost:8800/api/v1/conversation/${groupID}`, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
@@ -73,6 +74,7 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
             <Message
              key={conversation._id}
              own={Cookies.get('username') === conversation.messageSender.username}
+             isCurrentUserAdmin={isCurrentUserAdmin}
              senderUsername={conversation.messageSender.username}
              senderImg={conversation.messageSender.userImg}
              messageContent={conversation.messageContent}

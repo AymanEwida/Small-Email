@@ -25,6 +25,8 @@ import {
   InputElement
 } from '../../types/types';
 
+import { getParamsFromURL } from '../../hooks/useParams';
+
 import './inbox.css';
 
 const Inbox: React.FC = () => {
@@ -36,6 +38,8 @@ const Inbox: React.FC = () => {
   // if (typeof emailsValueFromLocalStorage === 'string') {
   //   emailsValue = JSON.parse(emailsValueFromLocalStorage);
   // }
+
+  const queryStrings = getParamsFromURL(document.location.href);
 
   const [emails, setEmails] = useState<null | any>(null);
   const [isChecked, setIsChecked] = useState(false);
@@ -110,6 +114,26 @@ const Inbox: React.FC = () => {
     setStatuses(arrayRepeat([false], newData.length));
   }
 
+  function handleSearch () {
+    let newData: any[] = [];
+
+    const searchedValue = queryStrings?.searchValue?.split('+').join(' ');
+    
+    if (searchedValue) {
+      const currentData = emails || data.emails;
+
+      for (const email of currentData) {
+        if (email.emailSubject.toLocaleLowerCase().includes(searchedValue) || email.emailContent.toLocaleLowerCase().includes(searchedValue)) {
+          newData.push(email);
+        }
+      }
+      
+      return newData;
+    }
+
+    return newData;
+  }
+
   // useEffect(() => {
   //   localStorage.setItem('inboxEmails', JSON.stringify(emails));
   // }, [emails]);
@@ -146,7 +170,24 @@ const Inbox: React.FC = () => {
        handleEmailsChecked={handleChecked}
        handleDeleteEmails={() => fiterData(emailsIDs)}
       />
-      {emails ? (
+      {handleSearch().length > 0 ? (
+        <>
+        {handleSearch().map((email: any, index: number) => (
+          <EmailComponent
+          key={email._id}
+          sender={email.sender.username}
+          subject={email.emailSubject}
+          sendAt={new Date(email.createdAt).toDateString()}
+          content={email.emailContent}
+          emailID={email._id}
+          category='inbox'
+          handleDeleteEmail={() => fiterData([email._id])}
+          isEmailChecked={statuses[index]}
+          handleEmailChecked={() => handleEmailsChecked(index)}
+          />
+        ))}
+      </>
+      ) : emails ? (
         <>
           {emails.map((email: any, index: number) => (
             <EmailComponent

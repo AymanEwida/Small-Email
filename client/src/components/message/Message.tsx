@@ -1,5 +1,9 @@
 import React from 'react';
 
+import { AiFillDelete } from 'react-icons/ai';
+
+import Icon from '../icon/Icon';
+
 import noAvatar from '../../assests/noAvatar.png';
 
 import './message.css';
@@ -12,19 +16,20 @@ type messageAttachment = {
 
 interface MessageProps {
   own : boolean,
+  isCurrentUserAdmin : boolean,
   senderUsername : string,
   senderImg : string,
   messageContent : string,
   messageAttachments : messageAttachment[],
-  createdAt : string 
+  createdAt : string, 
 }
 
-const Message: React.FC<MessageProps> = ({ own, senderUsername, senderImg, messageContent, messageAttachments, createdAt }) => {
+const Message: React.FC<MessageProps> = ({ own, isCurrentUserAdmin, senderUsername, senderImg, messageContent, messageAttachments, createdAt }) => {
   return (
     <div className={`flex gap-2 justify-start ${own ? 'flex-row' : 'flex-row-reverse'} mb-5`}>
       {!own ? <img
        className='rounded-full object-cover h-8 w-8'
-       src={noAvatar}
+       src={senderImg ? senderImg : noAvatar}
        alt='senderImg'
       /> : null}
       <div className={`rounded-lg ${own ? 'bg-green-600' : 'bg-slate-600'} p-2`}>
@@ -49,6 +54,18 @@ const Message: React.FC<MessageProps> = ({ own, senderUsername, senderImg, messa
             {messageContent}
           </p>
         </div>
+        {own || isCurrentUserAdmin ? (
+          <div className='float-right'>
+            <Icon
+             title='Delete'
+             iconPosition='bottom'
+             icon={<AiFillDelete />}
+             textSize='md'
+             color='black'
+             bgColor='bg-transparent' 
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   )

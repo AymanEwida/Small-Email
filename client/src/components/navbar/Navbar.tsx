@@ -1,6 +1,6 @@
 import React, { useState, useRef, useContext } from 'react'
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Cookies from 'js-cookie';
 
@@ -38,6 +38,8 @@ const Navbar: React.FC = () => {
 
   const search = useRef<InputElement>(null);
 
+  const history = useNavigate();
+
   function handleSidebar (): void {
     if (state.isMenu) {
       navbarDispatch({ type: NavbarTypes.CloseMenu });
@@ -72,8 +74,15 @@ const Navbar: React.FC = () => {
 
   function handleSubmitSearch (event: FormEvent): void {
     event.preventDefault();
+    
+    if (searchValue) { 
+      const location = document.location.href.split('/').at(-1);
 
-    console.log('I submitted wow!!');
+      if (location === 'inbox' || location === 'sent') {
+        const search = searchValue.split(' ').join('+');
+        history(`/${location}?searchValue=${search}`);
+      }
+    }
   }
 
   return (
