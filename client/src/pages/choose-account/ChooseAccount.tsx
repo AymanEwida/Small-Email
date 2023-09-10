@@ -130,7 +130,7 @@ const ChooseAccount: React.FC = () => {
                 <div className='flex gap-4'>
                   <img
                   className='h-8 w-8 object-cover rounded-full' 
-                  src={noAvater} 
+                  src={account.userImg ? account.userImg : noAvater} 
                   alt="profile img" 
                   />
                   <div className='text-sm text-left'>

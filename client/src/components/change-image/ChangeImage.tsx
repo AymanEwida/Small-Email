@@ -51,7 +51,7 @@ const ChangeImage: React.FC<ChangeImageProps> = ({ closeChangeImage }) => {
   }, {
     onSuccess: (data) => {
       Cookies.set('userImg', data.newImg, { expires: 30 });
-      accountsDispatch({ type: AccountsTypes.UpdateAccountCredentials, payload: {username: Cookies.get('username'), newCredential: { credential: "email", credentialValue: uploadImageMutation.data.image.src} } });
+      accountsDispatch({ type: AccountsTypes.UpdateAccountCredentials, payload: {username: Cookies.get('username'), newCredential: { credential: "userImg", credentialValue: data.newImg} } });
       history('/profile-settings');
     }
   });
@@ -143,7 +143,7 @@ const ChangeImage: React.FC<ChangeImageProps> = ({ closeChangeImage }) => {
           <Button
            type='submit'
            paddingSize='2'
-           text={mutation.isLoading ? <LoadingComponent style='circle' /> : 'Change Img'}
+           text={mutation.isLoading ? <LoadingComponent style='circle' /> : 'Change Image'}
            bgColor='rgb(74 222 128)'
            color='white'
            borderRadius='10px'

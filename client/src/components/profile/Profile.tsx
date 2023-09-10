@@ -94,7 +94,11 @@ const Profile: React.FC = () => {
       history('/');
       window.location.reload();
     } else {
-      history(`/login?email=${email}`);
+      Cookies.remove('token');
+      Cookies.remove('username');
+      Cookies.remove('email');
+      Cookies.remove('userImg');
+      window.location.href = `http://localhost:3000/login?email=${email}`;
     }
   }
 
@@ -183,8 +187,16 @@ const Profile: React.FC = () => {
         })}
       </div>
       <div className='border-color border-b-1 w-full py-3'>
-        <Link to='/choose-account'>
-          <div className='flex gap-3 items-center m-auto bg-black w-fit p-1 px-2 rounded-md hover:drop-shadow-md'>
+        <div 
+         onClick={() => {
+          Cookies.remove('token');
+          Cookies.remove('username');
+          Cookies.remove('email');
+          Cookies.remove('userImg');
+          window.location.href = 'http://localhost:3000/login';
+         }}
+        >
+          <div className='flex gap-3 cursor-pointer items-center m-auto bg-black w-fit p-1 px-2 rounded-md hover:drop-shadow-md'>
             <span className='text-2xl text-green-500'>
               <AiOutlineUserAdd />
             </span>
@@ -192,7 +204,7 @@ const Profile: React.FC = () => {
               Add new account
             </p>
           </div>
-        </Link>
+        </div>
       </div>
       <button
        type='button' 

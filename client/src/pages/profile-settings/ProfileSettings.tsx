@@ -2,6 +2,10 @@ import React, { useState } from 'react'
 
 import { Link } from 'react-router-dom';
 
+import { useMutation } from 'react-query';
+
+import axios, { AxiosError } from 'axios';
+
 import Cookies from 'js-cookie';
 
 import { AiOutlinePlus } from 'react-icons/ai';
@@ -23,6 +27,11 @@ import {
 import noAvater from '../../assests/noAvatar.png';
 
 import { settingOptions } from './settingOptionsData';
+
+import {
+  Event,
+  InputElement
+} from '../../types/types';
 
 import './profile-settings.css';
 
@@ -55,6 +64,30 @@ const ProfileSettings: React.FC = () => {
       }
     }
   });
+
+  const uploadImageMutation = useMutation(async (imageFormData: FormData) => {
+    const res = await axios.post('http://localhost:8800/api/v1/upload/image', imageFormData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: (data) => {
+      Cookies.set('userImg', data.image.src, { expires: 30 });
+      window.location.reload();
+    }
+  });
+
+  function handleChangeImage (event: Event<InputElement>): void {
+    if (event.target.files && event.target.files.length > 0) {
+      const uploadData = new FormData();
+      const addedImage = event.target.files[0];
+
+      uploadData.append("image", addedImage, addedImage.name);
+      uploadImageMutation.mutate(uploadData);
+
+      // if (uploadImageMutation.isSuccess && uploadImageMutation.data) {
+      //   Cookies.set('userImg', uploadImageMutation.data.image.src, { expires: 30 });
+      // }
+    }
+  }
 
   const handleOpenSettingsItems = (settingsInfo: string) => {
     switch(settingsInfo) {
@@ -274,7 +307,10 @@ const ProfileSettings: React.FC = () => {
             <input 
              type="file"
              id='addImg'
-             className='hidden' 
+             className='hidden'
+             onChange={handleChangeImage}
+             multiple={false}
+             accept='.png, .jpeg, .jpg'   
             />
           </div>
           <h1 className='text-2xl text-center font-semibold text-gray-300'>
