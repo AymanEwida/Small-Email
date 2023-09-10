@@ -49,7 +49,7 @@ const PersonalDetailsSettings: React.FC<PersonalDetailsSettingsProps> = ({ close
           </h1>
           <img 
            className='rounded-full object-cover h-10 w-10'
-           src={noAvater}
+           src={Cookies.get('userImg') ? Cookies.get('userImg') : noAvater}
            alt='profile image' 
           /> 
           <Button
@@ -70,7 +70,7 @@ const PersonalDetailsSettings: React.FC<PersonalDetailsSettingsProps> = ({ close
             Change Email
           </h1>
           <h2 className='text-gray-400 font-medium text-lg'> 
-            jan@smail.com
+            {Cookies.get('email')}
           </h2>
           <Button
            type='button'

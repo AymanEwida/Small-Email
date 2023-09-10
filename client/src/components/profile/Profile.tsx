@@ -64,6 +64,8 @@ const Profile: React.FC = () => {
   function handleLogot (): void {
     Cookies.remove('token');
     Cookies.remove('username');
+    Cookies.remove('email');
+    Cookies.remove('userImg');
     window.location.reload();
   }
 
@@ -76,15 +78,19 @@ const Profile: React.FC = () => {
         if (account.username === Cookies.get('username')) {
           Cookies.remove('token');
           Cookies.remove('username');
+          Cookies.remove('email');
+          Cookies.remove('userImg');
         }
       }
     }
   }
 
-  function handleLogin (token: string, username: string, email: string, isConnected: boolean): void {
+  function handleLogin (token: string, username: string, email: string, userImg: string, isConnected: boolean): void {
     if (token.length > 0 && isConnected) {
       Cookies.set('token', token, { expires: 30 });
       Cookies.set('username', username, { expires: 30 });
+      Cookies.set('email', email, { expires: 30 });
+      Cookies.set('userImg', username, { expires: 30 });
       history('/');
       window.location.reload();
     } else {
@@ -149,7 +155,7 @@ const Profile: React.FC = () => {
               />
               <div 
                className='text-sm ml-5'
-               onClick={() => handleLogin(account.token, account.username, account.email, account.isUserConnected)}
+               onClick={() => handleLogin(account.token, account.username, account.email, account.userImg, account.isUserConnected)}
               >
                 <h3 className='text-[16px] font-medium text-blue-500'>
                   {account.username}

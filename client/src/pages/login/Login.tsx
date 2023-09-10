@@ -95,10 +95,12 @@ const Login: React.FC = () => {
       if (queryStrings?.email && queryStrings?.email?.length > 0) {
         accountsDispatch({ type: AccountsTypes.ReconnectAccount, payload: { email: queryStrings?.email, token: data.token, expired: new Date(new Date().getTime() + 30*24*60*60*1000) } })
       } else {
-        accountsDispatch({ type: AccountsTypes.AddAccount, payload: {username: data.user.username, email: inputValues.email, userImg: "", token: data.token, isUserConnected: true, expired: new Date(new Date().getTime() + 30*24*60*60*1000)} });
+        accountsDispatch({ type: AccountsTypes.AddAccount, payload: {username: data.user.username, email: inputValues.email, userImg: data.user.userImg, token: data.token, isUserConnected: true, expired: new Date(new Date().getTime() + 30*24*60*60*1000)} });
       }
       Cookies.set('token', data.token, { expires: 30 });
       Cookies.set('username', data.user.username, { expires: 30 });
+      Cookies.set('email', inputValues.email, { expires: 30 });
+      Cookies.set('userImg', data.user.userImg, { expires: 30 });
       history('/');
       window.location.reload();
     }

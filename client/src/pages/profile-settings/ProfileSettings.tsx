@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 
 import { Link } from 'react-router-dom';
 
+import Cookies from 'js-cookie';
+
 import { AiOutlinePlus } from 'react-icons/ai';
 import { IoMdCloseCircleOutline } from 'react-icons/io';
 
@@ -253,7 +255,7 @@ const ProfileSettings: React.FC = () => {
           <div className='relative'>
             <img
              className='h-24 w-24 object-cover rounded-full' 
-             src={noAvater} 
+             src={Cookies.get('userImg') ? Cookies.get('userImg') : noAvater} 
              alt="profile image" 
             />
             <span className='absolute -top-1 right-1'>

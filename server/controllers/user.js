@@ -189,7 +189,29 @@ async function changeEmail (req, res) {
 
     await user.updateOne({ $set: { email: newEmail } });
 
-    res.status(StatusCodes.OK).json({ msg: 'Email has been update.' });
+    res.status(StatusCodes.OK).json({ msg: 'Email has been updated.' });
+}
+
+async function changeImg (req, res) {
+    const {
+        user: { userID },
+        body: { password, newImg }
+    } = req;
+
+    if (!newImg || newImg.length === 0) {
+        throw new BadRequestError('Please provide a newImg');
+    }
+
+    const user = await User.findById(userID);
+
+    const isPasswordCorrect = await user.comparePassword(password);
+    if (!isPasswordCorrect) {
+        throw new UnauthenticatedError('Invalid Credentials');
+    }
+
+    await user.updateOne({ $set: { userImg: newImg } });
+
+    res.status(StatusCodes.OK).json({ msg: 'Image has been updated.' });
 }
 
 async function getUserSavedDrafts (req, res) {
@@ -346,6 +368,7 @@ module.exports = {
     updateUsername,
     changePassword,
     changeEmail,
+    changeImg,
     getUserSavedDrafts,
     addDraftToUserSavedDrafts,
     removeDraftFromUserSavedDrafts,

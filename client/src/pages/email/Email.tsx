@@ -88,7 +88,7 @@ const Email: React.FC = () => {
         <EmailLayout
          subject={data.email.emailSubject}
          sender={{username: data.email.sender.username, email: data.email.sender.email, userImg: data.email.sender.userImg}}
-         recipients={emailCategory === 'inbox' || emailCategory === 'groups' ? [{recipientEmail: 'Me<jan@smail.com>'}] : data.email.to.map((recipient: any) => ({recipientEmail:recipient.user.email}))}
+         recipients={emailCategory === 'inbox' || emailCategory === 'groups' ? [{recipientEmail: `Me<${Cookies.get('email')}>`}] : data.email.to.map((recipient: any) => ({recipientEmail:recipient.user.email}))}
          content={eval('`' + data.email.emailContent + '`')}
          files={data.email.files} 
         />

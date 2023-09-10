@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -27,6 +27,9 @@ import {
   InputElement
 } from '../../types/types';
 
+import { AccountsContext } from '../../context/accounts-context/AccountsContext';
+import { AccountsTypes } from '../../context/accounts-context/AccountsReducer';
+
 import noAvater from '../../assests/noAvatar.png';
 
 import './register.css';
@@ -39,6 +42,10 @@ type FormData = {
 }
 
 const Register: React.FC = () => {
+
+  const {
+    accountsDispatch,
+  } = useContext(AccountsContext);
 
   const [actions, setActions] = useState(['username', 'phoneNumber', 'email', 'password', 'passwordAgain', 'addImg']);
   const [currentActionIndex, setCurrentActionIndex] = useState(0);
@@ -125,8 +132,14 @@ const Register: React.FC = () => {
     return res.data;
   }, {
     onSuccess: (data) => {
+      const validEmail = inputsValue.email+"@smail.com";
+
+      accountsDispatch({ type: AccountsTypes.AddAccount, payload: {username: data.user.username, email: validEmail, userImg: data.user.userImg, token: data.token, isUserConnected: true, expired: new Date(new Date().getTime() + 30*24*60*60*1000)} });
+
       Cookies.set('token', data.token, { expires: 30 });
       Cookies.set('username', data.user.username, { expires: 30 });
+      Cookies.set('email', validEmail, { expires: 30 });
+      Cookies.set('userImg', data.user.userImg, { expires: 30 });
       history('/');
       window.location.reload();
     }

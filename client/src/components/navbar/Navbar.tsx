@@ -151,7 +151,7 @@ const Navbar: React.FC = () => {
         onClick={handleProfile}
         >
           <img 
-          src={noAvater}
+          src={Cookies.get('userImg') ? Cookies.get('userImg') : noAvater}
           className='h-8 w-8 rounded-full object-cover' 
           alt="profile" 
           />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +21,9 @@ import {
   InputElement
 } from '../../types/types';
 
+import { AccountsContext } from '../../context/accounts-context/AccountsContext';
+import { AccountsTypes } from '../../context/accounts-context/AccountsReducer';
+
 import './change-username.css';
 
 interface ChangeUsernameProps {
@@ -28,6 +31,11 @@ interface ChangeUsernameProps {
 }
 
 const ChangeUsername: React.FC<ChangeUsernameProps> = ({ closeChangeUsername }) => {
+
+  const {
+    state,
+    accountsDispatch
+  } = useContext(AccountsContext);
 
   const [inputsValue, setInputsValue] = useState({
     newUsername: '',
@@ -60,7 +68,8 @@ const ChangeUsername: React.FC<ChangeUsernameProps> = ({ closeChangeUsername }) 
     mutation.mutate(inputsValue);
 
     if (mutation.isSuccess && mutation.data) {
-      history('/profile-settings')
+      accountsDispatch({ type: AccountsTypes.UpdateAccountCredentials, payload: { username: Cookies.get('username'), newCredential: { credential: "email", credentialValue: inputsValue.newUsername } } });
+      history('/profile-settings');
     }
   }
 

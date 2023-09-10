@@ -75,14 +75,18 @@ const ChooseAccount: React.FC = () => {
         accountsDispatch({ type: AccountsTypes.DisconnectAccount, payload: { index: i } });
         Cookies.remove('token');
         Cookies.remove('username');
+        Cookies.remove('email');
+        Cookies.remove('userImg');
       }
     }
   }
 
-  function handleLogin (token: string, username: string, email: string, isConnected: boolean): void {
+  function handleLogin (token: string, username: string, email: string, userImg: string, isConnected: boolean): void {
     if (token.length > 0 && isConnected) {
       Cookies.set('token', token, { expires: 30 });
       Cookies.set('username', username, { expires: 30 });
+      Cookies.set('email', email, { expires: 30 });
+      Cookies.set('userImg', userImg, { expires: 30 });
       history('/');
       window.location.reload();
     } else {
@@ -161,7 +165,7 @@ const ChooseAccount: React.FC = () => {
                  paddingSize='1'
                  borderRadius='10px'
                  width='100%'
-                 customFunc={() => handleLogin(account.token, account.username, account.email, account.isUserConnected)} 
+                 customFunc={() => handleLogin(account.token, account.username, account.email, account.userImg, account.isUserConnected)} 
                 />
               </div>
             </div>

@@ -1,8 +1,9 @@
-import { ActionMap } from '../../types/types';
+import { ActionMap, Optional } from '../../types/types';
 
 export enum AccountsTypes {
     AddAccount = 'ADD_ACCOUNT',
     RemoveAccount = 'REMOVE_ACCOUNT',
+    UpdateAccountCredentials = 'UPDATE_ACCOUNT_CREDENTIALS',
     DisconnectAccount = 'DISCONNECT_ACCOUNT',
     ReconnectAccount = 'RECONNECT_ACCOUNT',
 }
@@ -19,6 +20,7 @@ type Account = {
 type AccountsAction = {
     [AccountsTypes.AddAccount]: Account,
     [AccountsTypes.RemoveAccount]: {index: number},
+    [AccountsTypes.UpdateAccountCredentials]: {username: Optional<string>, newCredential: {credential: "username" | "email" | "userImg", credentialValue: string}},
     [AccountsTypes.DisconnectAccount]: {index: number},
     [AccountsTypes.ReconnectAccount]: {email: string, token: string, expired: Date},
 }
@@ -41,6 +43,23 @@ export const AccountsReducer = (state: Account[], action: AccountsActions) => {
             ]
         case AccountsTypes.RemoveAccount:
             return state.filter((account, index) => index !== action.payload.index);
+        case AccountsTypes.UpdateAccountCredentials:
+            let newStateChange: Account[] = [];
+
+            for (let i = 0; i < state.length; i++) {
+                const account = state[i];
+
+                if (action.payload.username === account.username && account.isUserConnected) {
+                    newStateChange.push({
+                        ...account,
+                        [action.payload.newCredential.credential]: action.payload.newCredential.credentialValue
+                    });
+                } else {
+                    newStateChange.push(account);
+                }
+            }
+
+            return newStateChange;
         case AccountsTypes.DisconnectAccount:
             let newState: Account[] = [];
 
