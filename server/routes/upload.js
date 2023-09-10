@@ -13,6 +13,6 @@ router.route('/image').post(uploadImage);
 router.route('/images').post(uploadImages);
 router.route('/video').post(uploadVideo);
 router.route('/file').post(uploadFile);
-router.route('/files').post(uploadImages);
+router.route('/files').post(uploadFiles);
 
 module.exports = router;

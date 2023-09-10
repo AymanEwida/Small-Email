@@ -34,11 +34,12 @@ import noAvater from '../../assests/noAvatar.png';
 
 import './register.css';
 
-type FormData = {
+type RegisterFormData = {
   username : string;
   phoneNumber : string;
   email : string;
   password : string;
+  userImg : string;
 }
 
 const Register: React.FC = () => {
@@ -56,6 +57,7 @@ const Register: React.FC = () => {
     password: '',
     passwordAgain: '',
   });
+  const [image, setImage] = useState<File | null>(null);
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const [isPasswordAgainShow, setIsPasswordAgainShow] = useState(false);
 
@@ -127,7 +129,7 @@ const Register: React.FC = () => {
     setIsPasswordAgainShow(prevIsPasswordAgainShow => !prevIsPasswordAgainShow);
   }
 
-  const { isError, error, isLoading, mutate } = useMutation(async (formData: FormData) => {
+  const { isError, error, isLoading, mutate } = useMutation(async (formData: RegisterFormData) => {
     const res = await axios.post('http://localhost:8800/api/v1/auth/register', formData);
     return res.data;
   }, {
@@ -145,13 +147,43 @@ const Register: React.FC = () => {
     }
   });
 
+  const uploadImageMutation = useMutation(async (imageFormData: FormData) => {
+    const res = await axios.post('http://localhost:8800/api/v1/auth/upload', imageFormData);
+    return res.data;
+  });
+
+  function handleAddImage (event: Event<InputElement>): void {
+    if (event.target.files && event.target.files.length > 0) {
+      const addedImage = event.target.files[0];
+      setImage(addedImage);
+    }
+  }
+
+  function getImageSrc (): string {
+    if (image) {
+      return URL.createObjectURL(image);
+    }
+    return noAvater;
+  }
+
   function handleSubmit (event: FormEvent): void {
     event.preventDefault();
 
     const validEmail = inputsValue.email+"@smail.com";
 
     if (inputsValue.password === inputsValue.passwordAgain) {
-      mutate({ username: inputsValue.username, email: validEmail, password: inputsValue.password, phoneNumber: inputsValue.phoneNumber });
+      if (image) {
+        const uploadData = new FormData();
+
+        uploadData.append("image", image, image.name);
+        uploadImageMutation.mutate(uploadData);
+
+        if (uploadImageMutation.isSuccess && uploadImageMutation.data) {
+          mutate({ username: inputsValue.username, email: validEmail, password: inputsValue.password, phoneNumber: inputsValue.phoneNumber, userImg: uploadImageMutation.data.image.src });
+        }
+      } else {
+        mutate({ username: inputsValue.username, email: validEmail, password: inputsValue.password, phoneNumber: inputsValue.phoneNumber, userImg: '' });
+      } 
     }
   }
 
@@ -342,12 +374,15 @@ const Register: React.FC = () => {
             <>
               <img
                className='h-32 w-32 m-auto rounded-full' 
-               src={noAvater} 
+               src={getImageSrc()} 
                alt="profile image" 
               />
               <input
                type="file"
-               className='cursor-pointer' 
+               className='cursor-pointer'
+               onChange={handleAddImage}
+               multiple={false}
+               accept='.png, .jpeg, .jpg'  
               />
             </>
           ) : null}

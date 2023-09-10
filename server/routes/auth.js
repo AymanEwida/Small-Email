@@ -5,8 +5,11 @@ const {
     register,
     login
 } = require('../controllers/auth');
+const { uploadImage } = require('../controllers/authUpload');
+
 
 router.post('/register', register);
 router.post('/login', login);
+router.post('/upload', uploadImage);
 
 module.exports = router;
