@@ -211,7 +211,7 @@ async function changeImg (req, res) {
 
     await user.updateOne({ $set: { userImg: newImg } });
 
-    res.status(StatusCodes.OK).json({ msg: 'Image has been updated.' });
+    res.status(StatusCodes.OK).json({ msg: 'Image has been updated.', newImg });
 }
 
 async function getUserSavedDrafts (req, res) {

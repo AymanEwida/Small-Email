@@ -121,7 +121,7 @@ const Profile: React.FC = () => {
       <div className='flex gap-5 items-center border-color border-b-1 pb-4 w-full'>
         <img
          className='rounded-full object-cover h-20 w-20' 
-         src={noAvater}
+         src={Cookies.get('userImg') ? Cookies.get('userImg') : noAvater}
          alt="profile" 
         />
         <div className='h-20'>
@@ -129,7 +129,7 @@ const Profile: React.FC = () => {
             {Cookies.get('username')}
           </h2>
           <p className='text-sm text-gray-400 mb-2'>
-            jan@smail.com
+            {Cookies.get('email')}
           </p>
           <Link to='/profile-settings'>
             <span className='bg-blue-500 text-sm rounded-md p-1 hover:drop-shadow-md'>
@@ -150,7 +150,7 @@ const Profile: React.FC = () => {
             >
               <img
               className='rounded-full object-cover h-8 w-8' 
-              src={noAvater} 
+              src={account.userImg ? account.userImg : noAvater} 
               alt="account" 
               />
               <div 

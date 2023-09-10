@@ -47,6 +47,10 @@ const ChangeEmail: React.FC<ChangeEmailProps> = ({ closeChangeEmail }) => {
   const mutation = useMutation(async (formData: {newEmail: string, password: string}) => {
     const res = await axios.patch('http://localhost:8800/api/v1/user/change/email', formData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
     return res.data;
+  }, {
+    onSuccess: (data) => {
+      Cookies.set('email', inputsValue.newEmail, { expires: 30 });
+    }
   });
 
   function handleInputsValue (event: Event<InputElement>): void {
