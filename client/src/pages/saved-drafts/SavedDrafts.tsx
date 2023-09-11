@@ -6,6 +6,8 @@ import axios, { AxiosError } from 'axios';
 
 import Cookies from 'js-cookie';
 
+import { Buffer } from 'buffer';
+
 import {
   EmailsNavbar,
   SavedDraftComponent,
@@ -19,6 +21,10 @@ import {
   arrayRepeat
 } from '../../functions';
 
+import {
+  Draft
+} from '../../types/types';
+
 import './saved-drafts.css';
 
 const SavedDrafts: React.FC = () => {
@@ -29,6 +35,7 @@ const SavedDrafts: React.FC = () => {
   const [statuses, setStatuses] = useState<boolean[]>([]);
   const [savedDraftsIDs, setSavedDraftsIDs] = useState<string[]>([]);
   const [isDraftShow, setIsDraftShow] = useState(false);
+  const [selectedDraft, setSetSelectedDraft] = useState<Draft | undefined>(undefined);
 
   const {isError, error, isLoading, data, refetch} = useQuery("savedDrafts", async () => {
     const res = await axios.get('http://localhost:8800/api/v1/user/saved-drafts', { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
@@ -104,7 +111,8 @@ const SavedDrafts: React.FC = () => {
     setStatuses(arrayRepeat([false], data.savedDrafts.length));
   }
 
-  function handleShowDraft (): void {
+  function handleShowDraft (draft: any): void {
+    setSetSelectedDraft(draft);
     setIsDraftShow(prevIsShowDraft => !prevIsShowDraft);
   }
 
@@ -135,7 +143,7 @@ const SavedDrafts: React.FC = () => {
     );
   }
 
-  return (
+  return ( 
     <div>
       <EmailsNavbar
        refreshEmails={refetch}
@@ -153,11 +161,11 @@ const SavedDrafts: React.FC = () => {
          isEmailChecked={statuses[index]}
          handleEmailChecked={() => handleEmailsChecked(index)}
          handleDeleteEmail={() => mutation.mutate(savedDraft._id)}
-         onClick={handleShowDraft}
+         onClick={() => handleShowDraft({to: savedDraft.to, draftSubject: savedDraft.draftSubject, draftContent: savedDraft.draftContent, draftFiles: savedDraft.draftFiles, draftImgs: savedDraft.draftImgs, _id: savedDraft._id})}
          />
       ))}
       {isDraftShow ? (
-        <SendEmail closeSendEmail={handleCloseDraft} />
+        <SendEmail selectedDraft={selectedDraft} closeSendEmail={handleCloseDraft} />
       ) : null}
     </div>
   )

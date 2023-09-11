@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import axios, { AxiosError } from 'axios';
 
 import Cookies from 'js-cookie';
+
+import parse from 'html-react-parser';
 
 import { AiOutlineFullscreen, AiFillDelete, AiOutlineFullscreenExit, AiOutlineDeliveredProcedure, AiOutlineUnderline, AiOutlineItalic, AiOutlineBold } from 'react-icons/ai';
 import { TiDelete } from 'react-icons/ti';
@@ -28,7 +30,9 @@ import {
   InputElement,
   User,
   Group,
-  Optional
+  Optional,
+  Recipient,
+  Draft
 } from '../../types/types';
 
 import { Buffer } from 'buffer';
@@ -36,18 +40,20 @@ import { Buffer } from 'buffer';
 import './send-email.css';
 
 interface SendEmailProps {
-  closeSendEmail: Void
+  selectedDraft ?: Draft,
+  closeSendEmail: Void,
 }
 
-const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
+const SendEmail: React.FC<SendEmailProps> = ({ selectedDraft, closeSendEmail }) => {
 
   const queryClient = useQueryClient();
 
   const [emailInputs, setEmailInputs] = useState({
     recipient: '',
-    subject: ''
+    subject: selectedDraft?.draftSubject || ''
   });
   const [recipients, setRecipients] = useState<string[]>([]);
+  const [selectedRecipients, setSelectedRecipients] = useState<Recipient[] | undefined>(selectedDraft?.to || undefined);
   const [fullScreen, setFullScreen] = useState(false);
   const [isDesignOptions, setIsDesignOptions] = useState(false);
   const [isDesignOptionsActive, setIsDesignOptionsActive] = useState({
@@ -116,6 +122,16 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
 
   const saveDraftMutation = useMutation(async (saveDraftFormData: {to: string[], draftContent: string | undefined, draftSubject: string, draftImgs: Buffer[], draftFiles: {file: Buffer, filename: string}[]}) => {
     const res = await axios.patch('http://localhost:8800/api/v1/user/saved-drafts/add', saveDraftFormData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("savedDrafts");
+      closeSendEmail();
+    }
+  });
+
+  const updateDraftMutation = useMutation(async (updateDraftFormData: {to: Recipient[] | undefined, draftContent: string | undefined, draftSubject: string, draftImgs: Buffer[], draftFiles: {file: Buffer, filename: string}[]}) => {
+    const res = await axios.patch(`http://localhost:8800/api/v1/user/saved-drafts/update/${selectedDraft?._id}`, updateDraftFormData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
     return res.data;
   }, {
     onSuccess: () => {
@@ -221,9 +237,26 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
   }
 
   function addRecipient (index: number): void {
-    setRecipients(prevRecipients => (
-      [...prevRecipients, data.usersAndGroups[index].email || data.usersAndGroups[index].groupEmail]
-    ));
+    if (selectedRecipients) {
+      let newRecipient: any = {
+        recipientID : data.usersAndGroups[index]._id,
+        role : data.usersAndGroups[index].role
+      };
+
+      if (data.usersAndGroups[index].username) {
+        newRecipient.username = data.usersAndGroups[index].username;
+      } else {
+        newRecipient.groupName = data.usersAndGroups[index].groupName;
+      }
+
+      setSelectedRecipients(prevSelectedRecipients => (
+        prevSelectedRecipients && [...prevSelectedRecipients, newRecipient]
+      ));
+    } else {
+      setRecipients(prevRecipients => (
+        [...prevRecipients, data.usersAndGroups[index].email || data.usersAndGroups[index].groupEmail]
+      ));
+    }
     setEmailInputs(prevEmailInputs => (
       {
         ...prevEmailInputs,
@@ -244,6 +277,18 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     setRecipients(newRecipients);
   }
 
+  function deleteSelectedRecipient (index: number): void {
+    let newSelectedRecipients: string[] = [];
+
+    for (let i = 0; i < recipients.length; i++) {
+      if (i !== index) {
+        newSelectedRecipients.push(recipients[i]);
+      }
+    }
+
+    setRecipients(newSelectedRecipients);
+  }
+
   function changeContentString (contentString: Optional<string>, imgsCount: number, isEmailSaved: boolean): Optional<string> {
     const content  = contentString as string;
     const startImgEelment = content?.indexOf('<div class=\"relative\">');
@@ -261,9 +306,30 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     return changeContentString(newContentString, imgsCount+1, isEmailSaved);
   }
 
+  let selectedContent = selectedDraft?.draftContent && parse(selectedDraft.draftContent);
+
   async function handleSaveDraft (): Promise<void> {
     if (!recipients && !emailInputs.subject && (!emailContent.current?.innerHTML || emailContent.current.innerHTML === '<br>')) {
       closeSendEmail();
+    } else if (selectedDraft) {
+      let newFiles: {file: Buffer, filename: string}[] = [];
+      let newImages: Buffer[] = [];
+      
+      for (const file of files) {
+        newFiles.push({file: Buffer.from(file.name), filename: file.name});
+      }
+  
+      for (const image of images) {
+        newImages.push(Buffer.from(image.name));
+      }
+
+      updateDraftMutation.mutate({
+        to: selectedRecipients,
+        draftContent: '<div>' + changeContentString(emailContent.current?.innerHTML, 0, true) + '</div>',
+        draftSubject: emailInputs.subject,
+        draftFiles: [...selectedDraft.draftFiles, ...newFiles],
+        draftImgs: [...selectedDraft.draftImgs, ...newImages] 
+      });
     } else {
       let newFiles: {file: Buffer, filename: string}[] = [];
       let newImages: Buffer[] = [];
@@ -362,7 +428,29 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
             ) : null}
             {data ? <div className='absolute -bottom-63 z-50'><FoundUsers users={getFoundUsersData(data.usersAndGroups)} addFunc={addRecipient} /></div> : null}
           </div>
-          {recipients.length > 0 ? <div className='flex flex-row items-center gap-3 flex-wrap mt-3'>
+          {(selectedRecipients && selectedRecipients.length > 0) ? (
+            <div className='flex flex-row items-center gap-3 flex-wrap mt-3'>
+              {selectedRecipients.map((recipient, index) => (
+                <div key={index} className='py-1 px-3 rounded-full bg-blue-400 flex items-center gap-4'>
+                  <TooltipComponent
+                  message='Delete'
+                  direction='top'
+                  >
+                    <button 
+                    type='button' 
+                    className='text-gray-200 cursor-pointer'
+                    onClick={() => deleteSelectedRecipient(index)}
+                    >
+                      X
+                    </button>
+                  </TooltipComponent>
+                  <p className='font-bold text-gray-300'>
+                    {recipient.groupName || recipient.username}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : recipients.length > 0 ? <div className='flex flex-row items-center gap-3 flex-wrap mt-3'>
             {recipients.map((recipientsEmail, index) => (
               <div key={index} className='py-1 px-3 rounded-full bg-blue-400 flex items-center gap-4'>
                 <TooltipComponent
@@ -406,6 +494,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
            onChange={() => console.log('I am here!')}
           >
             <br />
+            {parse(selectedContent as string)}
             {images ? (
               <React.Fragment>
                 {images.map((image, index) => (

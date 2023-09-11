@@ -42,3 +42,20 @@ export type TreeStructure = {
   childern ?: TreeStructure[];
 
 }
+
+export type Recipient = {
+  recipientID : string;
+  role : "user" | "group";
+  _id ?: string;
+  groupName ?: string;
+  username ?: string;
+}
+
+export type Draft = {
+  to : Recipient[];
+  draftSubject : string;
+  draftContent : string;
+  draftFiles : {file: Buffer, filename: string}[];
+  draftImgs : Buffer[];
+  _id : string;
+}

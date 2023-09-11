@@ -18,7 +18,7 @@ const FoundUsers: React.FC<FoundUsersProps> = ({ users, addFunc }) => {
         <div key={user._id} onClick={() => addFunc(index)} className='flex items-center gap-5 border-b-1 border-inherit hover:bg-hover-bg w-full cursor-pointer p-4'>
           <img
            className='h-10 w-10 rounded-full object-cover' 
-           src={noAvatar} 
+           src={user.userImg ? user.userImg : noAvatar} 
            alt="profile image" 
           />
           <div>
