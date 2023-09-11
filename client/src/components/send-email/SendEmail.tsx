@@ -96,7 +96,11 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     return res.data;
   }, {
     onSuccess: (data) => {
-      setUploadedFiles(data.files);
+      let newUploadedFiles: {filename: string, filePath: string}[] = uploadedFiles;
+      newUploadedFiles.push({filename: data.file.filename, filePath: data.file.src});
+
+      setUploadedFiles(newUploadedFiles);
+      console.log({uploadedFiles});
     }
   });
 
@@ -293,11 +297,10 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
       uploadData.delete("image");
     }
 
-    for (let i = 0; i < files?.length; i++) {
-      uploadData.append("file", files[i], files[i].name);
+    for (const file of files) {
+      uploadData.append("file", file, file.name);
       await uploadFileMutation.mutateAsync(uploadData);
       uploadData.delete("file");
-      console.log({uploadedFiles});
     }
     
     sendEmailMutation.mutate({
