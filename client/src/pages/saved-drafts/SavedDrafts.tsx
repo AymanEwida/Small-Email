@@ -8,9 +8,10 @@ import Cookies from 'js-cookie';
 
 import {
   EmailsNavbar,
-  EmailComponent,
+  SavedDraftComponent,
   LoadingComponent,
-  Tefo
+  Tefo,
+  SendEmail
 } from '../../components';
 
 import {
@@ -27,6 +28,7 @@ const SavedDrafts: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [statuses, setStatuses] = useState<boolean[]>([]);
   const [savedDraftsIDs, setSavedDraftsIDs] = useState<string[]>([]);
+  const [isDraftShow, setIsDraftShow] = useState(false);
 
   const {isError, error, isLoading, data, refetch} = useQuery("savedDrafts", async () => {
     const res = await axios.get('http://localhost:8800/api/v1/user/saved-drafts', { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
@@ -102,6 +104,14 @@ const SavedDrafts: React.FC = () => {
     setStatuses(arrayRepeat([false], data.savedDrafts.length));
   }
 
+  function handleShowDraft (): void {
+    setIsDraftShow(prevIsShowDraft => !prevIsShowDraft);
+  }
+
+  function handleCloseDraft (): void {
+    setIsDraftShow(false);
+  }
+
   if(isLoading) {
     return (
       <>
@@ -134,17 +144,21 @@ const SavedDrafts: React.FC = () => {
        handleDeleteEmails={handleDeleteSavedDrafts} 
       />
       {data.savedDrafts.map((savedDraft: any, index: number) => (
-        <EmailComponent
+        <SavedDraftComponent
          key={savedDraft._id}
          sendTo={savedDraft.to}
          subject={savedDraft.draftSubject}
-         sendAt={new Date(savedDraft.createdAt).toDateString()}
+         updatedAt={new Date(savedDraft.updatedAt).toDateString()}
          content={savedDraft.draftContent}
          isEmailChecked={statuses[index]}
          handleEmailChecked={() => handleEmailsChecked(index)}
          handleDeleteEmail={() => mutation.mutate(savedDraft._id)}
+         onClick={handleShowDraft}
          />
       ))}
+      {isDraftShow ? (
+        <SendEmail closeSendEmail={handleCloseDraft} />
+      ) : null}
     </div>
   )
 }

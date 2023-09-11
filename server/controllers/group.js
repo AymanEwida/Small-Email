@@ -184,7 +184,7 @@ async function updateGroup (req, res) {
         params: { id: groupID }
     } = req;
 
-    if (req.body === {} || !req.body) {
+    if (!req.body || !Object.keys(req.body).length) {
         throw new BadRequestError('Provide a thing to change the group with it');
     }
 

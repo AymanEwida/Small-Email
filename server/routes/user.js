@@ -11,6 +11,7 @@ const {
     getUserSavedDrafts,
     addDraftToUserSavedDrafts,
     removeDraftFromUserSavedDrafts,
+    updateUserSavedDraft,
     sendTwoFactorAuthentication,
     enableTwoFactorAuthentication,
     deleteUser
@@ -25,6 +26,7 @@ router.route('/change/img').patch(changeImg);
 router.route('/saved-drafts').get(getUserSavedDrafts);
 router.route('/saved-drafts/add').patch(addDraftToUserSavedDrafts);
 router.route('/saved-drafts/remove/:id').patch(removeDraftFromUserSavedDrafts);
+router.route('/saved-drafts/update/:id').patch(updateUserSavedDraft);
 router.route('/send/2FA').get(sendTwoFactorAuthentication);
 router.route('/change/is-two-factor-auth').patch(enableTwoFactorAuthentication);
 router.route('/delete').delete(deleteUser);

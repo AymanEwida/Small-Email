@@ -334,6 +334,40 @@ async function removeDraftFromUserSavedDrafts (req, res) {
     res.status(StatusCodes.OK).json({ status: "succes", draft: null });
 }
 
+async function updateUserSavedDraft (req, res) {
+    const {
+        user: { userID },
+        params: { id: draftID }
+    } = req;
+
+    if (!req.body || !Object.keys(req.body).length) {
+        throw new BadRequestError('Provide a thing to change the draft with it');
+    }
+
+    const user = await User.findById(userID);
+
+    function updateDraft () {
+        let newSavedDrafts = [];
+
+        for (let i = 0; i < user.savedDrafts.length; i++) {
+            const savedDraft = user.savedDrafts[i];
+
+            if (savedDraft._id.toString() === draftID) {
+                Object.assign(savedDraft._doc, req.body);
+                newSavedDrafts.push(savedDraft);
+            } else {
+                newSavedDrafts.push(savedDraft);
+            }
+        }
+
+        return newSavedDrafts;
+    }
+
+    await user.updateOne({ $set: { savedDrafts: updateDraft() } });
+
+    res.status(StatusCodes.OK).json({ msg: "Draft has been updated" });
+}
+
 async function sendTwoFactorAuthentication (req, res) {
     // TODO: twilio package
     res.status(StatusCodes.OK).json({ msg: 'TODO twilio package' });
@@ -372,6 +406,7 @@ module.exports = {
     getUserSavedDrafts,
     addDraftToUserSavedDrafts,
     removeDraftFromUserSavedDrafts,
+    updateUserSavedDraft,
     sendTwoFactorAuthentication,
     enableTwoFactorAuthentication,
     deleteUser

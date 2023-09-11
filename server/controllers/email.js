@@ -178,7 +178,7 @@ async function updateEmail (req, res) {
         params: { id: emailID },  
     } = req;
 
-    if (req.body === {} || !req.body) {
+    if (!req.body || !req.body.length) {
         throw new BadRequestError('Provide a thing to change the email with it');
     }
 

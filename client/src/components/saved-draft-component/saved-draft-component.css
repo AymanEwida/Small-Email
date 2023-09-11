@@ -1,0 +1,14 @@
+.show-animation {
+    display: inline-block;
+    animation: show 300ms ease-in;
+}
+
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

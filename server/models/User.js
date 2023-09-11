@@ -24,13 +24,13 @@ const SavedDraft = new mongoose.Schema(
         },
 
         draftFiles: {
-            type: [{filename: String, filePath: String}],
+            type: [{file: Buffer, filename: String}],
             default: [],
             required: false,
         },
         
         draftImgs: {
-            type: [{url: String}],
+            type: [Buffer],
             default: [],
             required: false,
         }

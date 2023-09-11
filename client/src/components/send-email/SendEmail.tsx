@@ -31,6 +31,8 @@ import {
   Optional
 } from '../../types/types';
 
+import { Buffer } from 'buffer';
+
 import './send-email.css';
 
 interface SendEmailProps {
@@ -104,6 +106,16 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('sentEmails');
+      closeSendEmail();
+    }
+  });
+
+  const saveDraftMutation = useMutation(async (saveDraftFormData: {to: string[], draftContent: string | undefined, draftSubject: string, draftImgs: Buffer[], draftFiles: {file: Buffer, filename: string}[]}) => {
+    const res = await axios.patch('http://localhost:8800/api/v1/user/saved-drafts/add', saveDraftFormData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("savedDrafts");
       closeSendEmail();
     }
   });
@@ -228,7 +240,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     setRecipients(newRecipients);
   }
 
-  function changeContentString (contentString: Optional<string>, imgsCount: number): Optional<string> {
+  function changeContentString (contentString: Optional<string>, imgsCount: number, isEmailSaved: boolean): Optional<string> {
     const content  = contentString as string;
     const startImgEelment = content?.indexOf('<div class=\"relative\">');
     
@@ -237,12 +249,37 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     if (startImgEelment != -1) {
       const endImgElement = content?.indexOf('</span>');
       
-      newContentString = content?.slice(0, startImgEelment) + `<img src=\"${imgs[imgsCount].url}\" alt=\"content-image\" class=\"w-3/4 h-fit my-3 object-cover\">` + content?.slice(endImgElement+13); 
+      newContentString = isEmailSaved ? content?.slice(0, startImgEelment) + `<img src=\"${URL.createObjectURL(images[imgsCount])}\" alt=\"content-image\" class=\"w-3/4 h-fit my-3 object-cover\">` + content?.slice(endImgElement+13) : content?.slice(0, startImgEelment) + `<img src=\"${imgs[imgsCount].url}\" alt=\"content-image\" class=\"w-3/4 h-fit my-3 object-cover\">` + content?.slice(endImgElement+13); 
     } else {
       return newContentString;
     }
 
-    return changeContentString(newContentString, imgsCount+1);
+    return changeContentString(newContentString, imgsCount+1, isEmailSaved);
+  }
+
+  async function handleSaveDraft (): Promise<void> {
+    if (!recipients && !emailInputs.subject && (!emailContent.current?.innerHTML || emailContent.current.innerHTML === '<br>')) {
+      closeSendEmail();
+    } else {
+      let newFiles: {file: Buffer, filename: string}[] = [];
+      let newImages: Buffer[] = [];
+      
+      for (const file of files) {
+        newFiles.push({file: Buffer.from(file.name), filename: file.name});
+      }
+  
+      for (const image of images) {
+        newImages.push(Buffer.from(image.name));
+      }
+  
+      saveDraftMutation.mutate({
+        to: recipients,
+        draftContent: '<div>' + changeContentString(emailContent.current?.innerHTML, 0, true) + '</div>',
+        draftSubject: emailInputs.subject,
+        draftFiles: newFiles,
+        draftImgs: newImages
+      });
+    }
   }
 
   async function handleSendEmail (event: FormEvent): Promise<void> {
@@ -265,7 +302,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
     
     sendEmailMutation.mutate({
       to: recipients,
-      emailContent: '<div>' + changeContentString(emailContent.current?.innerHTML, 0) + '</div>',
+      emailContent: '<div>' + changeContentString(emailContent.current?.innerHTML, 0, false) + '</div>',
       emailSubject: emailInputs.subject,
       files: uploadedFiles,
       imgs
@@ -300,7 +337,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ closeSendEmail }) => {
             color='white'
             bgColor='bg-gray-400'
             icon={<AiOutlineDeliveredProcedure />}
-            customFunc={closeSendEmail} 
+            customFunc={handleSaveDraft} 
             />
           </div>
         </div>
