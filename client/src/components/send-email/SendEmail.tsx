@@ -494,7 +494,7 @@ const SendEmail: React.FC<SendEmailProps> = ({ selectedDraft, closeSendEmail }) 
            onChange={() => console.log('I am here!')}
           >
             <br />
-            {parse(selectedContent as string)}
+            {selectedContent ? parse(selectedContent as string) : null}
             {images ? (
               <React.Fragment>
                 {images.map((image, index) => (
