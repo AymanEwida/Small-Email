@@ -68,7 +68,9 @@ async function sendMessageToConversation (req, res) {
     req.body.groupID = groupID;
     req.body.messageSender = userID;
     const conversation = await Conversation.create({ ...req.body });
-    res.status(StatusCodes.CREATED).json({ conversation });
+    
+    const displayConversation = {...conversation._doc, messageSender: await User.findById(userID).select('username userImg')}
+    res.status(StatusCodes.CREATED).json({ displayConversation });
 }
 
 async function deleteMessageFromConversation (req, res) {

@@ -4,6 +4,10 @@ import { BiImageAdd, BiVideoPlus } from 'react-icons/bi';
 import { MdOutlineAttachFile } from 'react-icons/md';
 import { AiOutlineSend } from 'react-icons/ai';
 
+import { useMutation } from 'react-query';
+
+import axios, { AxiosError } from 'axios';
+
 import Cookies from 'js-cookie';
 
 import Button from '../button/Button';
@@ -13,14 +17,34 @@ import TooltipComponent from '../tooltip-component/TooltipComponent';
 
 import {
   Event,
-  InputElement
+  InputElement,
+  Optional,
+  Void
 } from '../../types/types';
+
+import { Socket } from 'socket.io-client/build/esm/socket';
 
 import './send-message.css';
 
-const SendMessage: React.FC = () => {
+interface SendMessageProps {
+  socket: Socket | null,
+  groupID: Optional<string>,
+  clearArrivalMessagae: Void,
+}
+
+const SendMessage: React.FC<SendMessageProps> = ({ socket, groupID, clearArrivalMessagae }) => {
 
   const [messageText, setMessageText] = useState('');
+
+  const mutation = useMutation(async (formData: { messageContent: string, messageAttachments?: {filename: string, mimeType: string, filePath: string}[] }) => {
+    const res = await axios.post(`http://localhost:8800/api/v1/conversation/send-message/${groupID}`, formData, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }, {
+    onSuccess: (data) => {
+      socket?.emit('sendMessage', data.displayConversation);
+      setMessageText('');
+    }
+  });
 
   function handleChangeMessageText (event: Event<InputElement>): void {
     setMessageText(event.target.value)
@@ -29,7 +53,10 @@ const SendMessage: React.FC = () => {
   function handleSendMessage (event: React.FormEvent): void {
     event.preventDefault()
 
-    console.log('I submited wow!');
+    if (messageText) {
+      clearArrivalMessagae();
+      mutation.mutate({messageContent: messageText});
+    }
   }
 
   return (

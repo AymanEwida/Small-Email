@@ -20,7 +20,7 @@ const ConversationSchema = new mongoose.Schema(
         },
 
         messageAttachments: {
-            type: [{filename: String, filePath: String}],
+            type: [{filename: String, mimeType: String, filePath: String}],
             required: false,
             default: []
         }
