@@ -1,10 +1,21 @@
 import React from 'react';
 
+import { useMutation } from 'react-query';
+
+import axios, { AxiosError } from 'axios';
+
+import Cookies from 'js-cookie';
+
 import { AiFillDelete } from 'react-icons/ai';
+import { BiTime, BiCheckDouble } from 'react-icons/bi';
 
 import Icon from '../icon/Icon';
 
 import noAvatar from '../../assests/noAvatar.png';
+
+import { Optional } from '../../types/types';
+
+import { Socket } from 'socket.io-client/build/esm/socket';
 
 import './message.css';
 
@@ -21,10 +32,25 @@ interface MessageProps {
   senderImg : string,
   messageContent : string,
   messageAttachments : messageAttachment[],
-  createdAt : string, 
+  updatedAt : string,
+  isFinished ?: boolean,
+  groupID : Optional<string>,
+  messageID : string,
+  socket : Socket | null, 
 }
 
-const Message: React.FC<MessageProps> = ({ own, isCurrentUserAdmin, senderUsername, senderImg, messageContent, messageAttachments, createdAt }) => {
+const Message: React.FC<MessageProps> = ({ own, isCurrentUserAdmin, senderUsername, senderImg, messageContent, messageAttachments, updatedAt, isFinished, groupID, messageID, socket }) => {
+
+  function handleDeleteMessage () {
+    socket?.emit('deleteMessage', {messageID, groupID});
+    mutation.mutate();
+  }
+  
+  const mutation = useMutation(async () => {
+    const res = await axios.delete(`http://localhost:8800/api/v1/conversation/delete-message/${messageID}?groupID=${groupID}`, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
+    return res.data;
+  }); 
+
   return (
     <div className={`flex gap-2 justify-start ${own ? 'flex-row' : 'flex-row-reverse'} mb-5`}>
       {!own ? <img
@@ -38,7 +64,7 @@ const Message: React.FC<MessageProps> = ({ own, isCurrentUserAdmin, senderUserna
             {own ? "Me" : senderUsername}
           </p>
           <p className='text-black text-sm'>
-            {new Date(createdAt).toLocaleDateString() + " " + new Date(createdAt).toTimeString().split(' ')[0]}
+            {new Date(updatedAt).toLocaleDateString() + " " + new Date(updatedAt).toTimeString().split(' ')[0]}
           </p>
         </div>
         <div>
@@ -54,7 +80,7 @@ const Message: React.FC<MessageProps> = ({ own, isCurrentUserAdmin, senderUserna
             {messageContent}
           </p>
         </div>
-        {own || isCurrentUserAdmin ? (
+        {(own || isCurrentUserAdmin) && messageContent != "Message has been deleted" ? (
           <div className='float-right'>
             <Icon
              title='Delete'
@@ -62,10 +88,14 @@ const Message: React.FC<MessageProps> = ({ own, isCurrentUserAdmin, senderUserna
              icon={<AiFillDelete />}
              textSize='md'
              color='black'
-             bgColor='bg-transparent' 
+             bgColor='bg-transparent'
+             customFunc={handleDeleteMessage} 
             />
           </div>
         ) : null}
+        {typeof isFinished === "boolean" ? <div className={`float-left ${own ? 'text-blue-700' : 'text-blue-400'} mt-2`}>
+          {isFinished ? <BiCheckDouble /> : <BiTime />}
+        </div> : null}
       </div>
     </div>
   )

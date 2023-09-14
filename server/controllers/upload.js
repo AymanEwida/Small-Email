@@ -21,7 +21,7 @@ async function uploadImage (req, res) {
         }
     );
 
-    res.status(StatusCodes.OK).json({ image: { src: result.secure_url } });
+    res.status(StatusCodes.OK).json({ image: { src: result.secure_url, mimeType: image.mimetype } });
 }
 
 async function uploadVideo (req, res) {
@@ -43,7 +43,7 @@ async function uploadVideo (req, res) {
         }
     );
 
-    res.status(StatusCodes.OK).json({ video: { src: result.secure_url } });
+    res.status(StatusCodes.OK).json({ video: { src: result.secure_url, mimeType: video.mimetype } });
 }
 
 async function uploadFile (req, res) {
@@ -62,7 +62,7 @@ async function uploadFile (req, res) {
         }
     );
 
-    res.status(StatusCodes.OK).json({ file: { src: result.secure_url, filename: file.name } });
+    res.status(StatusCodes.OK).json({ file: { src: result.secure_url, filename: file.name, mimeType: file.mimetype } });
 }
 
 async function uploadImages (req, res) {
@@ -87,7 +87,7 @@ async function uploadImages (req, res) {
                 }
             );
 
-            urls.push({url: result.secure_url});
+            urls.push({url: result.secure_url, mimeType: image.mimetype});
         }
     }
 
@@ -113,7 +113,7 @@ async function uploadFiles (req, res) {
             }
         );
 
-        uploadedFiles.push({filename: file.name, filePath: result.secure_url});
+        uploadedFiles.push({filename: file.name, filePath: result.secure_url, mimeType: file.mimetype});
     }
 
     res.status(StatusCodes.OK).json({ files: uploadedFiles });

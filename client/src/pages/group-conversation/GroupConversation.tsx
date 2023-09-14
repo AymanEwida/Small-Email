@@ -41,11 +41,10 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const [messages, setMessages] = useState<any>(null);
-  const [arrivalMessagae, setArrivalMessagae] = useState<any>(null);
+  const [arrivalMessage, setArrivalMessage] = useState<any>(null);
 
   const { isError, error, isLoading, isSuccess, data } = useQuery('groupConversation' ,async () => {
     const res = await axios.get(`http://localhost:8800/api/v1/conversation/${groupID}`, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
-    setMessages(res.data.conversations);
     return res.data;
   });
 
@@ -55,30 +54,28 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
     if (socket) {
       socket.emit('addUser', Cookies.get('token'));
       socket.emit('joinRoom', groupID);
+      socket.emit('setGroupMessages', data.conversations);
+    }
+  }, []); 
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('getMessages', (groupMessages) => {
+        setMessages(groupMessages);
+      });
     }
   }, []);
 
   useEffect(() => {
-    if (socket) {
-      socket.on('getMessage', (message) => {
-        setArrivalMessagae(message);
-      });
-    }
-  });
-
-  useEffect(() => {
-    if (arrivalMessagae) {
+    if (arrivalMessage) { 
       setMessages((prevMessages: any) => (
         [
-          ...prevMessages,
-          arrivalMessagae
+          ...prevMessages
         ]
-      ));
+      )); 
     }
-  }, [arrivalMessagae]);
+  }, [arrivalMessage]);
 
-  console.log({ arrivalMessagae });
-  
   // if (isError && error instanceof AxiosError) {
   //   return (
   //     <Tefo isError message={error.response?.data.msg} />
@@ -121,8 +118,12 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
               senderImg={conversation.messageSender.userImg}
               messageContent={conversation.messageContent}
               messageAttachments={conversation.messageAttachments}
-              createdAt={conversation.createdAt} 
-              />
+              updatedAt={conversation.updatedAt}
+              isFinished={conversation.isFinished}
+              groupID={groupID}
+              messageID={conversation._id}
+              socket={socket} 
+              /> 
             ))}
             </>
           ) : 
@@ -136,13 +137,16 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
               senderImg={conversation.messageSender.userImg}
               messageContent={conversation.messageContent}
               messageAttachments={conversation.messageAttachments}
-              createdAt={conversation.createdAt} 
+              updatedAt={conversation.updatedAt}
+              groupID={groupID}
+              messageID={conversation._id}
+              socket={socket} 
               />
             ))}
           </>}
-        </div>
+        </div> 
       )}
-      <SendMessage socket={socket} groupID={groupID} clearArrivalMessagae={() => setArrivalMessagae(null)} />
+      <SendMessage socket={socket} groupID={groupID} messageSender={{_id: Cookies.get('token'), username: Cookies.get('username'), userImg: Cookies.get('userImg')}} clearArrivalMessagae={() => setArrivalMessage(null)} />
     </>
   )
 }

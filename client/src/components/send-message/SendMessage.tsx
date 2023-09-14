@@ -26,13 +26,20 @@ import { Socket } from 'socket.io-client/build/esm/socket';
 
 import './send-message.css';
 
+type MessageSender = {
+  _id: Optional<string>;
+  username: Optional<string>;
+  userImg: Optional<string>;
+}
+
 interface SendMessageProps {
   socket: Socket | null,
   groupID: Optional<string>,
+  messageSender: MessageSender,
   clearArrivalMessagae: Void,
 }
 
-const SendMessage: React.FC<SendMessageProps> = ({ socket, groupID, clearArrivalMessagae }) => {
+const SendMessage: React.FC<SendMessageProps> = ({ socket, groupID, messageSender, clearArrivalMessagae }) => {
 
   const [messageText, setMessageText] = useState('');
 
@@ -41,7 +48,7 @@ const SendMessage: React.FC<SendMessageProps> = ({ socket, groupID, clearArrival
     return res.data;
   }, {
     onSuccess: (data) => {
-      socket?.emit('sendMessage', data.displayConversation);
+      socket?.emit('sendMessage', {message: data.displayConversation, isFinished: true});
       setMessageText('');
     }
   });
@@ -50,11 +57,26 @@ const SendMessage: React.FC<SendMessageProps> = ({ socket, groupID, clearArrival
     setMessageText(event.target.value)
   }
 
+  function generateTemMessages () {
+    return {
+      _id: "1",
+      groupID,
+      messageSender,
+      messageContent: messageText,
+      messageAttachments: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      __v: 0
+    }
+  } 
+
   function handleSendMessage (event: React.FormEvent): void {
     event.preventDefault()
 
+    clearArrivalMessagae();
+
     if (messageText) {
-      clearArrivalMessagae();
+      socket?.emit('sendMessage', {message: generateTemMessages(), isFinished: false});
       mutation.mutate({messageContent: messageText});
     }
   }
