@@ -6,7 +6,7 @@ import axios, { AxiosError } from 'axios';
 
 import Cookies from 'js-cookie';
 
-import { AiFillDelete } from 'react-icons/ai';
+import { AiFillDelete, AiOutlineDownload } from 'react-icons/ai';
 import { BiTime, BiCheckDouble } from 'react-icons/bi';
 
 import Icon from '../icon/Icon';
@@ -23,6 +23,7 @@ type messageAttachment = {
   _id : string;
   filename : string;
   filePath : string;
+  mimeType : string;
 }
 
 interface MessageProps {
@@ -67,16 +68,35 @@ const Message: React.FC<MessageProps> = ({ own, isCurrentUserAdmin, senderUserna
             {new Date(updatedAt).toLocaleDateString() + " " + new Date(updatedAt).toTimeString().split(' ')[0]}
           </p>
         </div>
-        <div>
+        <div className='w-96 overflow-hidden'>
           {messageAttachments.map((messageAttachment) => (
-            <img
-             key={messageAttachment._id}
-             className='w-full rounded-md h-32 object-contain' 
-             src={messageAttachment.filePath} 
-             alt="test" 
-            />
+            <div key={messageAttachment._id}>
+              {messageAttachment.mimeType.startsWith('image/') ? (
+                <div className='relative'>
+                  <img
+                   className='w-full rounded-md h-32 object-contain my-4' 
+                   src={messageAttachment.filePath} 
+                   alt="message image" 
+                  />
+                  <a href={messageAttachment.filePath} className='absolute top-1 left-1 text-white'><AiOutlineDownload /></a>
+                </div> 
+              ) : messageAttachment.mimeType.startsWith('video/') ? (
+                <video
+                 className='w-full rounded-md h-32 object-contain my-4' 
+                 src={messageAttachment.filePath} 
+                 controls
+                />
+              ) : messageAttachment.mimeType.startsWith('file/') ? (
+                <a 
+                 href={messageAttachment.filePath} 
+                 className='rounded-full bg-blue-500 w-1/2 text-ellipsis text-gray-200 p-2 my-4'
+                >
+                  {messageAttachment.filename}
+                </a>
+              ) : null}
+            </div>
           ))}
-          <p className='text-white'>
+          <p className='text-white mt-4'>
             {messageContent}
           </p>
         </div>
@@ -93,7 +113,7 @@ const Message: React.FC<MessageProps> = ({ own, isCurrentUserAdmin, senderUserna
             />
           </div>
         ) : null}
-        {typeof isFinished === "boolean" ? <div className={`float-left ${own ? 'text-blue-700' : 'text-blue-400'} mt-2`}>
+        {typeof isFinished === "boolean" && own ? <div className={`float-left ${own ? 'text-blue-700' : 'text-blue-400'} mt-2`}>
           {isFinished ? <BiCheckDouble /> : <BiTime />}
         </div> : null}
       </div>

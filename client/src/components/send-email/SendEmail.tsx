@@ -106,7 +106,6 @@ const SendEmail: React.FC<SendEmailProps> = ({ selectedDraft, closeSendEmail }) 
       newUploadedFiles.push({filename: data.file.filename, filePath: data.file.src});
 
       setUploadedFiles(newUploadedFiles);
-      console.log({uploadedFiles});
     }
   });
 

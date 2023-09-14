@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { useQuery } from 'react-query';
 
@@ -43,6 +43,8 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
   const [messages, setMessages] = useState<any>(null);
   const [arrivalMessage, setArrivalMessage] = useState<any>(null);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   const { isError, error, isLoading, isSuccess, data } = useQuery('groupConversation' ,async () => {
     const res = await axios.get(`http://localhost:8800/api/v1/conversation/${groupID}`, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
     return res.data;
@@ -76,6 +78,10 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
     }
   }, [arrivalMessage]);
 
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages])
+ 
   // if (isError && error instanceof AxiosError) {
   //   return (
   //     <Tefo isError message={error.response?.data.msg} />
@@ -90,7 +96,7 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
        groupImg={groupImg}
        groupName={groupName}
        groupEmail={groupEmail}
-       numberOfMessages={6}
+       numberOfMessages={messages ? messages.length : data.conversations.length}
        toggleFunc={toggleGroupCategory}
        openSettingsMenuFunc={openSettingsMenu} 
       />
@@ -108,8 +114,9 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
       ) : (
         <div className='my-3 mx-4'>
           {messages ? (
-            <>
+            <> 
               {messages.map((conversation: any) => (
+              <div ref={scrollRef}>
               <Message
               key={conversation._id}
               own={Cookies.get('username') === conversation.messageSender.username}
@@ -119,16 +126,18 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
               messageContent={conversation.messageContent}
               messageAttachments={conversation.messageAttachments}
               updatedAt={conversation.updatedAt}
-              isFinished={conversation.isFinished}
+              isFinished={conversation.isFinished} 
               groupID={groupID}
               messageID={conversation._id}
-              socket={socket} 
-              /> 
+              socket={socket}
+              />
+              </div> 
             ))}
             </>
           ) : 
           <>
             {data.conversations.map((conversation: any) => (
+              <div ref={scrollRef}>
               <Message
               key={conversation._id}
               own={Cookies.get('username') === conversation.messageSender.username}
@@ -142,6 +151,7 @@ const GroupConversation: React.FC<GroupConversationProps> = ({ groupID, groupImg
               messageID={conversation._id}
               socket={socket} 
               />
+              </div>
             ))}
           </>}
         </div> 
