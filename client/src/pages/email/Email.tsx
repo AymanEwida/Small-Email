@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { Navigate, useParams, useNavigate } from 'react-router-dom';
 
@@ -11,6 +11,8 @@ import Cookies from 'js-cookie';
 import {
   EmailNavbar,
   EmailLayout,
+  TransferEmail,
+  ResponeEmail,
   LoadingComponent,
   Tefo
 } from '../../components';
@@ -31,6 +33,11 @@ const Email: React.FC = () => {
 
   const queryClient = useQueryClient();
 
+  const [emailMethods, setEmailMethods] = useState({
+    isTransferShow: false,
+    isResponeShow: false
+  });
+
   const history = useNavigate();
 
   const {isError, error, isLoading, data} = useQuery("email", async () => {
@@ -49,6 +56,31 @@ const Email: React.FC = () => {
       queryClient.invalidateQueries('sentEmails');
     }
   });
+
+  function handleShowEmailMethod (emailMethod: string): void {
+    if (emailMethod === 'transfer') {
+      setEmailMethods(prevEmailMethods => (
+        {
+          isTransferShow: !prevEmailMethods.isTransferShow,
+          isResponeShow: false
+        }
+      ));
+    } else if (emailMethod === 'respone') {
+      setEmailMethods(prevEmailMethods => (
+        {
+          isTransferShow: false,
+          isResponeShow: !prevEmailMethods.isResponeShow
+        }
+      ));
+    }
+  }
+
+  function handleCloseEmailMethod (): void {
+    setEmailMethods({
+      isTransferShow: false,
+      isResponeShow: false
+    });
+  }
 
   if (isLoading) {
     return (
@@ -78,7 +110,13 @@ const Email: React.FC = () => {
   }
 
   return (
-    <>
+    (emailCategory === 'sent' && data.email.sender.username !== Cookies.get('username')) ? (
+      <>
+        <h1 className='text-red-400 text-xl text-center pt-24'>
+          You can't see others email in sent mode.
+        </h1>
+      </>
+    ) : <>
       <EmailNavbar
        category={emailCategory}
        groupID={queryStrings.g_id}
@@ -99,7 +137,7 @@ const Email: React.FC = () => {
                key={index}
                type='button'
                className='flex gap-2 items-center p-2 text-md mt-3 hover:drop-shadow-xl rounded-md bg-green-400'
-               onClick={() => console.log(`I want to ${button.functionCategory} to this email`)}
+               onClick={() => handleShowEmailMethod(button.functionCategory)}
               >
                 <span>
                   {button.icon}
@@ -113,7 +151,7 @@ const Email: React.FC = () => {
           <button
            type='button'
            className='flex gap-2 items-center p-2 text-md mt-3 hover:drop-shadow-xl rounded-md bg-green-400'
-           onClick={() => console.log(`I want to ${buttons[0].functionCategory} to this email`)}
+           onClick={() => handleShowEmailMethod('transfer')}
           >
            <span>
              {buttons[0].icon}
@@ -122,6 +160,31 @@ const Email: React.FC = () => {
          </button>
         ) : <Navigate to='/inbox' />}
       </div>
+      {emailMethods.isTransferShow ? (
+        <div className='bg-main-dark-bg rounded-md p-2 mx-5 mb-4'>
+          <TransferEmail
+           senderUsername={data.email.sender.username}
+           senderEmail={data.email.sender.email}
+           emailCreatedAtDate={new Date(data.email.createdAt).toDateString()}
+           emailSubject={data.email.emailSubject}
+           selectedContent={data.email.emailContent}
+           emailFiles={data.email.files} 
+           closeTransferEmail={handleCloseEmailMethod} 
+          />
+        </div>
+      ) : null}
+      {emailMethods.isResponeShow ? (
+        <div className='bg-main-dark-bg rounded-md p-2 mx-5 mb-4'>
+          <ResponeEmail
+           senderUsername={data.email.sender.username}
+           senderEmail={data.email.sender.email}
+           emailCreatedAtDate={new Date(data.email.createdAt).toDateString()}
+           selectedContent={data.email.emailContent}
+           emailFiles={data.email.files} 
+           closeResponeEmail={handleCloseEmailMethod}  
+          />
+        </div>
+      ) : null}
     </>
   )
 }

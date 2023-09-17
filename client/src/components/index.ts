@@ -43,3 +43,5 @@ export { default as AddNewParticipates } from './add-new-participates/AddNewPart
 export { default as SendMessage } from './send-message/SendMessage';
 export { default as Message } from './message/Message';
 export { default as SavedDraftComponent } from './saved-draft-component/SavedDraftComponent';
+export { default as TransferEmail } from './transfer-email/TransferEmail';
+export { default as ResponeEmail } from './respone-email/ResponeEmail';
