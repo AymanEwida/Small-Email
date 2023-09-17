@@ -16,9 +16,10 @@ interface EmailNavbarProps {
   category : Optional<string>,
   groupID ?: string,
   deleteEmailFunc ?: Void,
+  showUpdateFunc ?: Void,
 }
 
-const EmailNavbar: React.FC<EmailNavbarProps> = ({ category, groupID, deleteEmailFunc }) => {
+const EmailNavbar: React.FC<EmailNavbarProps> = ({ category, groupID, deleteEmailFunc, showUpdateFunc }) => {
   return (
     <div className='sticky bg-secondary-dark-bg top-0 w-full py-2 px-8'>
       <h2 className='text-center text-gray-400 font-bold color-border border-b-1 pb-3 w-full'>
@@ -54,7 +55,8 @@ const EmailNavbar: React.FC<EmailNavbarProps> = ({ category, groupID, deleteEmai
              color='white'
              icon={<BiCommentEdit />}
              textSize='md'
-             bgColor='bg-gray-400' 
+             bgColor='bg-gray-400'
+             customFunc={showUpdateFunc} 
             />
           </div>
         ) : null}

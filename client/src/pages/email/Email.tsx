@@ -8,11 +8,15 @@ import axios, { AxiosError } from 'axios';
 
 import Cookies from 'js-cookie';
 
+import { IoMdCloseCircleOutline } from 'react-icons/io';
+
 import {
   EmailNavbar,
   EmailLayout,
   TransferEmail,
   ResponeEmail,
+  UpdateEmail,
+  Icon,
   LoadingComponent,
   Tefo
 } from '../../components';
@@ -37,6 +41,7 @@ const Email: React.FC = () => {
     isTransferShow: false,
     isResponeShow: false
   });
+  const [isUpdateEmailShow, setIsUpdateEmailShow] = useState(false);
 
   const history = useNavigate();
 
@@ -73,6 +78,7 @@ const Email: React.FC = () => {
         }
       ));
     }
+    setIsUpdateEmailShow(false);
   }
 
   function handleCloseEmailMethod (): void {
@@ -80,6 +86,19 @@ const Email: React.FC = () => {
       isTransferShow: false,
       isResponeShow: false
     });
+  }
+
+  
+  function handleShowUpdateEmail (): void {
+    setEmailMethods({
+      isTransferShow: false,
+      isResponeShow: false
+    });
+    setIsUpdateEmailShow(prevIsUpdateEmailShow => !prevIsUpdateEmailShow); 
+  }
+
+  function closeUpdateEmail (): void {
+    setIsUpdateEmailShow(false); 
   }
 
   if (isLoading) {
@@ -120,6 +139,7 @@ const Email: React.FC = () => {
       <EmailNavbar
        category={emailCategory}
        groupID={queryStrings.g_id}
+       showUpdateFunc={handleShowUpdateEmail}
        deleteEmailFunc={() => mutation.mutate(data.email._id)} 
       />
       <div className='px-4 mb-4'>
@@ -183,6 +203,34 @@ const Email: React.FC = () => {
            emailFiles={data.email.files} 
            closeResponeEmail={handleCloseEmailMethod}  
           />
+        </div>
+      ) : null}
+      {isUpdateEmailShow ? (
+        <div className='bg-main-dark-bg rounded-md w-fit absolute top-44 left overflow-hidden'>
+          <div className='flex items-center justify-between bg-gray-900 px-5 py-2'>
+            <h2 className='text-gray-300'>
+              Update Email
+            </h2>
+            <Icon
+             title='Close'
+             iconPosition='bottom'
+             color='white'
+             bgColor='transparent'
+             icon={<IoMdCloseCircleOutline />}
+             customFunc={closeUpdateEmail} 
+            />
+          </div>
+          <div className='p-2'>
+            <UpdateEmail
+             emailID={queryStrings?.e_id}
+             emailRecipients={data.email.to.map((recipient: any) => (recipient.user.email))}
+             emailSubject={data.email.emailSubject}
+             selectedContent={data.email.emailContent}
+             emailFiles={data.email.files} 
+             emailImgs={data.email.imgs}
+             closeUpdateEmail={closeUpdateEmail} 
+            />
+          </div>
         </div>
       ) : null}
     </>

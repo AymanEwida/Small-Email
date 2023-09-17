@@ -1,0 +1,9 @@
+.left {
+    left: 25%;
+}
+
+@media (min-width: 1024px) {
+    .left {
+        left: 40%;
+    }
+}

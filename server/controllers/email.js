@@ -178,9 +178,88 @@ async function updateEmail (req, res) {
         params: { id: emailID },  
     } = req;
 
-    if (!req.body || !req.body.length) {
+    if (req.body.length === 0) {
         throw new BadRequestError('Provide a thing to change the email with it');
     }
+
+    function removeDuplicatsFromRecipientArray () {
+        let newRecipientArray = [];
+        let flag = false;
+
+        for (let i = 0; i < req.body.to.length; i++) {
+            for (let j = 0; j < req.body.to.length-1-i; j++) {
+                if (req.body.to[i] === req.body.to[j+i+1]) {
+                    flag = true
+                }
+            }
+
+            if (!flag) {
+                newRecipientArray.push(req.body.to[i]);
+            }
+            flag = false;
+        }
+
+        return newRecipientArray;
+    }
+
+    const recipients = removeDuplicatsFromRecipientArray();
+
+    async function checkGroupEmail () {
+        let newToArray = [];
+
+        for (let i = 0; i < recipients.length; i++) {
+            if (recipients[i].slice(recipients[i].indexOf('@')) === '@sgroup.com') {
+                const group = await Group.findOne({ groupEmail: recipients[i] });
+                
+                if (group) {
+                    for (let j = 0; j < group.participates.length; j++) {
+                        if (group.participates[j].participateID.toString() === req.user.userID) {
+                            newToArray.push(recipients[i]);
+                        }
+                    }   
+                }
+
+            } else {
+                newToArray.push(recipients[i])
+            }
+        }
+
+        return newToArray;
+    }
+
+    const newRecipientsA = await checkGroupEmail();
+
+    const users = await Promise.all(
+        newRecipientsA.map((recipientEmail) => {
+            if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@smail.com') {
+                return User.findOne({ email: recipientEmail });
+            } else if (recipientEmail.slice(recipientEmail.indexOf('@')) === '@sgroup.com') {
+                return Group.findOne({ groupEmail: recipientEmail });
+            }
+        })
+    );
+
+    function removeNullFromUsersArray () {
+        return users.filter((user) => user !== null);
+    }
+
+    const validUsers = removeNullFromUsersArray();
+
+    if (validUsers.length === 0) {
+        throw new BadRequestError('When did not found any of the recipients you provided');
+    }
+
+    function getToArray () {
+        let toArray = [];
+
+        validUsers.map((user) => {
+            return toArray.push({recipientID: user._id, role: user.role});
+        });
+        
+        return toArray;
+    }
+
+    req.body.to = getToArray();
 
     const email = await Email.findOneAndUpdate(
         {
