@@ -6,7 +6,11 @@ import { MdDelete } from 'react-icons/md';
 import TooltipComponent from '../tooltip-component/TooltipComponent';
 import Icon from '../icon/Icon';
 
-import { Void } from '../../types/types';
+import {
+  Void,
+  Event,
+  SelectElement
+} from '../../types/types';
 
 import './emails-navbar.css';
 
@@ -15,9 +19,10 @@ interface EmailsNavbarProps {
   isEmailsChecked ?: boolean,
   handleEmailsChecked ?: Void,
   handleDeleteEmails ?: Void,
+  handleChangeSortOption ?: (event: Event<SelectElement>) => void,
 }
 
-const EmailsNavbar: React.FC<EmailsNavbarProps> = ({ refreshEmails, isEmailsChecked, handleEmailsChecked, handleDeleteEmails }) => {
+const EmailsNavbar: React.FC<EmailsNavbarProps> = ({ refreshEmails, isEmailsChecked, handleEmailsChecked, handleDeleteEmails, handleChangeSortOption }) => {
   
   const [checked, setChecked] = useState(false);
 
@@ -57,11 +62,18 @@ const EmailsNavbar: React.FC<EmailsNavbarProps> = ({ refreshEmails, isEmailsChec
         ) : null}
       </div>
       <div>
-        <select className='text-black rounded-md focus:outline-none cursor-pointer'>
-          <option> 
+        <select 
+         className='text-black rounded-md focus:outline-none cursor-pointer'
+         onChange={handleChangeSortOption}
+        >
+          <option
+           value='newer'
+          > 
             Newer
           </option>
-          <option>
+          <option
+           value='older'
+          >
             Older
           </option>
         </select>

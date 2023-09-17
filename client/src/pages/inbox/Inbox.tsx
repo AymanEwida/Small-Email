@@ -22,7 +22,8 @@ import {
 
 import {
   Event,
-  InputElement
+  InputElement,
+  SelectElement
 } from '../../types/types';
 
 import { getParamsFromURL } from '../../hooks/useParams';
@@ -45,11 +46,15 @@ const Inbox: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [statuses, setStatuses] = useState<boolean[]>([]);
   const [emailsIDs, setEmailsIDs] = useState<string[]>([]);
+  const [sortOption, setSortOption] = useState<string>('newer');
 
   const {isError, error, isLoading, data, refetch} = useQuery('inboxEmails', async () => {
     const res = await axios.get('http://localhost:8800/api/v1/email', { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
     setStatuses(arrayRepeat([false], res.data.emails.length));
-    return res.data
+    res.data.emails.sort((email1: any, email2: any) => {
+      return new Date(email2.createdAt).getTime() - new Date(email1.createdAt).getTime();
+    });
+    return res.data;
   });
 
   function handleChecked (): void {
@@ -134,6 +139,31 @@ const Inbox: React.FC = () => {
     return newData;
   }
 
+  function handleChangeSortOption (event: Event<SelectElement>): void {
+    setSortOption(event.target.value);
+    if (sortOption === 'older') {
+      if (emails) {
+        emails.sort((email1: any, email2: any) => {
+          return new Date(email2.createdAt).getTime() - new Date(email1.createdAt).getTime();
+        });
+      } else if (data) {
+        data.emails.sort((email1: any, email2: any) => {
+          return new Date(email2.createdAt).getTime() - new Date(email1.createdAt).getTime();
+        });
+      }
+    } else if (sortOption === 'newer') {
+      if (emails) {
+        emails.sort((email1: any, email2: any) => {
+          return new Date(email1.createdAt).getTime() - new Date(email2.createdAt).getTime();
+        });
+      } else if (data) {
+        data.emails.sort((email1: any, email2: any) => {
+          return new Date(email1.createdAt).getTime() - new Date(email2.createdAt).getTime();
+        });
+      }
+    }
+  }
+
   // useEffect(() => {
   //   localStorage.setItem('inboxEmails', JSON.stringify(emails));
   // }, [emails]);
@@ -169,6 +199,7 @@ const Inbox: React.FC = () => {
        isEmailsChecked={isChecked}
        handleEmailsChecked={handleChecked}
        handleDeleteEmails={() => fiterData(emailsIDs)}
+       handleChangeSortOption={handleChangeSortOption}
       />
       {handleSearch().length > 0 ? (
         <>

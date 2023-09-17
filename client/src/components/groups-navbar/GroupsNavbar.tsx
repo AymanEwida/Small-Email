@@ -13,7 +13,7 @@ import ClipboardCopy from '../clipboard-copy/ClipboardCopy';
 
 import noGroupAvatar from '../../assests/noGroupAvatar.png';
 
-import { Void, Optional } from '../../types/types';
+import { Void, Optional, Event, SelectElement } from '../../types/types';
 
 import './groups-navbar.css';
 
@@ -31,9 +31,10 @@ interface GroupsNavbarProps {
   openSettingsMenuFunc ?: Void,
   refreshEmails ?: Void,
   handleDeleteEmails ?: Void,
+  handleChangeSortOption ?: (event: Event<SelectElement>) => void,
 }
 
-const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, groupImg, groupName, groupEmail, numberOfEmail, numberOfMessages, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc, refreshEmails, handleDeleteEmails }) => {
+const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, groupImg, groupName, groupEmail, numberOfEmail, numberOfMessages, isEmailsChecked, handleEmailsChecked, toggleFunc, openSettingsMenuFunc, refreshEmails, handleDeleteEmails, handleChangeSortOption }) => {
   return (
     <div className='sticky bg-secondary-dark-bg top-0 w-full py-3 px-8 z-20'>
       <div className='flex justify-between border-b-1 pb-3 color-border'>
@@ -123,11 +124,18 @@ const GroupsNavbar: React.FC<GroupsNavbarProps> = ({ category, groupID, groupImg
         </div>
         {category === 'emails' ? (
           <div>
-            <select className='text-black rounded-md focus:outline-none cursor-pointer'>
-              <option> 
+            <select 
+             className='text-black rounded-md focus:outline-none cursor-pointer'
+             onChange={handleChangeSortOption}
+            >
+              <option
+               value='newer'
+              > 
                 Newer
               </option>
-              <option>
+              <option
+               value='older'
+              >
                 Older
               </option>
             </select>

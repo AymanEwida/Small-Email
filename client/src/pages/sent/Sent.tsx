@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Link } from 'react-router-dom';
 
@@ -22,6 +22,11 @@ import {
 
 import { getParamsFromURL } from '../../hooks/useParams';
 
+import {
+  Event,
+  SelectElement
+} from '../../types/types';
+
 import './sent.css';
 
 const Sent: React.FC = () => {
@@ -33,10 +38,14 @@ const Sent: React.FC = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [statuses, setStatuses] = useState<boolean[]>([]);
   const [sentEmailsIDs, setSentEmailsIDs] = useState<string[]>([]);
+  const [sortOption, setSortOption] = useState<string>('newer');
 
   const {isError, error, isLoading, data, refetch} = useQuery('sentEmails', async () => {
     const res = await axios.get('http://localhost:8800/api/v1/email/sent', { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
     setStatuses(arrayRepeat([false], res.data.sentEmails.length));
+    res.data.sentEmails.sort((email1: any, email2: any) => {
+      return new Date(email2.updatedAt).getTime() - new Date(email1.updatedAt).getTime();
+    });
     return res.data;
   });
 
@@ -129,6 +138,23 @@ const Sent: React.FC = () => {
     return newData;
   }
 
+  function handleChangeSortOption (event: Event<SelectElement>): void {
+    setSortOption(event.target.value);
+    if (sortOption === 'older') {
+      if (data) {
+        data.sentEmails.sort((email1: any, email2: any) => {
+          return new Date(email2.updatedAt).getTime() - new Date(email1.updatedAt).getTime();
+        });
+      }
+    } else if (sortOption === 'newer') {
+      if (data) {
+        data.sentEmails.sort((email1: any, email2: any) => {
+          return new Date(email1.updatedAt).getTime() - new Date(email2.updatedAt).getTime();
+        });
+      }
+    }
+  }
+
   if(isLoading) {
     return (
       <>
@@ -158,7 +184,8 @@ const Sent: React.FC = () => {
        refreshEmails={refetch}
        isEmailsChecked={isChecked}
        handleEmailsChecked={handleChecked}
-       handleDeleteEmails={handleDeleteSentEmails} 
+       handleDeleteEmails={handleDeleteSentEmails}
+       handleChangeSortOption={handleChangeSortOption} 
       />
       {handleSearch().length > 0 ? (
         handleSearch().map((sentEmail: any, index: number) => (
@@ -180,7 +207,7 @@ const Sent: React.FC = () => {
           key={sentEmail._id}
           sendTo={sentEmail.to}
           subject={sentEmail.emailSubject}
-          sendAt={new Date(sentEmail.createdAt).toDateString()}
+          sendAt={new Date(sentEmail.updatedAt).toDateString()}
           content={sentEmail.emailContent}
           emailID={sentEmail._id}
           category='sent'

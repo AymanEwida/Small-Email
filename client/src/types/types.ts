@@ -8,6 +8,7 @@ export type FormEvent = React.FormEvent;
 export type Event<T> =  React.ChangeEvent<T>;
 export type InputElement = HTMLInputElement;
 export type TextAreaElement = HTMLTextAreaElement;
+export type SelectElement = HTMLSelectElement;
 
 export type User = {
   _id : string;

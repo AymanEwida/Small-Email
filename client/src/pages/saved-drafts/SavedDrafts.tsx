@@ -22,7 +22,9 @@ import {
 } from '../../functions';
 
 import {
-  Draft
+  Draft,
+  Event,
+  SelectElement
 } from '../../types/types';
 
 import './saved-drafts.css';
@@ -36,10 +38,14 @@ const SavedDrafts: React.FC = () => {
   const [savedDraftsIDs, setSavedDraftsIDs] = useState<string[]>([]);
   const [isDraftShow, setIsDraftShow] = useState(false);
   const [selectedDraft, setSetSelectedDraft] = useState<Draft | undefined>(undefined);
+  const [sortOption, setSortOption] = useState<string>('newer');
 
   const {isError, error, isLoading, data, refetch} = useQuery("savedDrafts", async () => {
     const res = await axios.get('http://localhost:8800/api/v1/user/saved-drafts', { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
     setStatuses(arrayRepeat([false], res.data.savedDrafts.length));
+    res.data.savedDrafts.sort((email1: any, email2: any) => {
+      return new Date(email2.updatedAt).getTime() - new Date(email1.updatedAt).getTime();
+    });
     return res.data;
   });
 
@@ -120,6 +126,23 @@ const SavedDrafts: React.FC = () => {
     setIsDraftShow(false);
   }
 
+  function handleChangeSortOption (event: Event<SelectElement>): void {
+    setSortOption(event.target.value);
+    if (sortOption === 'older') {
+      if (data) {
+        data.savedDrafts.sort((email1: any, email2: any) => {
+          return new Date(email2.updatedAt).getTime() - new Date(email1.updatedAt).getTime();
+        });
+      }
+    } else if (sortOption === 'newer') {
+      if (data) {
+        data.savedDrafts.sort((email1: any, email2: any) => {
+          return new Date(email1.updatedAt).getTime() - new Date(email2.updatedAt).getTime();
+        });
+      }
+    }
+  }
+
   if(isLoading) {
     return (
       <>
@@ -149,7 +172,8 @@ const SavedDrafts: React.FC = () => {
        refreshEmails={refetch}
        isEmailsChecked={isChecked}
        handleEmailsChecked={handleChecked}
-       handleDeleteEmails={handleDeleteSavedDrafts} 
+       handleDeleteEmails={handleDeleteSavedDrafts}
+       handleChangeSortOption={handleChangeSortOption} 
       />
       {data.savedDrafts.map((savedDraft: any, index: number) => (
         <SavedDraftComponent

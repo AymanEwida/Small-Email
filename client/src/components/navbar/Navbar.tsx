@@ -62,6 +62,11 @@ const Navbar: React.FC = () => {
 
   function setSearchValueToEmpty (): void {
     setSearchValue('');
+
+    const location = document.location.href.split('/').at(-1)?.split('?')[0];
+    if (location === 'inbox' || location === 'sent') {
+      history(`/${location}`);
+    }
   }
 
   function handleSearchFocus (): void {

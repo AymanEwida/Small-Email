@@ -22,7 +22,9 @@ import {
 
 import {
   Void,
-  Optional
+  Optional,
+  Event,
+  SelectElement
 } from '../../types/types';
 
 import './group-emails.css';
@@ -43,10 +45,14 @@ const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupImg, groupName,
   const [isChecked, setIsChecked] = useState(false);
   const [statuses, setStatuses] = useState<boolean[]>([]);
   const [emailsIDs, setEmailsIDs] = useState<string[]>([]);
+  const [sortOption, setSortOption] = useState<string>('newer');
 
   const {isError, error, isLoading, data, refetch} = useQuery('groupEmails', async () => {
     const res = await axios.get(`http://localhost:8800/api/v1/group/emails/${groupID}`, { headers: { Authorization: 'Bearer ' + Cookies.get('token') } });
     setStatuses(arrayRepeat([false], res.data.emails.length));
+    res.data.emails.sort((email1: any, email2: any) => {
+      return new Date(email2.createdAt).getTime() - new Date(email1.createdAt).getTime();
+    });
     return res.data;
   }, {
     enabled: !!groupID
@@ -114,6 +120,31 @@ const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupImg, groupName,
     setStatuses(arrayRepeat([false], newData.length));
   }
 
+  function handleChangeSortOption (event: Event<SelectElement>): void {
+    setSortOption(event.target.value);
+    if (sortOption === 'older') {
+      if (emails) {
+        emails.sort((email1: any, email2: any) => {
+          return new Date(email2.createdAt).getTime() - new Date(email1.createdAt).getTime();
+        });
+      } else if (data) {
+        data.emails.sort((email1: any, email2: any) => {
+          return new Date(email2.createdAt).getTime() - new Date(email1.createdAt).getTime();
+        });
+      }
+    } else if (sortOption === 'newer') {
+      if (emails) {
+        emails.sort((email1: any, email2: any) => {
+          return new Date(email1.createdAt).getTime() - new Date(email2.createdAt).getTime();
+        });
+      } else if (data) {
+        data.emails.sort((email1: any, email2: any) => {
+          return new Date(email1.createdAt).getTime() - new Date(email2.createdAt).getTime();
+        });
+      }
+    }
+  }
+
   if (isLoading) {
     return (
       <>
@@ -151,7 +182,8 @@ const GroupEmails: React.FC<GroupEmailsProps> = ({ groupID, groupImg, groupName,
        toggleFunc={toggleGroupCategory}
        openSettingsMenuFunc={openSettingsMenu}
        refreshEmails={refetch}
-       handleDeleteEmails={() => fiterData(emailsIDs)} 
+       handleDeleteEmails={() => fiterData(emailsIDs)}
+       handleChangeSortOption={handleChangeSortOption} 
       />
       <div>
         {emails ? (
